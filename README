@@ -1,0 +1,82 @@
+###################################
+#    This software simulates      #
+#    hopping processes in dis-    #
+#    ordered systems. Check out   #
+#    the option --help for help   #
+#    concerning all the options.  #
+#                                 #
+#   by Jan Oliver Oelerich, 2011  #
+###################################
+
+Usage: hop [OPTIONS]...
+
+  -h, --help                 Print help and exit
+  -V, --version              Print version and exit
+  -l, --length=INT           This parameter specifies the length of the (cubic) 
+                               sample. If this parameter is set, the options 
+                               X,Y,Z are ignored!!! Number of cells.
+  -X, --X=INT                The x-length of the sample.  (default=`50')
+  -Y, --Y=INT                The y-length of the sample.  (default=`50')
+  -Z, --Z=INT                The z-length of the sample.  (default=`50')
+  -n, --ncarriers=INT        The number of charge carriers.  (default=`1250')
+  -N, --nsites=INT           The number of sites. This value has to be bigger 
+                               than --ncarriers.  (default=`125000')
+  -s, --sigma=FLOAT          The standard deviation of the gaussian.  
+                               (default=`1.0')
+  -a, --llength=FLOAT        Localization length of the sites.  
+                               (default=`0.215')
+  -r, --rc=FLOAT             Determines up to which range sites should see each 
+                               other.  (default=`2.5')
+      --rseed=LONG           Set the random seed. Only for debugging!
+  -F, --field=FLOAT          The electric field strength in z-direction.  
+                               (default=`0.3')
+  -T, --temperature=FLOAT    The temperature of the simulation.  
+                               (default=`0.3')
+
+
+  -I, --iterations=INT       The number of iterations  (default=`10000')
+  -R, --relaxation=INT       The number of hops being done _before_ any 
+                               statistics are started.  (default=`3000')
+
+
+      --nooutput             Don't output anything  (default=off)
+  -o, --outputfolder=STRING  The name of the output folder. Default: 
+                               output-YYYYMMDDHHMM
+  -f, --conf_file=STRING     Location of a configuration file.
+
+
+
+Units
+    Length
+        The sample is divided into cells in each spatial direction.
+        One cell has the length, size and width of
+    
+            --rc * --llength * 2
+        
+        The options that set the sample size are integers of how many
+        of these cells there are in one spatial direction.
+        Thus, --X=20, --rc=0.5, --llength=1.0 corresponds to a sample size 
+        of 20 LENGTH UNITS.
+    
+            --nsites = --length^3
+        
+        can be chosen as a good value.
+    
+    
+    Energies/Temperatures
+        All energies are measured in units of the disorder parameter \sigma.
+        Since 
+    
+            \sigma/kT \approx 3.0
+        
+        is a realistic value, the temperature T is usually around 0.3.
+    
+    
+Examples
+    Long run:
+        ./hop --nsites=1000000 --ncarriers=1000 --length=100 --relaxation=10000
+    Even longer run:
+        ./hop --nsites=8000000 --ncarriers=8000 --length=200 --relaxation=10000
+    Run to compare it to my BA Thesis's results
+        ./hop --temperature=0.25 --ncarriers=10000 --nsites=1000000 --llength=0.215 --field=0.03 --length=100 --iterations=500000 --relax=10000
+        ./hop --temperature=0.33 --ncarriers=10000 --nsites=1000000 --llength=0.215 --field=0.03 --length=100 --iterations=500000 --relax=10000
