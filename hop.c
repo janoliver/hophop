@@ -9,7 +9,7 @@ const gsl_rng_type * T;
 gsl_rng * r;
 int nx, ny, nz;
 
-void printResults(Results * results);
+void printResults(Results * results, Results * errors);
 void printApplicationHeader();
 void printSettings();
 void checkApplicationSettings(int argc, char **argv);
@@ -39,13 +39,7 @@ main(int argc, char **argv)
         total[iRun-1].simulationTime   = 0.0;
         simulationRun(total, &iRun);
     }
-        
-    // write output files
-    if(args.outputfolder_given)
-    {
-        writeConfig();
-    }
-        
+                
     // perform the averaging
     for(iRun = 0; iRun < args.nruns_arg; iRun++)
     {
@@ -67,29 +61,29 @@ main(int argc, char **argv)
     for(iRun = 0; iRun < args.nruns_arg; iRun++)
     {
         if(fabs(res.mobility -
-               total[iRun].mobility) > error.mobility)
+                total[iRun].mobility) > error.mobility)
             error.mobility = fabs(res.mobility -
-                                 total[iRun].mobility);
+                                  total[iRun].mobility);
         if(fabs(res.diffusivity -
-               total[iRun].diffusivity) > error.diffusivity)
+                total[iRun].diffusivity) > error.diffusivity)
             error.diffusivity = fabs(res.diffusivity -
-                                    total[iRun].diffusivity);
+                                     total[iRun].diffusivity);
         if(fabs(res.fermiEnergy -
-               total[iRun].fermiEnergy) > error.fermiEnergy)
+                total[iRun].fermiEnergy) > error.fermiEnergy)
             error.fermiEnergy = fabs(res.fermiEnergy -
-                                    total[iRun].fermiEnergy);
+                                     total[iRun].fermiEnergy);
         if(fabs(res.transportEnergy -
-               total[iRun].transportEnergy) > error.transportEnergy)
+                total[iRun].transportEnergy) > error.transportEnergy)
             error.transportEnergy = fabs(res.transportEnergy -
-                                        total[iRun].transportEnergy);
+                                         total[iRun].transportEnergy);
         if(fabs(res.currentDensity -
-               total[iRun].currentDensity) > error.currentDensity)
+                total[iRun].currentDensity) > error.currentDensity)
             error.currentDensity = fabs(res.currentDensity -
-                                           total[iRun].currentDensity);
+                                        total[iRun].currentDensity);
         if(fabs(res.simulationTime -
-               total[iRun].simulationTime) > error.simulationTime)
+                total[iRun].simulationTime) > error.simulationTime)
             error.simulationTime = fabs(res.simulationTime -
-                                       total[iRun].simulationTime);
+                                        total[iRun].simulationTime);
     }
 
     // summary
@@ -97,9 +91,8 @@ main(int argc, char **argv)
         writeSummary(&res, &error);
 
     // output results to the command line
-    printResults(&res);
+    printResults(&res, &error);
 
-    gsl_rng_free(r);
     return 0;
 }
 
@@ -136,8 +129,10 @@ simulationRun(Results * total, int * iRun)
     MC_calculateResults(sites, carriers, &res);
 
     if(args.outputfolder_given)
+    {
         writeResults(&res);
-
+    }
+    
     // add results to the total result struct for averaging
     total[*iRun-1].mobility        = res.mobility;
     total[*iRun-1].diffusivity     = res.diffusivity;
@@ -153,15 +148,21 @@ simulationRun(Results * total, int * iRun)
         {
             writeSites(sites);
             writeSitesConfig(sites);
+            writeConfig();
+            writeTransitions(sites);
         }
     }
+
+    gsl_rng_free(r);
+
+    return;
 }
 
 
 /**
     This function checks and processes application
     settings.
- */
+*/
 void
 checkApplicationSettings(int argc, char **argv)
 {
@@ -198,13 +199,13 @@ checkApplicationSettings(int argc, char **argv)
     // and the other way around
     if((args.length_given || (args.X_given && args.Y_given &&
                               args.Z_given))
-        && !args.nsites_given)
+       && !args.nsites_given)
     {
         args.nsites_arg = args.X_arg * args.Y_arg * args.Z_arg;
     }
     if(!(args.length_given || (args.X_given && args.Y_given &&
-                              args.Z_given))
-        && args.nsites_given)
+                               args.Z_given))
+       && args.nsites_given)
     {
         int sitesPerDirection = pow(args.nsites_arg,1./3.);
         args.X_arg = sitesPerDirection;
@@ -229,8 +230,8 @@ checkApplicationSettings(int argc, char **argv)
 }
 
 /**
-    This function prints out a useless header for the program.
- */
+   This function prints out a useless header for the program.
+*/
 void
 printApplicationHeader()
 {
@@ -243,8 +244,8 @@ printApplicationHeader()
 }
 
 /**
-    This function just prints out the parameters of the simulation.
- */
+   This function just prints out the parameters of the simulation.
+*/
 void
 printSettings()
 {
@@ -277,26 +278,26 @@ printSettings()
 }
 
 /**
-    This function prints out the results of the simulation.
- */
+   This function prints out the results of the simulation.
+*/
 void
-printResults(Results * results)
+printResults(Results * results, Results * error)
 {
     if(args.quiet_given)
         return;
     
     // Results output
     printf("\nResults:\n");
-    printf("\tMobility in field-direction: \tu   = %e\n",
-           results->mobility);
-    printf("\tDiffusivity perp. to field:  \tD   = %e\n",
-           results->diffusivity);
+    printf("\tMobility in field-direction: \tu   = %e (+- %e)\n",
+           results->mobility, error->mobility);
+    printf("\tDiffusivity perp. to field:  \tD   = %e (+- %e)\n",
+           results->diffusivity, error->diffusivity);
     printf("\tEinstein rel. perp. to field: \tD/u = %e\n",
            results->diffusivity / results->mobility);
-    printf("\tCurrent density (z-dir):  \tj   = %e\n",
-           results->currentDensity);
+    printf("\tCurrent density (z-dir):  \tj   = %e (+- %e)\n",
+           results->currentDensity, error->currentDensity);
     /*printf("\tFermi energy:  \t\t\tE_f = %e\n",
-           results->fermiEnergy);*/
+      results->fermiEnergy);*/
     printf("\tSimulated time: \t\tt   = %f\n\n",
            results->simulationTime);
 }

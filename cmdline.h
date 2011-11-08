@@ -31,7 +31,7 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_VERSION
 /** @brief the program version */
-#define CMDLINE_PARSER_VERSION "1.0"
+#define CMDLINE_PARSER_VERSION "1.1"
 #endif
 
 /** @brief Where the command line options are stored */
@@ -102,6 +102,9 @@ struct gengetopt_args_info
   char * summary_arg;	/**< @brief The name of the summary file to which one summary result line is then written..  */
   char * summary_orig;	/**< @brief The name of the summary file to which one summary result line is then written. original value given at command line.  */
   const char *summary_help; /**< @brief The name of the summary file to which one summary result line is then written. help description.  */
+  char * comment_arg;	/**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data..  */
+  char * comment_orig;	/**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data. original value given at command line.  */
+  const char *comment_help; /**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data. help description.  */
   char * conf_file_arg;	/**< @brief Location of a configuration file for the simulation..  */
   char * conf_file_orig;	/**< @brief Location of a configuration file for the simulation. original value given at command line.  */
   const char *conf_file_help; /**< @brief Location of a configuration file for the simulation. help description.  */
@@ -130,6 +133,7 @@ struct gengetopt_args_info
   unsigned int quiet_given ;	/**< @brief Whether quiet was given.  */
   unsigned int outputfolder_given ;	/**< @brief Whether outputfolder was given.  */
   unsigned int summary_given ;	/**< @brief Whether summary was given.  */
+  unsigned int comment_given ;	/**< @brief Whether comment was given.  */
   unsigned int conf_file_given ;	/**< @brief Whether conf_file was given.  */
 
 } ;

@@ -1,7 +1,7 @@
 #  Created by Jan Oliver Oelerich
 
 package "hop"
-version "1.0"
+version "1.1"
 purpose "This software simulates hopping in disordered semiconductors with \
 hopping on localized states. It uses Monte-Carlo simulation techniques. \
 See the README file to learn more."
@@ -36,4 +36,5 @@ text "\n"
 option "quiet" q "Don't say anything." flag off
 option "outputfolder" o "The name of the output folder if one wants output files." string optional
 option "summary" - "The name of the summary file to which one summary result line is then written." string optional 
+option "comment" - "Specify a string that is appended to the line in the summary file for better overview over the simulated data." string optional
 option "conf_file" f "Location of a configuration file for the simulation." string optional  

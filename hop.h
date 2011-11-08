@@ -75,6 +75,7 @@ void 	  MC_calculateResults(Site * sites, Carrier * carriers, Results * res);
 // output.c
 void writeSites(Site * sites);
 void writeSitesConfig(Site * sites);
+void writeTransitions(Site * sites);
 void writeConfig();
 void writeResults(Results * res);
 void writeSummary(Results * res, Results * error);

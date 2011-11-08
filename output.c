@@ -2,6 +2,7 @@
 
 #include <sys/stat.h> 
 #include "hop.h"
+#include "mc.h"
 
 void checkOutputFolder();
 
@@ -81,6 +82,49 @@ writeSites(Site * sites)
     if(!args.quiet_given)
         printf("Wrote site result information to %s\n", fileName);
 }
+
+
+/**
+    Writes all the transitions to a datafile in the form
+
+      index1 index2 E1 E2 NTransitions
+ */
+void
+writeTransitions(Site * sites)
+{
+    checkOutputFolder();
+    
+    FILE *file;
+    int i;
+    char fileName[128] = "";
+    
+    sprintf(fileName, "%s/transitions.dat",args.outputfolder_arg);
+    
+    file = fopen(fileName,"w+");
+
+    // write transitions information
+    for(i = 0;i<args.nsites_arg;++i)
+    {
+        SLE * neighbor = sites[i].neighbors;
+        while(neighbor)
+        {
+            if(neighbor->nTransitions > 0)
+            {
+                fprintf(file,"%d %d %8.5f %8.5f %8d\n",
+                        sites[i].index, neighbor->s->index, sites[i].energy,
+                        neighbor->s->energy, neighbor->nTransitions);
+            }
+            neighbor = neighbor->next;
+        }
+        
+    }
+    fclose(file);
+    
+    // some output
+    if(!args.quiet_given)
+        printf("Wrote transitions information to %s\n", fileName);
+}
+
 
 /**
     Writes the configuration file, which can be read
@@ -207,27 +251,27 @@ writeSummary(Results * res, Results * error)
     if(buffer == 0)
     {
         fprintf(file, "#DOS exponent     ");
-        fprintf(file, "system size       ");
-        fprintf(file, "number carriers   ");
-        fprintf(file, "localization len. ");
-        fprintf(file, "temperature       ");
-        fprintf(file, "electric field    ");
-        
-        fprintf(file, "simul. time       ");
-        fprintf(file, "error simul. time ");
-        fprintf(file, "mobility          ");
-        fprintf(file, "error mobility    ");
-        fprintf(file, "diffusivity x/y   ");
-        fprintf(file, "error diffus. x/y ");
-        fprintf(file, "current density   ");
-        fprintf(file, "erro curr. dens.  ");
+        fprintf(file, "System size       ");
+        fprintf(file, "Number carriers   ");
+        fprintf(file, "Localization len. ");
+        fprintf(file, "Temperature       ");
+        fprintf(file, "Electric field    ");
+        fprintf(file, "Simul. time       ");
+        fprintf(file, "Error simul. time ");
+        fprintf(file, "Mobility          ");
+        fprintf(file, "Error mobility    ");
+        fprintf(file, "Diffusivity x/y   ");
+        fprintf(file, "Error diffus. x/y ");
+        fprintf(file, "Current density   ");
+        fprintf(file, "Erro curr. dens.  ");
+        fprintf(file, "Comment           ");
         fprintf(file, "\n");
     }
 
     // write site information
     fprintf(file, "%e      ", args.exponent_arg);
-    fprintf(file, "%d                ", args.length_arg);
-    fprintf(file, "%d                ", args.ncarriers_arg);
+    fprintf(file, "%-10d        ", args.length_arg);
+    fprintf(file, "%-10d        ", args.ncarriers_arg);
     fprintf(file, "%e      ", args.llength_arg);
     fprintf(file, "%e      ", args.temperature_arg);
     fprintf(file, "%e      ", args.field_arg);
@@ -240,6 +284,8 @@ writeSummary(Results * res, Results * error)
     fprintf(file, "%e      ", error->diffusivity);
     fprintf(file, "%e      ", res->currentDensity);
     fprintf(file, "%e      ", error->currentDensity);
+    if(args.comment_given)
+        fprintf(file, "%s", args.comment_arg);
     fprintf(file, "\n");
     
     fclose(file);
