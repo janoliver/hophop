@@ -337,11 +337,13 @@ printEstimatedMemory()
     mem += args.ncarriers_arg * sizeof(Carrier);
 
     // neighbor lists
-    mem += pow(args.rc_arg, 3) * 4. / 3. * M_PI * args.nsites_arg
-        * (sizeof(SLE) + sizeof(Site));
+    mem += pow(args.rc_arg, 3) * 4. / 3. * M_PI * args.nsites_arg * sizeof(SLE);
 
     // results
     mem += (args.nruns_arg+2) * sizeof(Results);
+
+    // some offset that shouldn't scale with the system...
+    mem += 100*1024*1024;
 
     printf("Estimated memory usage: %5.2f MB\n",mem/(1024*1024));
     return;
