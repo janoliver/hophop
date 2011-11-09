@@ -17,10 +17,10 @@ Vector distance(Site * i, Site * j);
 SLE *  sortNeighbors(SLE * list);
 
 /**
-    creates n sites randomly distributed within a box
-    of the size X*Y*Z cells (!) and with random energies picked
-    out of a gaussian distribution with standard deviation
-    sigma (=1.0 since this should be the energy scale!).
+    creates n sites randomly distributed within a box of the size X*Y*Z
+    cells (!) and with random energies picked out of a gaussian
+    distribution with standard deviation sigma (=1.0 since this should be
+    the energy scale!).
  */
 Site *
 MC_createSites()
@@ -48,17 +48,20 @@ MC_createSites()
         s[i].index         = i;
         s[i].totalOccTime  = 0.0;
         s[i].tempOccTime   = 0.0;
+        s[i].neighbors     = NULL;
+        s[i].nNeighbors    = 0;
+        s[i].rateSum       = 0.0;
+        s[i].updatedAt     = 0.0;
     }
 
     return s;
 }
 
 /**
-    Distributes the electrons over random sites. Since
-    all site energies and positions were created randomly, 
-    simply the first nCarriers sites can be set to
-    occupied. This can be modified to have a localized source
-    of electrons or anything else.
+    Distributes the electrons over random sites. Since all site energies
+    and positions were created randomly, simply the first nCarriers sites
+    can be set to occupied.m This can be modified to have a localized
+    source of electrons or anything else.
  */
 Carrier *
 MC_distributeCarriers(Site * sites)
@@ -143,10 +146,10 @@ createCells(Site * sites)
 }
 
 /**
-    This function creates the array Site.neighbors, assigning 
-    neighbors of the sites and the corresponding hopping rate 
-    to it. It takes a while, especially for big values of nSites.
-    It is also the main consumer of memory!! 
+    This function creates the array Site.neighbors, assigning neighbors of
+    the sites and the corresponding hopping rate to it. It takes a while,
+    especially for big values of nSites.  It is also the main consumer of
+    memory!!
  */
 void
 MC_createHoppingRates(Site * sites)
@@ -180,12 +183,12 @@ MC_createHoppingRates(Site * sites)
             sList = tmp;
         }
     }
-    free((void *)cells);
+    free(cells);
 }
 
 /**
-    This function removes the found softpairs, using the algorithm described
-    in the PhD Thesis of Fredrik Jansson based ok xyz.
+    This function removes the found softpairs, using the algorithm
+    described in the PhD Thesis of Fredrik Jansson based ok xyz.
  */
 void
 MC_removeSoftPairs(Site * sites)
@@ -295,7 +298,7 @@ MC_removeSoftPairs(Site * sites)
         while(softpair)
         {
             temp = softpair->next;
-            free((void *)softpair);
+            free(softpair);
             softpair = temp;
         }
 
@@ -324,8 +327,8 @@ MC_removeSoftPairs(Site * sites)
 }
 
 /**
-    Returns a linked list of type SLE for the neighbors
-    of the site s. Requires the array of cells.
+    Returns a linked list of type SLE for the neighbors of the site
+    s. Requires the array of cells.
  */
 void
 setNeighbors(Site * s, Cell * cells)
@@ -381,9 +384,9 @@ setNeighbors(Site * s, Cell * cells)
 }
 
 /**
-    This function calculates the hopping rate from one site
-    to another. It takes into account periodic boundary con-
-    ditions. float instead of double to save memory.
+    This function calculates the hopping rate from one site to another. It
+    takes into account periodic boundary con- ditions. float instead of
+    double to save memory.
  */
 double
 calcHoppingRate(Site i, Site j)
@@ -411,9 +414,9 @@ calcHoppingRate(Site i, Site j)
 
 
 /**
-    This function calculates the distance between two sites
-    and takes into account periodic boundary conditions. It
-    returns a Vector struct with the fields x,y and z.
+    This function calculates the distance between two sites and takes into
+    account periodic boundary conditions. It returns a Vector struct with
+    the fields x,y and z.
  */
 Vector
 distance(Site * i, Site * j)
@@ -449,10 +452,10 @@ distance(Site * i, Site * j)
 
 
 /**
-    This function maps a 3D matrix for the cells of the sample to
-    a 1D array (or the other way round.). Expects coordinates of the
-    cell (small x,y,z) as well as the cell array.
-    Returns a pointer to the desired cell element.
+    This function maps a 3D matrix for the cells of the sample to a 1D
+    array (or the other way round.). Expects coordinates of the cell (small
+    x,y,z) as well as the cell array.  Returns a pointer to the desired
+    cell element.
  */
 Cell *
 getCell3D(Cell * cells, ssize_t x, ssize_t y, ssize_t z)

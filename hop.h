@@ -54,6 +54,26 @@ typedef struct results {
     size_t nFailedAttempts;
 } Results;
 
+typedef struct vector {
+    float x,y,z;
+} Vector;
+
+typedef struct site_list_element {
+    struct site_list_element * next;
+    struct site * s;
+    double rate;
+    Vector dist;
+    int nTransitions;
+} SLE;
+
+struct softpair;
+typedef struct softpair {
+    Site * i;
+    Site * j;
+    struct softpair * next;
+} Softpair;
+
+
 typedef signed long ssize_t;
 
 extern struct gengetopt_args_info args;
@@ -72,9 +92,6 @@ Carrier * MC_distributeCarriers(Site * sites);
 void 	  MC_createHoppingRates(Site * sites);
 void      MC_removeSoftPairs(Site * sites);
 void 	  MC_calculateResults(Site * sites, Carrier * carriers, Results * res);
-void      MC_freeSites(Site * sites);
-void      MC_freeCarriers(Carrier * carriers);
-
 
 // output.c
 void writeSites(Site * sites);

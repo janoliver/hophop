@@ -108,6 +108,8 @@ struct gengetopt_args_info
   char * conf_file_arg;	/**< @brief Location of a configuration file for the simulation..  */
   char * conf_file_orig;	/**< @brief Location of a configuration file for the simulation. original value given at command line.  */
   const char *conf_file_help; /**< @brief Location of a configuration file for the simulation. help description.  */
+  int memreq_flag;	/**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately (default=off).  */
+  const char *memreq_help; /**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
@@ -135,6 +137,7 @@ struct gengetopt_args_info
   unsigned int summary_given ;	/**< @brief Whether summary was given.  */
   unsigned int comment_given ;	/**< @brief Whether comment was given.  */
   unsigned int conf_file_given ;	/**< @brief Whether conf_file was given.  */
+  unsigned int memreq_given ;	/**< @brief Whether memreq was given.  */
 
 } ;
 

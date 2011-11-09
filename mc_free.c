@@ -18,12 +18,12 @@ MC_freeSites(Site * sites)
             neighbor = tmp;
         }
     }
-    free((void *)sites);
+    free(sites);
 
 }
 
 void
 MC_freeCarriers(Carrier * carriers)
 {
-    free((void *)carriers);
+    free(carriers);
 }

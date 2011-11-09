@@ -14,6 +14,7 @@ void printApplicationHeader();
 void printSettings();
 void checkApplicationSettings(int argc, char **argv);
 void simulationRun(Results * total, int * iRun);
+void printEstimatedMemory();
 
 int
 main(int argc, char **argv)
@@ -21,6 +22,13 @@ main(int argc, char **argv)
     loctime = localtime(&curtime);
 
     checkApplicationSettings(argc, argv);
+
+    if(args.memreq_given)
+    {
+        printEstimatedMemory();
+        return 0;
+    }
+    
     printApplicationHeader();
     printSettings();
 
@@ -153,19 +161,30 @@ simulationRun(Results * total, int * iRun)
         }
     }
 
-    gsl_rng_free(r);
-
     // free resources
-    MC_freeSites(sites);
-    MC_freeCarriers(carriers);
+    gsl_rng_free(r);
+    SLE * neighbor, * tmp;
+    int i;
+    for(i = 0; i < args.nsites_arg; ++i)
+    {
+        // free neighbor memory
+        neighbor = sites[i].neighbors;
+        while(neighbor)
+        {
+            tmp = neighbor->next;
+            free(neighbor);
+            neighbor = tmp;
+        }
+    }
+    free(sites);
+    free(carriers);
     
     return;
 }
 
 
 /**
-    This function checks and processes application
-    settings.
+    This function checks and processes application settings.
 */
 void
 checkApplicationSettings(int argc, char **argv)
@@ -304,4 +323,26 @@ printResults(Results * results, Results * error)
       results->fermiEnergy);*/
     printf("\tSimulated time: \t\tt   = %f\n\n",
            results->simulationTime);
+}
+
+void
+printEstimatedMemory()
+{
+    double mem = 0;
+    
+    // sites
+    mem += args.nsites_arg * sizeof(Site);
+
+    // carriers
+    mem += args.ncarriers_arg * sizeof(Carrier);
+
+    // neighbor lists
+    mem += pow(args.rc_arg, 3) * 4. / 3. * M_PI * args.nsites_arg
+        * (sizeof(SLE) + sizeof(Site));
+
+    // results
+    mem += (args.nruns_arg+2) * sizeof(Results);
+
+    printf("Estimated memory usage: %5.2f MB\n",mem/(1024*1024));
+    return;
 }

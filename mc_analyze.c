@@ -14,13 +14,10 @@ MC_calculateResults(Site * sites, Carrier * carriers, Results * res)
 }
 
 /**
-    Here, the carrier mobility in the direction of the 
-    electric field is calculated. 
-    Equation:
-        \mu = \frac{<z>}{F*t}
-    where F is the electric field, t is the simulation time
-    and <z> the mean distance in z-direction the elctrons 
-    hopped.
+    Here, the carrier mobility in the direction of the electric field is
+    calculated.  Equation: \mu = \frac{<z>}{F*t} where F is the electric
+    field, t is the simulation time and <z> the mean distance in
+    z-direction the elctrons hopped.
  */
 float
 calcMobility(Carrier * carriers, Results * results)
@@ -34,8 +31,8 @@ calcMobility(Carrier * carriers, Results * results)
 }
 
 /**
-    Here, the diffusivity of the system is calculated.
-    This is, right now, perpendicular to the field direction.
+    Here, the diffusivity of the system is calculated.  This is, right now,
+    perpendicular to the field direction.
  */
 float
 calcDiffusivity(Carrier * carriers, Results * results)

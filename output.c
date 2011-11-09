@@ -49,10 +49,10 @@ writeSitesConfig(Site * sites)
 
 /**
     Writes the sites file with the following format:
-    x1   y1  z2  E1  nvisited1   nvisitedUpwards1
-    x2   y2  z2  E2  nvisited2   nvisitedUpwards2
+      x1   y1  z2  E1  nvisited1   nvisitedUpwards1
+      x2   y2  z2  E2  nvisited2   nvisitedUpwards2
           ...
-    xn   yn  zn  En  nvisitedn   nvisitedUpwardsn
+      xn   yn  zn  En  nvisitedn   nvisitedUpwardsn
     
     Filename: sites.dat
 */
@@ -86,7 +86,6 @@ writeSites(Site * sites)
 
 /**
     Writes all the transitions to a datafile in the form
-
       index1 index2 E1 E2 NTransitions
  */
 void
@@ -127,9 +126,8 @@ writeTransitions(Site * sites)
 
 
 /**
-    Writes the configuration file, which can be read
-    by the program using the option --conf_file=/path/to/params.conf
-    to re-use the settings.
+    Writes the configuration file, which can be read by the program using
+    the option --conf_file=/path/to/params.conf to re-use the settings.
     
     Filename: params.conf
 */
@@ -201,9 +199,8 @@ writeResults(Results * res)
 }
 
 /**
-    Checks if output folder argument is given. If not,
-    create it's name and check if it exists. If not,
-    create it.
+    Checks if output folder argument is given. If not, create it's name and
+    check if it exists. If not, create it.
 */
 void
 checkOutputFolder() 

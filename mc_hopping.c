@@ -4,13 +4,12 @@
 
 void hoppingStep(Site * sites, Carrier * carriers, Results * res, bool stat);
 void hop(Carrier * c, SLE * dest, Vector * dist,
-		 Results * res, Carrier * carriers, bool stat);
+         Results * res, Carrier * carriers, bool stat);
 void updateCarrier(Carrier * carriers);
 
 /**
-    This function runs the iteration of the simulation.
-    It keeps track of the passed "time" (in arbitrary units)
-    and ouputs the progress.
+    This function runs the iteration of the simulation.  It keeps track of
+    the passed "time" (in arbitrary units) and ouputs the progress.
  */
 void
 MC_simulation(Site * sites, Carrier * carriers, Results * res)
@@ -73,10 +72,10 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
 
 /**
     This function executes one step of the simulation. It finds the carrier
-    or occupied site with the lowest occupation time and defines this
-    as the next electron to hop. It then reduces all the other times of
-    all other electrons and finds the destination for the hop. Then,
-    the hop() function is called with these parameters.
+    or occupied site with the lowest occupation time and defines this as
+    the next electron to hop. It then reduces all the other times of all
+    other electrons and finds the destination for the hop. Then, the hop()
+    function is called with these parameters.
  */
 void
 hoppingStep(Site * sites, Carrier * carriers, Results * res, bool stat)
@@ -127,10 +126,9 @@ hoppingStep(Site * sites, Carrier * carriers, Results * res, bool stat)
 }
 
 /**
-    In this function, one hop is executed. Here, the track-keeping
-    of energies and so on should happen. It updates both sites
-    that take part in the hopping process and all of the sites around
-    these two sites. 
+    In this function, one hop is executed. Here, the track-keeping of
+    energies and so on should happen. It updates both sites that take part
+    in the hopping process and all of the sites around these two sites.
  */
 void
 hop(Carrier * c, SLE * dest, Vector * dist,
@@ -167,10 +165,10 @@ hop(Carrier * c, SLE * dest, Vector * dist,
 
 }
 
-/* Subtract the `struct timeval' values X and Y,
-   storing the result in RESULT.
-   Return 1 if the difference is negative, otherwise 0.  */
-
+/**
+   Subtract the `struct timeval' values X and Y, storing the result in
+   RESULT.  Return 1 if the difference is negative, otherwise 0.
+*/
 int
 timeval_subtract(struct timeval * result,
                  struct timeval * y, struct timeval * x)

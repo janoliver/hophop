@@ -60,6 +60,7 @@ const char *gengetopt_args_info_help[] = {
   "      --summary=STRING          The name of the summary file to which one \n                                  summary result line is then written.",
   "      --comment=STRING          Specify a string that is appended to the line \n                                  in the summary file for better overview over \n                                  the simulated data.",
   "  -f, --conf_file=STRING        Location of a configuration file for the \n                                  simulation.",
+  "      --memreq                  Estimates the used memory for the specified \n                                  parameter set. Print's the information and \n                                  exits immediately  (default=off)",
     0
 };
 
@@ -139,6 +140,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->summary_given = 0 ;
   args_info->comment_given = 0 ;
   args_info->conf_file_given = 0 ;
+  args_info->memreq_given = 0 ;
 }
 
 static
@@ -188,6 +190,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->comment_orig = NULL;
   args_info->conf_file_arg = NULL;
   args_info->conf_file_orig = NULL;
+  args_info->memreq_flag = 0;
   
 }
 
@@ -222,6 +225,7 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->summary_help = gengetopt_args_info_help[25] ;
   args_info->comment_help = gengetopt_args_info_help[26] ;
   args_info->conf_file_help = gengetopt_args_info_help[27] ;
+  args_info->memreq_help = gengetopt_args_info_help[28] ;
   
 }
 
@@ -409,6 +413,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "comment", args_info->comment_orig, 0);
   if (args_info->conf_file_given)
     write_into_file(outfile, "conf_file", args_info->conf_file_orig, 0);
+  if (args_info->memreq_given)
+    write_into_file(outfile, "memreq", 0, 0 );
   
 
   i = EXIT_SUCCESS;
@@ -725,6 +731,7 @@ cmdline_parser_internal (
         { "summary",	1, NULL, 0 },
         { "comment",	1, NULL, 0 },
         { "conf_file",	1, NULL, 'f' },
+        { "memreq",	0, NULL, 0 },
         { 0,  0, 0, 0 }
       };
 
@@ -1036,6 +1043,18 @@ cmdline_parser_internal (
                 &(local_args_info.comment_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "comment", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Estimates the used memory for the specified parameter set. Print's the information and exits immediately.  */
+          else if (strcmp (long_options[option_index].name, "memreq") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->memreq_flag), 0, &(args_info->memreq_given),
+                &(local_args_info.memreq_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "memreq", '-',
                 additional_error))
               goto failure;
           
