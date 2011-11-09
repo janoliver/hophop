@@ -1,23 +1,26 @@
 #  Created by Jan Oliver Oelerich
 
 COMP=/usr/bin/gcc
-CFLAGS=-Wall -O3 -ffast-math -march=native 
+CFLAGS=-Wall -g -ffast-math -march=native 
 LFLAGS=-lgsl -lgslcblas -lm
 #GGO=gengetopt
 GGO=/import/vtthomes/oelerich/software/bin/gengetopt
 
 all: hop clean
 
-hop: hop.c hop.h cmdline.o init_mc.o hopping_mc.o output.o analyze_mc.o
-	$(COMP) -o hop hop.c cmdline.o mc_hopping.o output.o mc_analyze.o mc_init.o $(CFLAGS) $(LFLAGS)
+hop: hop.c hop.h cmdline.o mc_init.o mc_hopping.o output.o mc_analyze.o mc_free.o
+	$(COMP) -o hop hop.c cmdline.o mc_hopping.o output.o mc_analyze.o mc_init.o mc_free.o $(CFLAGS) $(LFLAGS)
 
-init_mc.o: mc_init.c hop.h
+mc_init.o: mc_init.c hop.h
 	$(COMP) -c -o mc_init.o mc_init.c $(CFLAGS)
 
-hopping_mc.o: mc_hopping.c hop.h
+mc_free.o: mc_free.c hop.h
+	$(COMP) -c -o mc_free.o mc_free.c $(CFLAGS)
+
+mc_hopping.o: mc_hopping.c hop.h
 	$(COMP) -c -o mc_hopping.o mc_hopping.c $(CFLAGS)
 
-analyze_mc.o: mc_analyze.c hop.h
+mc_analyze.o: mc_analyze.c hop.h
 	$(COMP) -c -o mc_analyze.o mc_analyze.c $(CFLAGS)
 
 output.o: output.c hop.h

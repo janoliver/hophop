@@ -155,6 +155,10 @@ simulationRun(Results * total, int * iRun)
 
     gsl_rng_free(r);
 
+    // free resources
+    MC_freeSites(sites);
+    MC_freeCarriers(carriers);
+    
     return;
 }
 

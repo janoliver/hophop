@@ -14,7 +14,7 @@ Cell * getCell3D(Cell *cells, ssize_t x, ssize_t y, ssize_t z);
 void   setNeighbors(Site * s, Cell * cells);
 double calcHoppingRate(Site i, Site j);
 Vector distance(Site * i, Site * j);
-SLE * sortNeighbors(SLE * list);
+SLE *  sortNeighbors(SLE * list);
 
 /**
     creates n sites randomly distributed within a box
@@ -67,7 +67,7 @@ MC_distributeCarriers(Site * sites)
     Carrier * c;
     Carrier tmp;
 
-    c = malloc(sizeof (Carrier) * args.ncarriers_arg);
+    c = (Carrier *) malloc(sizeof (Carrier) * args.ncarriers_arg);
 
     for(k = 0; k < args.ncarriers_arg; ++k)
     {
@@ -152,8 +152,8 @@ void
 MC_createHoppingRates(Site * sites)
 {
     size_t k, l;
-
-    Cell * cells = createCells(sites);
+    SLE * sList, * tmp;
+    Cell * cells = (Cell *) createCells(sites);
 
     for(l = 0; l < 100; ++l)
     {
@@ -169,6 +169,18 @@ MC_createHoppingRates(Site * sites)
     if(!args.quiet_given)
         printf(" Done.\n");
 
+    // free cells
+    for(l = 0; l < sizeof(cells)/sizeof(Cell); ++l)
+    {
+        sList = cells[l].siteList;
+        while(sList)
+        {
+            tmp = sList->next;
+            free(sList);
+            sList = tmp;
+        }
+    }
+    free((void *)cells);
 }
 
 /**
@@ -277,6 +289,16 @@ MC_removeSoftPairs(Site * sites)
             }
             softpair = softpair->next;
         }
+
+        // free memory
+        softpair = newSoftpair;
+        while(softpair)
+        {
+            temp = softpair->next;
+            free((void *)softpair);
+            softpair = temp;
+        }
+
 
         // all removed ?
         int counter = 0;

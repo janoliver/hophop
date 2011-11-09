@@ -35,6 +35,7 @@ calcMobility(Carrier * carriers, Results * results)
 
 /**
     Here, the diffusivity of the system is calculated.
+    This is, right now, perpendicular to the field direction.
  */
 float
 calcDiffusivity(Carrier * carriers, Results * results)

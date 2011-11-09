@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
 #include <math.h>
@@ -71,6 +72,9 @@ Carrier * MC_distributeCarriers(Site * sites);
 void 	  MC_createHoppingRates(Site * sites);
 void      MC_removeSoftPairs(Site * sites);
 void 	  MC_calculateResults(Site * sites, Carrier * carriers, Results * res);
+void      MC_freeSites(Site * sites);
+void      MC_freeCarriers(Carrier * carriers);
+
 
 // output.c
 void writeSites(Site * sites);
