@@ -135,11 +135,6 @@ simulationRun(Results * total, int * iRun)
     Results res;
     MC_simulation(sites, carriers, &res);
     MC_calculateResults(sites, carriers, &res);
-
-    if(args.outputfolder_given)
-    {
-        writeResults(&res);
-    }
     
     // add results to the total result struct for averaging
     total[*iRun-1].mobility        = res.mobility;
@@ -152,13 +147,12 @@ simulationRun(Results * total, int * iRun)
     // write output files
     if(args.outputfolder_given)
     {
-        if(args.nruns_arg == 1)
-        {
-            writeSites(sites);
-            writeSitesConfig(sites);
-            writeConfig();
-            writeTransitions(sites);
-        }
+        writeResults(&res, *iRun);
+        writeConfig(*iRun);
+        writeSites(sites,*iRun);
+        writeSitesConfig(sites,*iRun);
+        if(args.transitions_given)
+            writeTransitions(sites,*iRun);
     }
 
     // free resources

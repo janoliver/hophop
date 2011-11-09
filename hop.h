@@ -94,11 +94,11 @@ void      MC_removeSoftPairs(Site * sites);
 void 	  MC_calculateResults(Site * sites, Carrier * carriers, Results * res);
 
 // output.c
-void writeSites(Site * sites);
-void writeSitesConfig(Site * sites);
-void writeTransitions(Site * sites);
-void writeConfig();
-void writeResults(Results * res);
+void writeSites(Site * sites, int iRun);
+void writeSitesConfig(Site * sites, int iRun);
+void writeTransitions(Site * sites, int iRun);
+void writeConfig( int iRun);
+void writeResults(Results * res,  int iRun);
 void writeSummary(Results * res, Results * error);
 
 #endif /* HOP_H */
