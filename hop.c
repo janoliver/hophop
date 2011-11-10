@@ -68,32 +68,22 @@ main(int argc, char **argv)
     // find the errors
     for(iRun = 0; iRun < args.nruns_arg; iRun++)
     {
-        if(fabs(res.mobility -
-                total[iRun].mobility) > error.mobility)
-            error.mobility = fabs(res.mobility -
-                                  total[iRun].mobility);
-        if(fabs(res.diffusivity -
-                total[iRun].diffusivity) > error.diffusivity)
-            error.diffusivity = fabs(res.diffusivity -
-                                     total[iRun].diffusivity);
-        if(fabs(res.fermiEnergy -
-                total[iRun].fermiEnergy) > error.fermiEnergy)
-            error.fermiEnergy = fabs(res.fermiEnergy -
-                                     total[iRun].fermiEnergy);
-        if(fabs(res.transportEnergy -
-                total[iRun].transportEnergy) > error.transportEnergy)
-            error.transportEnergy = fabs(res.transportEnergy -
-                                         total[iRun].transportEnergy);
-        if(fabs(res.currentDensity -
-                total[iRun].currentDensity) > error.currentDensity)
-            error.currentDensity = fabs(res.currentDensity -
-                                        total[iRun].currentDensity);
-        if(fabs(res.simulationTime -
-                total[iRun].simulationTime) > error.simulationTime)
-            error.simulationTime = fabs(res.simulationTime -
-                                        total[iRun].simulationTime);
+        error.mobility = pow(res.mobility - total[iRun].mobility, 2);
+        error.diffusivity = pow(res.diffusivity - total[iRun].diffusivity, 2);
+        error.fermiEnergy = pow(res.fermiEnergy - total[iRun].fermiEnergy, 2);
+        error.transportEnergy = pow(res.transportEnergy -
+                                    total[iRun].transportEnergy, 2);
+        error.simulationTime = pow(res.simulationTime -
+                                   total[iRun].simulationTime, 2);
     }
+    error.mobility        = sqrt(error.mobility/args.nruns_arg);
+    error.diffusivity     = sqrt(error.diffusivity/args.nruns_arg);
+    error.fermiEnergy     = sqrt(error.fermiEnergy/args.nruns_arg);
+    error.transportEnergy = sqrt(error.transportEnergy/args.nruns_arg);
+    error.currentDensity  = sqrt(error.currentDensity/args.nruns_arg);
+    error.simulationTime  = sqrt(error.simulationTime/args.nruns_arg);
 
+    
     // summary
     if(args.summary_given)
         writeSummary(&res, &error);
