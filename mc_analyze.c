@@ -19,13 +19,14 @@ MC_calculateResults(Site * sites, Carrier * carriers, Results * res)
     field, t is the simulation time and <z> the mean distance in
     z-direction the elctrons hopped.
  */
-float
+double
 calcMobility(Carrier * carriers, Results * results)
 {
     int i;
     double ez = 0;
     for(i = 0; i < args.ncarriers_arg; ++i)
         ez += carriers[i].dz;
+    
     return ez / (args.ncarriers_arg *
                  args.field_arg * results->simulationTime);
 }
@@ -34,7 +35,7 @@ calcMobility(Carrier * carriers, Results * results)
     Here, the diffusivity of the system is calculated.  This is, right now,
     perpendicular to the field direction.
  */
-float
+double
 calcDiffusivity(Carrier * carriers, Results * results)
 {
     double ex, ey, ez, ex2, ey2, ez2, /*ds,*/ dp/*, sez*/;
@@ -71,12 +72,12 @@ calcDiffusivity(Carrier * carriers, Results * results)
 /**
     This function determines the fermi energy of the system.
  */
-float
+double
 calcFermiEnergy(Site * sites, Results * results)
 {
     int i, m;
     double totalEnergy = 0.0;
-    float timeRate;
+    double timeRate;
     m = 0;
 
     for(i = 0; i < args.nsites_arg; ++i)
@@ -94,7 +95,7 @@ calcFermiEnergy(Site * sites, Results * results)
 /**
     This function determines the transport energy of the system.
  */
-float
+double
 calcTransportEnergy(Site * sites, Results * results)
 {
     return 0.0;
@@ -103,7 +104,7 @@ calcTransportEnergy(Site * sites, Results * results)
 /**
     This function determines the current density of the system.
  */
-float
+double
 calcCurrentDensity(Carrier * carriers, Results * results)
 {
     int i;

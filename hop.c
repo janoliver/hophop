@@ -45,6 +45,8 @@ main(int argc, char **argv)
         total[iRun-1].transportEnergy  = 0.0;
         total[iRun-1].currentDensity   = 0.0;
         total[iRun-1].simulationTime   = 0.0;
+
+        // here is where el magico happens
         simulationRun(total, &iRun);
     }
                 
@@ -68,12 +70,14 @@ main(int argc, char **argv)
     // find the errors
     for(iRun = 0; iRun < args.nruns_arg; iRun++)
     {
-        error.mobility = pow(res.mobility - total[iRun].mobility, 2);
-        error.diffusivity = pow(res.diffusivity - total[iRun].diffusivity, 2);
-        error.fermiEnergy = pow(res.fermiEnergy - total[iRun].fermiEnergy, 2);
+        error.mobility        = pow(res.mobility - total[iRun].mobility, 2);
+        error.diffusivity     = pow(res.diffusivity -
+                                    total[iRun].diffusivity, 2);
+        error.fermiEnergy     = pow(res.fermiEnergy -
+                                    total[iRun].fermiEnergy, 2);
         error.transportEnergy = pow(res.transportEnergy -
                                     total[iRun].transportEnergy, 2);
-        error.simulationTime = pow(res.simulationTime -
+        error.simulationTime  = pow(res.simulationTime -
                                    total[iRun].simulationTime, 2);
     }
     error.mobility        = sqrt(error.mobility/args.nruns_arg);
@@ -202,6 +206,12 @@ checkApplicationSettings(int argc, char **argv)
         args.Z_arg = args.length_arg;
     }
 
+    if(args.smarttimes_given)
+    {
+        args.relaxationtime_arg *= exp(.3/args.temperature_arg-1);
+        args.simulationtime_arg *= exp(.3/args.temperature_arg-1);
+    }
+
     // set sample size according to site concentration
     // and the other way around
     if((args.length_given || (args.X_given && args.Y_given &&
@@ -279,9 +289,9 @@ printSettings()
     printf("\tNumber of carriers: \t\tn = %d\n",
            args.ncarriers_arg);
     printf("\tTime of relaxation: \t\tR = %e\n",
-           args.relaxation_arg);
+           args.relaxationtime_arg);
     printf("\tTime of simulation: \t\tI = %e\n",
-           args.iterations_arg);
+           args.simulationtime_arg);
 }
 
 /**
@@ -305,7 +315,7 @@ printResults(Results * results, Results * error)
            results->currentDensity, error->currentDensity);
     printf("\tFermi energy:  \t\t\tE_f = %e\n",
       results->fermiEnergy);
-    printf("\tSimulated time: \t\tt   = %f\n\n",
+    printf("\tSimulated time: \t\tt   = %e\n\n",
            results->simulationTime);
 }
 

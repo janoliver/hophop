@@ -80,12 +80,16 @@ struct gengetopt_args_info
   const char *temperature_help; /**< @brief The temperature of the simulation. help description.  */
   int gaussian_flag;	/**< @brief Use a Gaussian DOS with std. dev. sigma. g(x) = exp(-1/2*(x/sigma)^2) (default=off).  */
   const char *gaussian_help; /**< @brief Use a Gaussian DOS with std. dev. sigma. g(x) = exp(-1/2*(x/sigma)^2) help description.  */
-  float iterations_arg;	/**< @brief The simulation time during which statistics are collected. (default='1e9').  */
-  char * iterations_orig;	/**< @brief The simulation time during which statistics are collected. original value given at command line.  */
-  const char *iterations_help; /**< @brief The simulation time during which statistics are collected. help description.  */
-  float relaxation_arg;	/**< @brief The simulation time to relax. (default='1e8').  */
-  char * relaxation_orig;	/**< @brief The simulation time to relax. original value given at command line.  */
-  const char *relaxation_help; /**< @brief The simulation time to relax. help description.  */
+  int ar_flag;	/**< @brief Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2 (default=off).  */
+  const char *ar_help; /**< @brief Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2 help description.  */
+  float simulationtime_arg;	/**< @brief The simulation time during which statistics are collected. (default='1e9').  */
+  char * simulationtime_orig;	/**< @brief The simulation time during which statistics are collected. original value given at command line.  */
+  const char *simulationtime_help; /**< @brief The simulation time during which statistics are collected. help description.  */
+  float relaxationtime_arg;	/**< @brief The simulation time to relax. (default='1e8').  */
+  char * relaxationtime_orig;	/**< @brief The simulation time to relax. original value given at command line.  */
+  const char *relaxationtime_help; /**< @brief The simulation time to relax. help description.  */
+  int smarttimes_flag;	/**< @brief Adjusts the simulation and relaxation times according to temperature (default=off).  */
+  const char *smarttimes_help; /**< @brief Adjusts the simulation and relaxation times according to temperature help description.  */
   int removesoftpairs_flag;	/**< @brief Remove softpairs. (default=off).  */
   const char *removesoftpairs_help; /**< @brief Remove softpairs. help description.  */
   float softpairthreshold_arg;	/**< @brief The min hopping rate ratio to define a softpair (default='0.95').  */
@@ -129,8 +133,10 @@ struct gengetopt_args_info
   unsigned int field_given ;	/**< @brief Whether field was given.  */
   unsigned int temperature_given ;	/**< @brief Whether temperature was given.  */
   unsigned int gaussian_given ;	/**< @brief Whether gaussian was given.  */
-  unsigned int iterations_given ;	/**< @brief Whether iterations was given.  */
-  unsigned int relaxation_given ;	/**< @brief Whether relaxation was given.  */
+  unsigned int ar_given ;	/**< @brief Whether ar was given.  */
+  unsigned int simulationtime_given ;	/**< @brief Whether simulationtime was given.  */
+  unsigned int relaxationtime_given ;	/**< @brief Whether relaxationtime was given.  */
+  unsigned int smarttimes_given ;	/**< @brief Whether smarttimes was given.  */
   unsigned int removesoftpairs_given ;	/**< @brief Whether removesoftpairs was given.  */
   unsigned int softpairthreshold_given ;	/**< @brief Whether softpairthreshold was given.  */
   unsigned int nruns_given ;	/**< @brief Whether nruns was given.  */

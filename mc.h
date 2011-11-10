@@ -10,11 +10,11 @@ int timeval_subtract(struct timeval * result,
                      struct timeval * x, struct timeval * y);
 
 // analyze_mc.c
-float calcMobility(Carrier * carriers, Results * results);
-float calcDiffusivity(Carrier * carriers, Results * results);
-float calcFermiEnergy(Site * sites, Results * results);
-float calcTransportEnergy(Site * sites, Results * results);
-float calcCurrentDensity(Carrier * carriers, Results * results);
+double calcMobility(Carrier * carriers, Results * results);
+double calcDiffusivity(Carrier * carriers, Results * results);
+double calcFermiEnergy(Site * sites, Results * results);
+double calcTransportEnergy(Site * sites, Results * results);
+double calcCurrentDensity(Carrier * carriers, Results * results);
 
 
 #endif /* MC_H */

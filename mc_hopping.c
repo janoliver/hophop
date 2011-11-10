@@ -2,15 +2,17 @@
 
 #include "mc.h"
 
-void hoppingStep(Site * sites, Carrier * carriers, Results * res, bool stat);
+void hoppingStep(Site * sites, Carrier * carriers, Results * res,
+                 bool stat, ALT * tables);
 void hop(Carrier * c, SLE * dest, Vector * dist,
          Results * res, Carrier * carriers, bool stat);
 void updateCarrier(Carrier * carriers);
+int  getTransitionLookupTables(Site * sites, ALT * tables);
 
 /**
-    This function runs the iteration of the simulation.  It keeps track of
-    the passed "time" (in arbitrary units) and ouputs the progress.
- */
+   This function runs the iteration of the simulation.  It keeps track of
+   the passed "time" (in arbitrary units) and ouputs the progress.
+*/
 void
 MC_simulation(Site * sites, Carrier * carriers, Results * res)
 {
@@ -23,11 +25,19 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
     res->nHops          = 0;
     res->nFailedAttempts= 0;
 
+    // if the accept/reject method is chosen, initialize tables
+    ALT alias_tables;
+    if(args.ar_given)
+    {
+        int n = getTransitionLookupTables(sites, &alias_tables);
+        alias_tables.tab = gsl_ran_discrete_preproc(n, alias_tables.weights);
+    }
+
     // relaxation, no time or hop counting
     for(j = 0; j < 100; j++)
     {
-        while(res->simulationTime < args.relaxation_arg / 100 * j)
-            hoppingStep(sites, carriers, res, false);
+        while(res->simulationTime < args.relaxationtime_arg / 100 * j)
+            hoppingStep(sites, carriers, res, false, &alias_tables);
 
         if(!args.quiet_given)
         {
@@ -46,8 +56,8 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
     res->simulationTime = 0.0;
     for(j = 0; j < 100; j++)
     {
-        while(res->simulationTime < args.iterations_arg / 100 * j)
-            hoppingStep(sites, carriers, res, true);
+        while(res->simulationTime < args.simulationtime_arg / 100 * j)
+            hoppingStep(sites, carriers, res, true, &alias_tables);
 
         if(!args.quiet_given)
         {
@@ -66,8 +76,18 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
 
     double elapsed = result.tv_sec + (double)result.tv_usec / 1e6;
     if(!args.quiet_given)
-        printf(" Done. %d it/s (%ld successful, %ld failed)\n",
+        printf(" Done. %d successful hops/s (%ld successful, %ld failed)\n",
                (int) (res->nHops / elapsed), res->nHops, res->nFailedAttempts);
+
+    // free the memory for the alias method
+    if(args.ar_given)
+    {
+        free(alias_tables.dest);
+        free(alias_tables.orig);
+        free(alias_tables.weights);
+        gsl_ran_discrete_free(alias_tables.tab);
+    }
+
 }
 
 /**
@@ -78,48 +98,79 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
     function is called with these parameters.
  */
 void
-hoppingStep(Site * sites, Carrier * carriers, Results * res, bool stat)
+hoppingStep(Site * sites, Carrier * carriers, Results * res, bool stat, ALT * tables)
 {
-    double randomHopProb, probSum;
-    Carrier * c;
-    SLE * dest;
-    c    = NULL;
-    dest = NULL;
+    Carrier * c = NULL;
+    SLE * dest = NULL;
 
-    // heap
-    c = &carriers[0];
-
-    // determine the next destination site
-    randomHopProb  = (float) gsl_rng_uniform(r) * c->site->rateSum;
-    probSum        = 0.0;
-    SLE * neighbor = c->site->neighbors;
-    while(neighbor)
+    if(args.ar_given)
     {
-        if(probSum > randomHopProb)
-            break;
+        size_t nextTransitionIndex = gsl_ran_discrete(r, tables->tab);
+        //size_t nextTransitionIndex = 10;
+        res->simulationTime += tables->total;
 
-        dest     = neighbor;
-        probSum += neighbor->rate;
-        neighbor = neighbor->next;
-    }
-
-    res->simulationTime = c->occTime;
-
-    if(dest->s->carrier == NULL)
-    {
-
-        // do the hopping and write some statistics
-        if(stat)
-            res->nHops++;
-
-        hop(c, dest, &dest->dist, res, carriers, stat);
+        c = tables->orig[nextTransitionIndex]->carrier;
+        dest = tables->dest[nextTransitionIndex];
+        
+        // check if jump is accepted
+        if(c != NULL &&
+           dest->s->carrier == NULL)
+        {
+            // do the hopping and write some statistics
+            if(stat)
+                res->nHops++;
+            
+            hop(c, dest, &dest->dist, res, carriers, stat);
+        }
+        else if(dest->s->carrier != NULL && c != NULL && stat)
+        {
+            res->nFailedAttempts++;
+            c->nFailedAttempts++;  
+        }
+        else if(stat)
+            res->nFailedAttempts++;
+           
     }
     else
     {
-        if(stat)
+        double randomHopProb, probSum;
+    
+
+        // heap
+        c = &carriers[0];
+
+        // determine the next destination site
+        randomHopProb  = (float) gsl_rng_uniform(r) * c->site->rateSum;
+        probSum        = 0.0;
+        SLE * neighbor = c->site->neighbors;
+        while(neighbor)
         {
-            res->nFailedAttempts++;
-            c->nFailedAttempts++;
+            if(probSum > randomHopProb)
+                break;
+
+            dest     = neighbor;
+            probSum += neighbor->rate;
+            neighbor = neighbor->next;
+        }
+
+        res->simulationTime = c->occTime;
+
+        if(dest->s->carrier == NULL)
+        {
+
+            // do the hopping and write some statistics
+            if(stat)
+                res->nHops++;
+
+            hop(c, dest, &dest->dist, res, carriers, stat);
+        }
+        else
+        {
+            if(stat)
+            {
+                res->nFailedAttempts++;
+                c->nFailedAttempts++;
+            }
         }
         updateCarrier(carriers);
     }
@@ -154,7 +205,6 @@ hop(Carrier * c, SLE * dest, Vector * dist,
 
     // update carrier
     c->site    = dest->s;
-    updateCarrier(carriers);
 
     // update destination site
     dest->s->carrier = c;
@@ -173,31 +223,36 @@ int
 timeval_subtract(struct timeval * result,
                  struct timeval * y, struct timeval * x)
 {
-  /* Perform the carry for the later subtraction by updating y. */
-  if (x->tv_usec < y->tv_usec) {
-    int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
-    y->tv_usec -= 1000000 * nsec;
-    y->tv_sec += nsec;
-  }
-  if (x->tv_usec - y->tv_usec > 1000000) {
-    int nsec = (x->tv_usec - y->tv_usec) / 1000000;
-    y->tv_usec += 1000000 * nsec;
-    y->tv_sec -= nsec;
-  }
+    /* Perform the carry for the later subtraction by updating y. */
+    if (x->tv_usec < y->tv_usec) {
+        int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+        y->tv_usec -= 1000000 * nsec;
+        y->tv_sec += nsec;
+    }
+    if (x->tv_usec - y->tv_usec > 1000000) {
+        int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+        y->tv_usec += 1000000 * nsec;
+        y->tv_sec -= nsec;
+    }
 
-  /* Compute the time remaining to wait.
-     tv_usec is certainly positive. */
-  result->tv_sec = x->tv_sec - y->tv_sec;
-  result->tv_usec = x->tv_usec - y->tv_usec;
+    /* Compute the time remaining to wait.
+       tv_usec is certainly positive. */
+    result->tv_sec = x->tv_sec - y->tv_sec;
+    result->tv_usec = x->tv_usec - y->tv_usec;
 
-  /* Return 1 if result is negative. */
-  return x->tv_sec < y->tv_sec;
+    /* Return 1 if result is negative. */
+    return x->tv_sec < y->tv_sec;
 }
 
+/**
+   This is a binary tree search for the carrier with the lowest occupation
+   time. It moves it to the top of the carriers list. The last jumped
+   carrier is assigned a new occupation time.
+ */
 void
 updateCarrier(Carrier * c)
 {
-	int smallest, i = 0;
+    int smallest, i = 0;
 
     c[0].occTime += (float) gsl_ran_exponential(r, 1.0) / c[0].site->rateSum;
 
@@ -206,13 +261,13 @@ updateCarrier(Carrier * c)
     while(1)
     {
     	smallest = (2*i+1 < args.ncarriers_arg &&
-    				c[i].occTime > c[2*i+1].occTime) ? 2*i+1 : i;
+                    c[i].occTime > c[2*i+1].occTime) ? 2*i+1 : i;
     	if(2*i+2 < args.ncarriers_arg &&
     	   c[smallest].occTime > c[2*i+2].occTime)
-    		smallest = 2*i+2;
+            smallest = 2*i+2;
 
     	if(i == smallest)
-    		break;
+            break;
 
     	// swap
     	tmp = c[i];
@@ -220,4 +275,56 @@ updateCarrier(Carrier * c)
     	c[smallest] = tmp;
     	i = smallest;
     }
+}
+
+
+/**
+   Generates the lookup table used for the accept/reject method
+   resp. Walker's random number generator.
+ */
+int
+getTransitionLookupTables(Site * sites, ALT * tables)
+{
+    size_t k = 0, l = 0;
+    tables->weights = NULL;
+    tables->orig = NULL;
+    tables->dest = NULL;
+    SLE * neighbor;
+    tables->total = 0;
+    
+    // find memory to be alloced
+    for(k = 0; k < args.nsites_arg; ++k)
+        l += sites[k].nNeighbors;
+   
+    tables->weights = malloc(sizeof(double) * l);
+    tables->orig    = malloc(sizeof(Site *) * l);
+    tables->dest    = malloc(sizeof(SLE *) * l);
+
+    l = 0;
+    for(k = 0; k < args.nsites_arg; ++k)
+    {
+        printf("\r\tBuilding Tables...:  \t\t%2d%%", (int) (100*k/args.nsites_arg));
+        fflush(stdout);
+                
+        if(sites[k].nNeighbors <= 0)
+            continue;
+        
+        neighbor = sites[k].neighbors;
+        while(neighbor)
+        {
+            tables->weights[l] = neighbor->rate;
+            tables->orig[l]    = &sites[k];
+            tables->dest[l]    = neighbor;
+
+            tables->total += neighbor->rate;
+            
+            ++l;
+            neighbor = neighbor->next;
+            
+        }
+    }
+    tables->total = 1./tables->total;
+    
+    printf(" Done.\n");
+    return l;
 }

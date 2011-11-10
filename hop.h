@@ -45,10 +45,10 @@ typedef struct site {
 
 typedef struct results {
     double mobility;
-    float  diffusivity;
+    double diffusivity;
     double simulationTime;
-    float  fermiEnergy;
-    float  transportEnergy;
+    double fermiEnergy;
+    double transportEnergy;
     double currentDensity;
     size_t nHops;
     size_t nFailedAttempts;
@@ -65,6 +65,14 @@ typedef struct site_list_element {
     Vector dist;
     int nTransitions;
 } SLE;
+
+typedef struct alias_lookup_tables {
+    double * weights;
+    double total;
+    Site ** orig;
+    SLE ** dest;
+    gsl_ran_discrete_t * tab;
+} ALT;
 
 struct softpair;
 typedef struct softpair {

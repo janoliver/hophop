@@ -48,9 +48,11 @@ const char *gengetopt_args_info_help[] = {
   "  -F, --field=FLOAT             The electric field strength in z-direction.  \n                                  (default=`0.3')",
   "  -T, --temperature=FLOAT       The temperature of the simulation.  \n                                  (default=`0.3')",
   "      --gaussian                Use a Gaussian DOS with std. dev. sigma. g(x) = \n                                  exp(-1/2*(x/sigma)^2)  (default=off)",
+  "      --ar                      Use Walker's random number generation and the \n                                  accept/reject technique for finding the next \n                                  transition. This is efficient for high \n                                  concentrations around n=N/2  (default=off)",
   "\n",
-  "  -I, --iterations=FLOAT        The simulation time during which statistics are \n                                  collected.  (default=`1e9')",
-  "  -R, --relaxation=FLOAT        The simulation time to relax.  (default=`1e8')",
+  "  -I, --simulationtime=FLOAT    The simulation time during which statistics are \n                                  collected.  (default=`1e9')",
+  "  -R, --relaxationtime=FLOAT    The simulation time to relax.  (default=`1e8')",
+  "      --smarttimes              Adjusts the simulation and relaxation times \n                                  according to temperature  (default=off)",
   "      --removesoftpairs         Remove softpairs.  (default=off)",
   "      --softpairthreshold=FLOAT The min hopping rate ratio to define a softpair \n                                   (default=`0.95')",
   "  -i, --nruns=INT               The number of runs to average over.  \n                                  (default=`1')",
@@ -129,8 +131,10 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->field_given = 0 ;
   args_info->temperature_given = 0 ;
   args_info->gaussian_given = 0 ;
-  args_info->iterations_given = 0 ;
-  args_info->relaxation_given = 0 ;
+  args_info->ar_given = 0 ;
+  args_info->simulationtime_given = 0 ;
+  args_info->relaxationtime_given = 0 ;
+  args_info->smarttimes_given = 0 ;
   args_info->removesoftpairs_given = 0 ;
   args_info->softpairthreshold_given = 0 ;
   args_info->nruns_given = 0 ;
@@ -172,10 +176,12 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->temperature_arg = 0.3;
   args_info->temperature_orig = NULL;
   args_info->gaussian_flag = 0;
-  args_info->iterations_arg = 1e9;
-  args_info->iterations_orig = NULL;
-  args_info->relaxation_arg = 1e8;
-  args_info->relaxation_orig = NULL;
+  args_info->ar_flag = 0;
+  args_info->simulationtime_arg = 1e9;
+  args_info->simulationtime_orig = NULL;
+  args_info->relaxationtime_arg = 1e8;
+  args_info->relaxationtime_orig = NULL;
+  args_info->smarttimes_flag = 0;
   args_info->removesoftpairs_flag = 0;
   args_info->softpairthreshold_arg = 0.95;
   args_info->softpairthreshold_orig = NULL;
@@ -216,18 +222,20 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->field_help = gengetopt_args_info_help[13] ;
   args_info->temperature_help = gengetopt_args_info_help[14] ;
   args_info->gaussian_help = gengetopt_args_info_help[15] ;
-  args_info->iterations_help = gengetopt_args_info_help[17] ;
-  args_info->relaxation_help = gengetopt_args_info_help[18] ;
-  args_info->removesoftpairs_help = gengetopt_args_info_help[19] ;
-  args_info->softpairthreshold_help = gengetopt_args_info_help[20] ;
-  args_info->nruns_help = gengetopt_args_info_help[21] ;
-  args_info->quiet_help = gengetopt_args_info_help[23] ;
-  args_info->outputfolder_help = gengetopt_args_info_help[24] ;
-  args_info->transitions_help = gengetopt_args_info_help[25] ;
-  args_info->summary_help = gengetopt_args_info_help[26] ;
-  args_info->comment_help = gengetopt_args_info_help[27] ;
-  args_info->conf_file_help = gengetopt_args_info_help[28] ;
-  args_info->memreq_help = gengetopt_args_info_help[29] ;
+  args_info->ar_help = gengetopt_args_info_help[16] ;
+  args_info->simulationtime_help = gengetopt_args_info_help[18] ;
+  args_info->relaxationtime_help = gengetopt_args_info_help[19] ;
+  args_info->smarttimes_help = gengetopt_args_info_help[20] ;
+  args_info->removesoftpairs_help = gengetopt_args_info_help[21] ;
+  args_info->softpairthreshold_help = gengetopt_args_info_help[22] ;
+  args_info->nruns_help = gengetopt_args_info_help[23] ;
+  args_info->quiet_help = gengetopt_args_info_help[25] ;
+  args_info->outputfolder_help = gengetopt_args_info_help[26] ;
+  args_info->transitions_help = gengetopt_args_info_help[27] ;
+  args_info->summary_help = gengetopt_args_info_help[28] ;
+  args_info->comment_help = gengetopt_args_info_help[29] ;
+  args_info->conf_file_help = gengetopt_args_info_help[30] ;
+  args_info->memreq_help = gengetopt_args_info_help[31] ;
   
 }
 
@@ -321,8 +329,8 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->rseed_orig));
   free_string_field (&(args_info->field_orig));
   free_string_field (&(args_info->temperature_orig));
-  free_string_field (&(args_info->iterations_orig));
-  free_string_field (&(args_info->relaxation_orig));
+  free_string_field (&(args_info->simulationtime_orig));
+  free_string_field (&(args_info->relaxationtime_orig));
   free_string_field (&(args_info->softpairthreshold_orig));
   free_string_field (&(args_info->nruns_orig));
   free_string_field (&(args_info->outputfolder_arg));
@@ -395,10 +403,14 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "temperature", args_info->temperature_orig, 0);
   if (args_info->gaussian_given)
     write_into_file(outfile, "gaussian", 0, 0 );
-  if (args_info->iterations_given)
-    write_into_file(outfile, "iterations", args_info->iterations_orig, 0);
-  if (args_info->relaxation_given)
-    write_into_file(outfile, "relaxation", args_info->relaxation_orig, 0);
+  if (args_info->ar_given)
+    write_into_file(outfile, "ar", 0, 0 );
+  if (args_info->simulationtime_given)
+    write_into_file(outfile, "simulationtime", args_info->simulationtime_orig, 0);
+  if (args_info->relaxationtime_given)
+    write_into_file(outfile, "relaxationtime", args_info->relaxationtime_orig, 0);
+  if (args_info->smarttimes_given)
+    write_into_file(outfile, "smarttimes", 0, 0 );
   if (args_info->removesoftpairs_given)
     write_into_file(outfile, "removesoftpairs", 0, 0 );
   if (args_info->softpairthreshold_given)
@@ -697,8 +709,10 @@ cmdline_parser_internal (
         { "field",	1, NULL, 'F' },
         { "temperature",	1, NULL, 'T' },
         { "gaussian",	0, NULL, 0 },
-        { "iterations",	1, NULL, 'I' },
-        { "relaxation",	1, NULL, 'R' },
+        { "ar",	0, NULL, 0 },
+        { "simulationtime",	1, NULL, 'I' },
+        { "relaxationtime",	1, NULL, 'R' },
+        { "smarttimes",	0, NULL, 0 },
         { "removesoftpairs",	0, NULL, 0 },
         { "softpairthreshold",	1, NULL, 0 },
         { "nruns",	1, NULL, 'i' },
@@ -875,11 +889,11 @@ cmdline_parser_internal (
         case 'I':	/* The simulation time during which statistics are collected..  */
         
         
-          if (update_arg( (void *)&(args_info->iterations_arg), 
-               &(args_info->iterations_orig), &(args_info->iterations_given),
-              &(local_args_info.iterations_given), optarg, 0, "1e9", ARG_FLOAT,
+          if (update_arg( (void *)&(args_info->simulationtime_arg), 
+               &(args_info->simulationtime_orig), &(args_info->simulationtime_given),
+              &(local_args_info.simulationtime_given), optarg, 0, "1e9", ARG_FLOAT,
               check_ambiguity, override, 0, 0,
-              "iterations", 'I',
+              "simulationtime", 'I',
               additional_error))
             goto failure;
         
@@ -887,11 +901,11 @@ cmdline_parser_internal (
         case 'R':	/* The simulation time to relax..  */
         
         
-          if (update_arg( (void *)&(args_info->relaxation_arg), 
-               &(args_info->relaxation_orig), &(args_info->relaxation_given),
-              &(local_args_info.relaxation_given), optarg, 0, "1e8", ARG_FLOAT,
+          if (update_arg( (void *)&(args_info->relaxationtime_arg), 
+               &(args_info->relaxationtime_orig), &(args_info->relaxationtime_given),
+              &(local_args_info.relaxationtime_given), optarg, 0, "1e8", ARG_FLOAT,
               check_ambiguity, override, 0, 0,
-              "relaxation", 'R',
+              "relaxationtime", 'R',
               additional_error))
             goto failure;
         
@@ -966,6 +980,30 @@ cmdline_parser_internal (
             if (update_arg((void *)&(args_info->gaussian_flag), 0, &(args_info->gaussian_given),
                 &(local_args_info.gaussian_given), optarg, 0, 0, ARG_FLAG,
                 check_ambiguity, override, 1, 0, "gaussian", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2.  */
+          else if (strcmp (long_options[option_index].name, "ar") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->ar_flag), 0, &(args_info->ar_given),
+                &(local_args_info.ar_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "ar", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Adjusts the simulation and relaxation times according to temperature.  */
+          else if (strcmp (long_options[option_index].name, "smarttimes") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->smarttimes_flag), 0, &(args_info->smarttimes_given),
+                &(local_args_info.smarttimes_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "smarttimes", '-',
                 additional_error))
               goto failure;
           
