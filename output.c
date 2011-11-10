@@ -4,7 +4,7 @@
 #include "hop.h"
 #include "mc.h"
 
-void checkOutputFolder();
+void checkOutputFolder(int iRun);
 
 /**
     Writes the sites file with the following format:
@@ -19,15 +19,15 @@ void checkOutputFolder();
     Filename: sites-config.dat
 */
 void
-writeSitesConfig(Site * sites)
+writeSitesConfig(Site * sites, int iRun)
 {
-    checkOutputFolder();
+    checkOutputFolder(iRun);
     
     FILE *file;
     int i;
     char fileName[128] = "";
     
-    sprintf(fileName, "%s/sites-config.dat",args.outputfolder_arg);
+    sprintf(fileName, "%s/%d/sites-config.dat",args.outputfolder_arg,iRun);
     
     file = fopen(fileName,"w+");
 
@@ -44,7 +44,7 @@ writeSitesConfig(Site * sites)
     
     // some output
     if(!args.quiet_given)
-        printf("Wrote site configuration to %s\n", fileName);
+        printf("\tWrote site configuration to \t\t%s\n", fileName);
 }
 
 /**
@@ -57,15 +57,15 @@ writeSitesConfig(Site * sites)
     Filename: sites.dat
 */
 void
-writeSites(Site * sites)
+writeSites(Site * sites, int iRun)
 {
-    checkOutputFolder();
+    checkOutputFolder(iRun);
     
     FILE *file;
     int i;
     char fileName[128] = "";
     
-    sprintf(fileName, "%s/sites.dat",args.outputfolder_arg);
+    sprintf(fileName, "%s/%d/sites.dat",args.outputfolder_arg,iRun);
     
     file = fopen(fileName,"w+");
 
@@ -80,7 +80,7 @@ writeSites(Site * sites)
     
     // some output
     if(!args.quiet_given)
-        printf("Wrote site result information to %s\n", fileName);
+        printf("\tWrote site result information to \t%s\n", fileName);
 }
 
 
@@ -89,15 +89,15 @@ writeSites(Site * sites)
       index1 index2 E1 E2 NTransitions
  */
 void
-writeTransitions(Site * sites)
+writeTransitions(Site * sites, int iRun)
 {
-    checkOutputFolder();
+    checkOutputFolder(iRun);
     
     FILE *file;
     int i;
     char fileName[128] = "";
     
-    sprintf(fileName, "%s/transitions.dat",args.outputfolder_arg);
+    sprintf(fileName, "%s/%d/transitions.dat",args.outputfolder_arg,iRun);
     
     file = fopen(fileName,"w+");
 
@@ -121,7 +121,7 @@ writeTransitions(Site * sites)
     
     // some output
     if(!args.quiet_given)
-        printf("Wrote transitions information to %s\n", fileName);
+        printf("\tWrote transitions information to \t%s\n", fileName);
 }
 
 
@@ -132,9 +132,9 @@ writeTransitions(Site * sites)
     Filename: params.conf
 */
 void
-writeConfig()
+writeConfig(int iRun)
 {
-    checkOutputFolder();
+    checkOutputFolder(iRun);
     
     char fileName[128] = "";
     
@@ -143,7 +143,7 @@ writeConfig()
     
     // some output
     if(!args.quiet_given)
-        printf("Wrote configuration file to %s\n", fileName);
+        printf("\tWrote configuration file to \t\t%s\n", fileName);
 }
 
 /**
@@ -152,9 +152,9 @@ writeConfig()
     Filename: results.dat
 */
 void 
-writeResults(Results * res)
+writeResults(Results * res, int iRun)
 {
-    checkOutputFolder();
+    checkOutputFolder(iRun);
     
     FILE *file, *file2;
     char fileName[128] = "";
@@ -195,7 +195,7 @@ writeResults(Results * res)
     
     // some output
     if(!args.quiet_given)
-        printf("\tWrote results to %s\n\n", fileName);
+        printf("\n\tWrote results to \t\t\t%s\n", fileName);
 }
 
 /**
@@ -203,23 +203,15 @@ writeResults(Results * res)
     check if it exists. If not, create it.
 */
 void
-checkOutputFolder() 
-{
-    bool exists = false;
-    
-    // check if it exists
-    struct stat st;
-    if(stat(args.outputfolder_arg,&st) == 0)
-        exists = true;
-    
-    if(!exists) 
-    {
-        char mkcmd[128];
-        sprintf(mkcmd, "mkdir -p %s", args.outputfolder_arg);
-        int ret = system(mkcmd);
-        if(ret)
-            printf("could not create output folder!\n");
-    }
+checkOutputFolder(int iRun) 
+{   
+    // check if realization folder exists
+    char realfolder[200];
+    sprintf(realfolder, "mkdir -p %s/%d", args.outputfolder_arg, iRun);
+    int ret = system(realfolder);
+    if(ret)
+        printf("could not create output realization folder!\n");
+ 
 }
 
 void

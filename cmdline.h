@@ -99,6 +99,8 @@ struct gengetopt_args_info
   char * outputfolder_arg;	/**< @brief The name of the output folder if one wants output files..  */
   char * outputfolder_orig;	/**< @brief The name of the output folder if one wants output files. original value given at command line.  */
   const char *outputfolder_help; /**< @brief The name of the output folder if one wants output files. help description.  */
+  int transitions_flag;	/**< @brief Save all transitions to a file. (Can be big, scales with -l^3!) Only valid when --outputfolder is given (default=off).  */
+  const char *transitions_help; /**< @brief Save all transitions to a file. (Can be big, scales with -l^3!) Only valid when --outputfolder is given help description.  */
   char * summary_arg;	/**< @brief The name of the summary file to which one summary result line is then written..  */
   char * summary_orig;	/**< @brief The name of the summary file to which one summary result line is then written. original value given at command line.  */
   const char *summary_help; /**< @brief The name of the summary file to which one summary result line is then written. help description.  */
@@ -134,6 +136,7 @@ struct gengetopt_args_info
   unsigned int nruns_given ;	/**< @brief Whether nruns was given.  */
   unsigned int quiet_given ;	/**< @brief Whether quiet was given.  */
   unsigned int outputfolder_given ;	/**< @brief Whether outputfolder was given.  */
+  unsigned int transitions_given ;	/**< @brief Whether transitions was given.  */
   unsigned int summary_given ;	/**< @brief Whether summary was given.  */
   unsigned int comment_given ;	/**< @brief Whether comment was given.  */
   unsigned int conf_file_given ;	/**< @brief Whether conf_file was given.  */

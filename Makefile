@@ -3,8 +3,8 @@
 COMP=/usr/bin/gcc
 CFLAGS=-Wall -O3 -ffast-math -march=native 
 LFLAGS=-lgsl -lgslcblas -lm
-#GGO=gengetopt
-GGO=/import/vtthomes/oelerich/software/bin/gengetopt
+GGO=gengetopt
+#GGO=/import/vtthomes/oelerich/software/bin/gengetopt
 #CFLAGS=-Wall -O3 -ffast-math -I/import/vtthomes/oelerich/Workspace/cluster/bin/include
 #LFLAGS=-L/import/vtthomes/oelerich/Workspace/cluster/bin/lib -lgsl -lgslcblas -lm
 
