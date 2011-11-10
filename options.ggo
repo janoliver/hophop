@@ -10,7 +10,7 @@ option "length" l "This parameter specifies the length of the (cubic) sample. If
 option "X" X "The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional
 option "Y" Y "The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional
 option "Z" Z "The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional 
-option "ncarriers" n "The number of charge carriers in the system." int required default="1250"
+option "ncarriers" n "The number of charge carriers in the system." int default="10" optional
 option "nsites" N "The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length." int optional default="125000"
 option "sigma" s "The width of the DOS specified with --exponent." float default="1.0" optional
 option "exponent" p "The exponent of the DOS g(x) = exp(-(x/sigma)^p)" float optional default="2.0"

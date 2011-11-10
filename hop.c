@@ -303,8 +303,8 @@ printResults(Results * results, Results * error)
            results->diffusivity / results->mobility);
     printf("\tCurrent density (z-dir):  \tj   = %e (+- %e)\n",
            results->currentDensity, error->currentDensity);
-    /*printf("\tFermi energy:  \t\t\tE_f = %e\n",
-      results->fermiEnergy);*/
+    printf("\tFermi energy:  \t\t\tE_f = %e\n",
+      results->fermiEnergy);
     printf("\tSimulated time: \t\tt   = %f\n\n",
            results->simulationTime);
 }

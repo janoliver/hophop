@@ -51,7 +51,7 @@ struct gengetopt_args_info
   int Z_arg;	/**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. (default='50').  */
   char * Z_orig;	/**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. original value given at command line.  */
   const char *Z_help; /**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. help description.  */
-  int ncarriers_arg;	/**< @brief The number of charge carriers in the system. (default='1250').  */
+  int ncarriers_arg;	/**< @brief The number of charge carriers in the system. (default='10').  */
   char * ncarriers_orig;	/**< @brief The number of charge carriers in the system. original value given at command line.  */
   const char *ncarriers_help; /**< @brief The number of charge carriers in the system. help description.  */
   int nsites_arg;	/**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. (default='125000').  */
