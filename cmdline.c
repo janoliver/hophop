@@ -56,6 +56,7 @@ const char *gengetopt_args_info_help[] = {
   "      --removesoftpairs         Remove softpairs.  (default=off)",
   "      --softpairthreshold=FLOAT The min hopping rate ratio to define a softpair \n                                   (default=`0.95')",
   "  -i, --nruns=INT               The number of runs to average over.  \n                                  (default=`1')",
+  "  -P, --parallel                If the runs given with the --nruns option \n                                  should be executed using mutliple cores and \n                                  parallelization. This suppresses any progress \n                                  output of the runs but will be very fast on \n                                  multicore systems.  (default=off)",
   "\n",
   "  -q, --quiet                   Don't say anything.  (default=off)",
   "  -o, --outputfolder=STRING     The name of the output folder if one wants \n                                  output files.",
@@ -138,6 +139,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->removesoftpairs_given = 0 ;
   args_info->softpairthreshold_given = 0 ;
   args_info->nruns_given = 0 ;
+  args_info->parallel_given = 0 ;
   args_info->quiet_given = 0 ;
   args_info->outputfolder_given = 0 ;
   args_info->transitions_given = 0 ;
@@ -187,6 +189,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->softpairthreshold_orig = NULL;
   args_info->nruns_arg = 1;
   args_info->nruns_orig = NULL;
+  args_info->parallel_flag = 0;
   args_info->quiet_flag = 0;
   args_info->outputfolder_arg = NULL;
   args_info->outputfolder_orig = NULL;
@@ -229,13 +232,14 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->removesoftpairs_help = gengetopt_args_info_help[21] ;
   args_info->softpairthreshold_help = gengetopt_args_info_help[22] ;
   args_info->nruns_help = gengetopt_args_info_help[23] ;
-  args_info->quiet_help = gengetopt_args_info_help[25] ;
-  args_info->outputfolder_help = gengetopt_args_info_help[26] ;
-  args_info->transitions_help = gengetopt_args_info_help[27] ;
-  args_info->summary_help = gengetopt_args_info_help[28] ;
-  args_info->comment_help = gengetopt_args_info_help[29] ;
-  args_info->conf_file_help = gengetopt_args_info_help[30] ;
-  args_info->memreq_help = gengetopt_args_info_help[31] ;
+  args_info->parallel_help = gengetopt_args_info_help[24] ;
+  args_info->quiet_help = gengetopt_args_info_help[26] ;
+  args_info->outputfolder_help = gengetopt_args_info_help[27] ;
+  args_info->transitions_help = gengetopt_args_info_help[28] ;
+  args_info->summary_help = gengetopt_args_info_help[29] ;
+  args_info->comment_help = gengetopt_args_info_help[30] ;
+  args_info->conf_file_help = gengetopt_args_info_help[31] ;
+  args_info->memreq_help = gengetopt_args_info_help[32] ;
   
 }
 
@@ -417,6 +421,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "softpairthreshold", args_info->softpairthreshold_orig, 0);
   if (args_info->nruns_given)
     write_into_file(outfile, "nruns", args_info->nruns_orig, 0);
+  if (args_info->parallel_given)
+    write_into_file(outfile, "parallel", 0, 0 );
   if (args_info->quiet_given)
     write_into_file(outfile, "quiet", 0, 0 );
   if (args_info->outputfolder_given)
@@ -716,6 +722,7 @@ cmdline_parser_internal (
         { "removesoftpairs",	0, NULL, 0 },
         { "softpairthreshold",	1, NULL, 0 },
         { "nruns",	1, NULL, 'i' },
+        { "parallel",	0, NULL, 'P' },
         { "quiet",	0, NULL, 'q' },
         { "outputfolder",	1, NULL, 'o' },
         { "transitions",	0, NULL, 0 },
@@ -726,7 +733,7 @@ cmdline_parser_internal (
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVl:X:Y:Z:n:N:s:p:a:r:F:T:I:R:i:qo:f:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVl:X:Y:Z:n:N:s:p:a:r:F:T:I:R:i:Pqo:f:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -918,6 +925,16 @@ cmdline_parser_internal (
               &(local_args_info.nruns_given), optarg, 0, "1", ARG_INT,
               check_ambiguity, override, 0, 0,
               "nruns", 'i',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'P':	/* If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems..  */
+        
+        
+          if (update_arg((void *)&(args_info->parallel_flag), 0, &(args_info->parallel_given),
+              &(local_args_info.parallel_given), optarg, 0, 0, ARG_FLAG,
+              check_ambiguity, override, 1, 0, "parallel", 'P',
               additional_error))
             goto failure;
         

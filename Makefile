@@ -1,7 +1,7 @@
 #  Created by Jan Oliver Oelerich
 
 COMP=/usr/bin/gcc
-CFLAGS=-Wall -O3 -ffast-math -march=native 
+CFLAGS=-Wall -O3 -ffast-math -march=native -fopenmp 
 LFLAGS=-lgsl -lgslcblas -lm
 GGO=gengetopt
 #GGO=/import/vtthomes/oelerich/software/bin/gengetopt
@@ -11,8 +11,11 @@ GGO=gengetopt
 
 all: hop clean
 
-hop: hop.c hop.h cmdline.o mc_init.o mc_hopping.o output.o mc_analyze.o
-	$(COMP) -o hop hop.c cmdline.o mc_hopping.o output.o mc_analyze.o mc_init.o $(CFLAGS) $(LFLAGS)
+hop: hop.c hop.h cmdline.o mc.o mc_init.o mc_hopping.o output.o mc_analyze.o
+	$(COMP) -o hop hop.c mc.o cmdline.o mc_hopping.o output.o mc_analyze.o mc_init.o $(CFLAGS) $(LFLAGS)
+
+mc.o: mc.c hop.h
+	$(COMP) -c -o mc.o mc.c $(CFLAGS)
 
 mc_init.o: mc_init.c hop.h
 	$(COMP) -c -o mc_init.o mc_init.c $(CFLAGS)

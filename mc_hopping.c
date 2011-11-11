@@ -98,7 +98,8 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
     function is called with these parameters.
  */
 void
-hoppingStep(Site * sites, Carrier * carriers, Results * res, bool stat, ALT * tables)
+hoppingStep(Site * sites, Carrier * carriers,
+            Results * res, bool stat, ALT * tables)
 {
     Carrier * c = NULL;
     SLE * dest = NULL;

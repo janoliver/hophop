@@ -98,6 +98,8 @@ struct gengetopt_args_info
   int nruns_arg;	/**< @brief The number of runs to average over. (default='1').  */
   char * nruns_orig;	/**< @brief The number of runs to average over. original value given at command line.  */
   const char *nruns_help; /**< @brief The number of runs to average over. help description.  */
+  int parallel_flag;	/**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. (default=off).  */
+  const char *parallel_help; /**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. help description.  */
   int quiet_flag;	/**< @brief Don't say anything. (default=off).  */
   const char *quiet_help; /**< @brief Don't say anything. help description.  */
   char * outputfolder_arg;	/**< @brief The name of the output folder if one wants output files..  */
@@ -140,6 +142,7 @@ struct gengetopt_args_info
   unsigned int removesoftpairs_given ;	/**< @brief Whether removesoftpairs was given.  */
   unsigned int softpairthreshold_given ;	/**< @brief Whether softpairthreshold was given.  */
   unsigned int nruns_given ;	/**< @brief Whether nruns was given.  */
+  unsigned int parallel_given ;	/**< @brief Whether parallel was given.  */
   unsigned int quiet_given ;	/**< @brief Whether quiet was given.  */
   unsigned int outputfolder_given ;	/**< @brief Whether outputfolder was given.  */
   unsigned int transitions_given ;	/**< @brief Whether transitions was given.  */

@@ -9,6 +9,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <math.h>
+#include <omp.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include "cmdline.h"
@@ -94,12 +95,14 @@ extern gsl_rng * r;
 // number of cells in each spatial direction
 extern int nx, ny, nz;
 
-void 	  MC_simulation(Site * sites, Carrier * carriers, Results * res);
+void 	  MC_simulation(Site * sites, Carrier * carriers,
+                        Results * res);
 Site *    MC_createSites();
 Carrier * MC_distributeCarriers(Site * sites);
 void 	  MC_createHoppingRates(Site * sites);
 void      MC_removeSoftPairs(Site * sites);
 void 	  MC_calculateResults(Site * sites, Carrier * carriers, Results * res);
+void      MC_run(Results * total, int * iRun);
 
 // output.c
 void writeSites(Site * sites, int iRun);

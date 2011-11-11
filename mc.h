@@ -16,5 +16,4 @@ double calcFermiEnergy(Site * sites, Results * results);
 double calcTransportEnergy(Site * sites, Results * results);
 double calcCurrentDensity(Carrier * carriers, Results * results);
 
-
 #endif /* MC_H */
