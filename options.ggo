@@ -22,9 +22,7 @@ option "temperature" T "The temperature of the simulation." float default="0.3" 
 option "gaussian" - "Use a Gaussian DOS with std. dev. sigma. g(x) = exp(-1/2*(x/sigma)^2)" flag off
 option "ar" - "Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2" flag off
 
-
 text "\n"
-
 
 option "simulationtime" I "The simulation time during which statistics are collected." float default="1e9" optional
 option "relaxationtime" R "The simulation time to relax." float default="1e8" optional  
@@ -33,9 +31,7 @@ option "removesoftpairs" - "Remove softpairs." flag off
 option "softpairthreshold" - "The min hopping rate ratio to define a softpair" float default="0.95" optional  
 option "nruns" i "The number of runs to average over." int default="1" optional
 
-
 text "\n"
-
 
 option "quiet" q "Don't say anything." flag off
 option "outputfolder" o "The name of the output folder if one wants output files." string optional
