@@ -163,13 +163,13 @@ MC_createHoppingRates(Site * sites)
         for(k = 0; k < args.nsites_arg / 100; ++k)
             setNeighbors(&sites[l * args.nsites_arg / 100 + k], cells);
 
-        if(!args.quiet_given)
+        if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
         {
             printf("\r\tInitializing...: \t\t%2d%%", (int) l);
             fflush(stdout);
         }
     }
-    if(!args.quiet_given)
+    if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
         printf(" Done.\n");
 
     // free cells
@@ -222,7 +222,7 @@ MC_removeSoftPairs(Site * sites)
     if(nSoftPairs > 0)
     {
         // some output
-        if(!args.quiet_given)
+        if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
             printf("\tRemoving Softpairs...:");
 
         temp = newSoftpair;
@@ -317,7 +317,7 @@ MC_removeSoftPairs(Site * sites)
             }
         }
         // some output
-        if(!args.quiet_given)
+        if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
             printf("\t\tDone. %d Softpairs found.\n", counter);
 
         // recursive call if there are still softpairs
@@ -510,7 +510,8 @@ sortNeighbors(SLE * list)
         }
         else if(!list)
         {
-        	next = right; right = right->next;
+        	next = right;
+                right = right->next;
         }
         else if(list->rate > right->rate)
         {

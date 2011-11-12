@@ -43,7 +43,7 @@ writeSitesConfig(Site * sites, int iRun)
     fclose(file);
     
     // some output
-    if(!args.quiet_given)
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
         printf("\tWrote site configuration to \t\t%s\n", fileName);
 }
 
@@ -79,7 +79,7 @@ writeSites(Site * sites, int iRun)
     fclose(file);
     
     // some output
-    if(!args.quiet_given)
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
         printf("\tWrote site result information to \t%s\n", fileName);
 }
 
@@ -120,7 +120,7 @@ writeTransitions(Site * sites, int iRun)
     fclose(file);
     
     // some output
-    if(!args.quiet_given)
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
         printf("\tWrote transitions information to \t%s\n", fileName);
 }
 
@@ -142,7 +142,7 @@ writeConfig(int iRun)
     cmdline_parser_file_save(fileName, &args);
     
     // some output
-    if(!args.quiet_given)
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
         printf("\tWrote configuration file to \t\t%s\n", fileName);
 }
 
@@ -194,7 +194,7 @@ writeResults(Results * res, int iRun)
     fclose(file);
     
     // some output
-    if(!args.quiet_given)
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
         printf("\n\tWrote results to \t\t\t%s\n", fileName);
 }
 
@@ -280,6 +280,6 @@ writeSummary(Results * res, Results * error)
     fclose(file);
     
     // some output
-    if(!args.quiet_given)
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
         printf("\nExtended summary file %s\n", fileName);
 }

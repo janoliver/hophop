@@ -14,7 +14,7 @@ int  getTransitionLookupTables(Site * sites, ALT * tables);
    the passed "time" (in arbitrary units) and ouputs the progress.
 */
 void
-MC_simulation(Site * sites, Carrier * carriers, Results * res)
+MC_simulation(Site * sites, Carrier * carriers, Results * res, int * iRun)
 {
     size_t j;
     struct timeval start, end, result;
@@ -39,13 +39,13 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
         while(res->simulationTime < args.relaxationtime_arg / 100 * j)
             hoppingStep(sites, carriers, res, false, &alias_tables);
 
-        if(!args.quiet_given)
+        if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
         {
             printf("\r\tRelaxing...:  \t\t\t%2d%%", (int) j);
             fflush(stdout);
         }
     }
-    if(!args.quiet_given)
+    if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
         printf(" Done.\n");
 
     // actual simulation, time and hop counting
@@ -59,7 +59,7 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
         while(res->simulationTime < args.simulationtime_arg / 100 * j)
             hoppingStep(sites, carriers, res, true, &alias_tables);
 
-        if(!args.quiet_given)
+        if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
         {
             printf("\r\tSimulating...: \t\t\t%2d%%", (int) j);
             fflush(stdout);
@@ -75,10 +75,13 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res)
                 += res->simulationTime - sites[j].tempOccTime;
 
     double elapsed = result.tv_sec + (double)result.tv_usec / 1e6;
-    if(!args.quiet_given)
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
+        printf("Finished %d. Iteration (total %d): \n\t%d successful hops/s (%ld successful, %ld failed)\n",
+               *iRun, args.nruns_arg, (int) (res->nHops / elapsed), res->nHops, res->nFailedAttempts);
+    if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
         printf(" Done. %d successful hops/s (%ld successful, %ld failed)\n",
                (int) (res->nHops / elapsed), res->nHops, res->nFailedAttempts);
-
+    
     // free the memory for the alias method
     if(args.ar_given)
     {

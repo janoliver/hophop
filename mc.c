@@ -15,7 +15,9 @@ void MC_run(Results * total, int * iRun)
     gsl_rng_set(r, RSEED);
 
     // some output
-    if(!args.quiet_given)
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
+        printf("Starting %d. Iteration (total %d): Thread ID %d\n", *iRun, args.nruns_arg, omp_get_thread_num());
+    if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
         printf("\nRunning %d. iteration (total %d):\n", *iRun, args.nruns_arg);
 
     // create the sites, cells, carriers, hopping rates
@@ -27,7 +29,7 @@ void MC_run(Results * total, int * iRun)
 
     // simulate
     Results res;
-    MC_simulation(sites, carriers, &res);
+    MC_simulation(sites, carriers, &res, iRun);
     MC_calculateResults(sites, carriers, &res);
     
     // add results to the total result struct for averaging
@@ -50,7 +52,6 @@ void MC_run(Results * total, int * iRun)
     }
 
     // free resources
-    //gsl_rng_free(r);
     SLE * neighbor, * tmp;
     int i;
     for(i = 0; i < args.nsites_arg; ++i)
@@ -66,7 +67,6 @@ void MC_run(Results * total, int * iRun)
     }
     free(sites);
     free(carriers);
-    //gsl_rng_free(r);
     
     return;
 }

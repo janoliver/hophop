@@ -96,7 +96,7 @@ extern gsl_rng * r;
 extern int nx, ny, nz;
 
 void 	  MC_simulation(Site * sites, Carrier * carriers,
-                        Results * res);
+                        Results * res, int * iRun);
 Site *    MC_createSites();
 Carrier * MC_distributeCarriers(Site * sites);
 void 	  MC_createHoppingRates(Site * sites);

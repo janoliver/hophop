@@ -41,17 +41,13 @@ main(int argc, char **argv)
     r = gsl_rng_alloc(T);
     
     // averaging loop
-    // if parallel, seet quiet to one for now
-    unsigned int quiet = args.quiet_given;
-    if(args.parallel_given)
-        args.quiet_given = 1;
-        
-# pragma omp parallel if(args.parallel_given) shared(r)
+    omp_set_num_threads(omp_get_max_threads());
+#pragma omp parallel if(args.parallel_given)
     {
 #pragma omp for
         for(iRun = 1; iRun <= args.nruns_arg; iRun++)
         {
-            
+        
             total[iRun-1].mobility         = 0.0;
             total[iRun-1].diffusivity      = 0.0;
             total[iRun-1].fermiEnergy      = 0.0;
@@ -63,10 +59,6 @@ main(int argc, char **argv)
             MC_run(total, &iRun);
         }
     }
-
-    if(args.parallel_given)
-        args.quiet_given = quiet;
-                
     // perform the averaging
     for(iRun = 0; iRun < args.nruns_arg; iRun++)
     {
@@ -238,6 +230,8 @@ printSettings()
            args.relaxationtime_arg);
     printf("\tTime of simulation: \t\tI = %e\n",
            args.simulationtime_arg);
+    if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
+        printf("\n");
 }
 
 /**
@@ -263,6 +257,7 @@ printResults(Results * results, Results * error)
       results->fermiEnergy);
     printf("\tSimulated time: \t\tt   = %e\n\n",
            results->simulationTime);
+
 }
 
 void
@@ -278,6 +273,12 @@ printEstimatedMemory()
 
     // neighbor lists
     mem += pow(args.rc_arg, 3) * 4. / 3. * M_PI * args.nsites_arg * sizeof(SLE);
+
+    // parallelization
+    if(args.parallel_given && args.nruns_given >= omp_get_max_threads())
+        mem *= omp_get_max_threads();
+    else if(args.parallel_given)
+        mem *= args.nruns_arg;
 
     // results
     mem += (args.nruns_arg+2) * sizeof(Results);
