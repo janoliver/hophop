@@ -42,7 +42,7 @@ main(int argc, char **argv)
     
     // averaging loop
     omp_set_num_threads(omp_get_max_threads());
-#pragma omp parallel if(args.parallel_given)
+#pragma omp parallel if(args.parallel_given) shared(total) private(iRun)
     {
 #pragma omp for
         for(iRun = 1; iRun <= args.nruns_arg; iRun++)
