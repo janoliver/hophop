@@ -46,9 +46,9 @@ main(int argc, char **argv)
         nThreads = omp_get_max_threads();
     else
         nThreads = args.nruns_arg;
-
+    printf("%d\n",nThreads);
     omp_set_num_threads(nThreads);
-#pragma omp parallel if(args.parallel_given) shared(total) private(iRun,RSEED,nx,ny,nz,args,loctime)
+#pragma omp parallel if(args.parallel_given) shared(total) private(iRun)
     {
 #pragma omp for
         for(iRun = 1; iRun <= args.nruns_arg; iRun++)
