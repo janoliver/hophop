@@ -1,7 +1,7 @@
 #  Created by Jan Oliver Oelerich
 
 COMP=/usr/bin/gcc
-CFLAGS=-Wall -O3 -ffast-math -march=native -fopenmp 
+CFLAGS=-Wall -pg -ffast-math -march=native -fopenmp 
 LFLAGS=-lgsl -lgslcblas -lm
 GGO=gengetopt
 #GGO=/import/vtthomes/oelerich/software/bin/gengetopt

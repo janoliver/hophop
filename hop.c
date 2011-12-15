@@ -158,8 +158,7 @@ checkApplicationSettings(int argc, char **argv)
     {
         args.nsites_arg = args.X_arg * args.Y_arg * args.Z_arg;
     }
-    if(!(args.length_given || (args.X_given && args.Y_given &&
-                               args.Z_given))
+    if(!(args.length_given || (args.X_given && args.Y_given && args.Z_given))
        && args.nsites_given)
     {
         int sitesPerDirection = pow(args.nsites_arg,1./3.);
