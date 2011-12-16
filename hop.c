@@ -46,9 +46,9 @@ main(int argc, char **argv)
         nThreads = omp_get_max_threads();
     else
         nThreads = args.nruns_arg;
-
+    printf("%d\n",nThreads);
     omp_set_num_threads(nThreads);
-#pragma omp parallel if(args.parallel_given) shared(total) private(iRun,RSEED,nx,ny,nz,loctime)
+#pragma omp parallel if(args.parallel_given) shared(total) private(iRun)
     {
 #pragma omp for schedule(dynamic)
         for(iRun = 1; iRun <= args.nruns_arg; iRun++)
@@ -164,8 +164,7 @@ checkApplicationSettings(int argc, char **argv)
     {
         args.nsites_arg = args.X_arg * args.Y_arg * args.Z_arg;
     }
-    if(!(args.length_given || (args.X_given && args.Y_given &&
-                               args.Z_given))
+    if(!(args.length_given || (args.X_given && args.Y_given && args.Z_given))
        && args.nsites_given)
     {
         int sitesPerDirection = pow(args.nsites_arg,1./3.);
