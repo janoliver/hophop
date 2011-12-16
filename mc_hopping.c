@@ -34,9 +34,9 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res, int * iRun)
     }
 
     // relaxation, no time or hop counting
-    for(j = 0; j < 100; j++)
+    for(j = 0; j <= 100; j++)
     {
-        while(res->simulationTime < args.relaxationtime_arg / 100 * j)
+        while(res->nHops < args.relaxation_arg / 100 * j)
             hoppingStep(sites, carriers, res, false, &alias_tables);
 
         if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
@@ -54,9 +54,10 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res, int * iRun)
 
     gettimeofday(&start, &tz);
     res->simulationTime = 0.0;
+    res->nHops          = 0;
     for(j = 0; j < 100; j++)
     {
-        while(res->simulationTime < args.simulationtime_arg / 100 * j)
+        while(res->nHops <= args.simulation_arg / 100 * j)
             hoppingStep(sites, carriers, res, true, &alias_tables);
 
         if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
@@ -121,8 +122,7 @@ hoppingStep(Site * sites, Carrier * carriers,
            dest->s->carrier == NULL)
         {
             // do the hopping and write some statistics
-            if(stat)
-                res->nHops++;
+            res->nHops++;
             
             hop(c, dest, &dest->dist, res, carriers, stat);
         }
@@ -163,8 +163,7 @@ hoppingStep(Site * sites, Carrier * carriers,
         {
 
             // do the hopping and write some statistics
-            if(stat)
-                res->nHops++;
+            res->nHops++;
 
             hop(c, dest, &dest->dist, res, carriers, stat);
         }

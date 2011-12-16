@@ -1,14 +1,10 @@
 #  Created by Jan Oliver Oelerich
 
 COMP=/usr/bin/gcc
-<<<<<<< HEAD
-CFLAGS=-Wall -g -ffast-math -march=native -fopenmp 
-=======
-CFLAGS=-Wall -pg -ffast-math -march=native -fopenmp 
->>>>>>> 2eba802c5a4a1b5f493b2813cf6c5cd5a6b31710
+CFLAGS=-Wall -O3 -ffast-math -march=native -fopenmp 
 LFLAGS=-lgsl -lgslcblas -lm
-#GGO=gengetopt
-GGO=/import/vtthomes/oelerich/software/bin/gengetopt
+GGO=gengetopt
+#GGO=/import/vtthomes/oelerich/software/bin/gengetopt
 #CFLAGS=-Wall -O3 -ffast-math -I/import/vtthomes/oelerich/Workspace/cluster/bin/include
 #LFLAGS=-L/import/vtthomes/oelerich/Workspace/cluster/bin/lib -lgsl -lgslcblas -lm
 

@@ -150,12 +150,6 @@ checkApplicationSettings(int argc, char **argv)
         args.Z_arg = args.length_arg;
     }
 
-    if(args.smarttimes_given)
-    {
-        args.relaxationtime_arg *= exp(.3/args.temperature_arg-1);
-        args.simulationtime_arg *= exp(.3/args.temperature_arg-1);
-    }
-
     // set sample size according to site concentration
     // and the other way around
     if((args.length_given || (args.X_given && args.Y_given &&
@@ -231,10 +225,10 @@ printSettings()
            args.nsites_arg);
     printf("\tNumber of carriers: \t\tn = %d\n",
            args.ncarriers_arg);
-    printf("\tTime of relaxation: \t\tR = %e\n",
-           args.relaxationtime_arg);
-    printf("\tTime of simulation: \t\tI = %e\n",
-           args.simulationtime_arg);
+    printf("\tHops of relaxation: \t\tR = %lu\n",
+           args.relaxation_arg);
+    printf("\tHops of simulation: \t\tI = %lu\n",
+           args.simulation_arg);
     if(!args.quiet_given && args.parallel_given && args.nruns_arg > 1)
         printf("\n");
 }

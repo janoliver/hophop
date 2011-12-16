@@ -24,9 +24,8 @@ option "ar" - "Use Walker's random number generation and the accept/reject techn
 
 text "\n"
 
-option "simulationtime" I "The simulation time during which statistics are collected." float default="1e9" optional
-option "relaxationtime" R "The simulation time to relax." float default="1e8" optional  
-option "smarttimes" - "Adjusts the simulation and relaxation times according to temperature" flag off
+option "simulation" I "The number of hops during which statistics are collected." long default="1000000000" optional
+option "relaxation" R "The number of hops to relax." long default="100000000" optional  
 option "removesoftpairs" - "Remove softpairs." flag off
 option "softpairthreshold" - "The min hopping rate ratio to define a softpair" float default="0.95" optional  
 option "nruns" i "The number of runs to average over." int default="1" optional
