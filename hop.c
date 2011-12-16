@@ -48,9 +48,9 @@ main(int argc, char **argv)
         nThreads = args.nruns_arg;
 
     omp_set_num_threads(nThreads);
-#pragma omp parallel if(args.parallel_given) shared(total) private(iRun,RSEED,nx,ny,nz,args,loctime)
+#pragma omp parallel if(args.parallel_given) shared(total) private(iRun,RSEED,nx,ny,nz,loctime)
     {
-#pragma omp for
+#pragma omp for schedule(dynamic)
         for(iRun = 1; iRun <= args.nruns_arg; iRun++)
         {
         
@@ -175,9 +175,9 @@ checkApplicationSettings(int argc, char **argv)
     }
 
     // calculate number of cells
-    nx = floor(args.X_arg / args.rc_arg);
-    ny = floor(args.Y_arg / args.rc_arg);
-    nz = floor(args.Z_arg / args.rc_arg);
+    nx = ceil(args.X_arg / args.rc_arg);
+    ny = ceil(args.Y_arg / args.rc_arg);
+    nz = ceil(args.Z_arg / args.rc_arg);
 
     // error checking..
     if(args.ncarriers_arg >= args.nsites_arg)
