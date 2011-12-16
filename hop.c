@@ -255,7 +255,7 @@ printResults(Results * results, Results * error)
     printf("\tDiffusivity perp. to field:  \tD   = %e (+- %e)\n",
            results->diffusivity, error->diffusivity);
     printf("\tEinstein rel. perp. to field: \tD/u = %e\n",
-           results->diffusivity / results->mobility);
+           results->diffusivity / (results->mobility * args.temperature_arg));
     printf("\tCurrent density (z-dir):  \tj   = %e (+- %e)\n",
            results->currentDensity, error->currentDensity);
     printf("\tFermi energy:  \t\t\tE_f = %e\n",
