@@ -160,9 +160,13 @@ MC_createHoppingRates(Site * sites)
 
     for(l = 0; l < 100; ++l)
     {
-        for(k = 0; k < args.nsites_arg / 100; ++k)
-            setNeighbors(&sites[l * args.nsites_arg / 100 + k], cells);
-
+        // this weirdness with 99 takes care of site numbers that
+        // cannot be divided by 100.
+        for(k = l * args.nsites_arg / 99;
+            k < ((l+1) * args.nsites_arg / 99); ++k)
+            if(k < args.nsites_arg)
+                setNeighbors(&sites[k], cells);
+            
         if(!args.quiet_given && (!args.parallel_given || args.nruns_arg == 1))
         {
             printf("\r\tInitializing...: \t\t%2d%%", (int) l);
@@ -183,6 +187,7 @@ MC_createHoppingRates(Site * sites)
             sList = tmp;
         }
     }
+    
     free(cells);
 }
 
@@ -341,15 +346,15 @@ setNeighbors(Site * s, Cell * cells)
     float rc2 = pow(args.rc_arg, 2.0);
 
     neighbors = NULL;
-
+    
     // now, find all the neighbors
     for(i = -1; i <= 1; i++)
         for(k = -1; k <= 1; k++)
             for(l = -1; l <= 1; l++)
             {
-                c = getCell3D(cells, i+ s->x / args.rc_arg,
-                              k + s->y / args.rc_arg,
-                              l + s->z / args.rc_arg);
+                c = getCell3D(cells, i+ floor(s->x / args.rc_arg),
+                              floor(k + s->y / args.rc_arg),
+                              floor(l + s->z / args.rc_arg));
                 siteList = c->siteList;
                 while(siteList)
                 {
@@ -369,15 +374,18 @@ setNeighbors(Site * s, Cell * cells)
                         neighbors->dist = d;
                         neighbors->nTransitions = 0;
                         s->rateSum     += neighbors->rate;
+                        
+                        if(s->rateSum == 0) {
+                            printf("Null rate!!!\n");
+                        }
                         s->nNeighbors++;
                         neighbors->next = s->neighbors;
                         s->neighbors    = neighbors;
                     }
                     siteList = siteList->next;
                 }
-
             }
-
+    
     // sort the neighbors according to the rate to save computation
     // time while simulating
     s->neighbors = sortNeighbors(s->neighbors);
@@ -408,7 +416,7 @@ calcHoppingRate(Site i, Site j)
     // energy part
     if(dE > 0)
         r *= exp(-1.0 * dE / args.temperature_arg);
-    
+
     return r;
 }
 
