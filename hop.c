@@ -42,11 +42,11 @@ main(int argc, char **argv)
     
     // averaging loop
     int nThreads = 0;
-    if(args.nruns_given >= omp_get_max_threads())
-        nThreads = omp_get_max_threads();
-    else
+    if(args.nruns_given && args.nruns_arg <= omp_get_max_threads())
         nThreads = args.nruns_arg;
-    printf("%d\n",nThreads);
+    else
+        nThreads = omp_get_max_threads();
+    
     omp_set_num_threads(nThreads);
 #pragma omp parallel if(args.parallel_given) shared(total) private(iRun)
     {
