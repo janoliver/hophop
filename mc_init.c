@@ -25,34 +25,47 @@ SLE *  sortNeighbors(SLE * list);
 Site *
 MC_createSites()
 {
-    size_t i;
+    size_t i,j,k,l;
     Site  *s;
 
     s = (Site *) malloc(args.nsites_arg * sizeof (Site));
 
-    // create random numbers for site's energies and locations
-    for(i = 0; i < args.nsites_arg; ++i)
-    {
-        if(!args.gaussian_given)
-            s[i].energy = (float) gsl_ran_exppow(r, args.sigma_arg,
-                                                 args.exponent_arg);
-        else
-            s[i].energy = (float) gsl_ran_gaussian(r, args.sigma_arg);
-       
-        s[i].x = (float) gsl_rng_uniform(r) * args.X_arg;
-        s[i].y = (float) gsl_rng_uniform(r) * args.Y_arg;
-        s[i].z = (float) gsl_rng_uniform(r) * args.Z_arg;
-        s[i].carrier       = NULL;
-        s[i].visited       = 0;
-        s[i].visitedUpward = 0;
-        s[i].index         = i;
-        s[i].totalOccTime  = 0.0;
-        s[i].tempOccTime   = 0.0;
-        s[i].neighbors     = NULL;
-        s[i].nNeighbors    = 0;
-        s[i].rateSum       = 0.0;
-        s[i].updatedAt     = 0.0;
-    }
+    // lattice case. Map site index to x,y,z coordinates
+    for(l = 0; l < args.X_arg; ++l)
+        for(j=0; j < args.Y_arg; ++j)
+            for(k = 0; k < args.Z_arg; ++k) {
+                i = ((l * args.Y_arg + j) * args.Z_arg ) + k;
+                if(args.lattice_given)
+                {                    
+                    s[i].x = (float) l;
+                    s[i].y = (float) j;
+                    s[i].z = (float) k;
+                }
+                else
+                {
+                    s[i].x = (float) gsl_rng_uniform(r) * args.X_arg;
+                    s[i].y = (float) gsl_rng_uniform(r) * args.Y_arg;
+                    s[i].z = (float) gsl_rng_uniform(r) * args.Z_arg;
+                }
+    
+                if(!args.gaussian_given)
+                    s[i].energy = (float) gsl_ran_exppow(r, args.sigma_arg,
+                                                         args.exponent_arg);
+                else
+                    s[i].energy = (float) gsl_ran_gaussian(r, args.sigma_arg);
+        
+                s[i].carrier       = NULL;
+                s[i].visited       = 0;
+                s[i].visitedUpward = 0;
+                s[i].index         = i;
+                s[i].totalOccTime  = 0.0;
+                s[i].tempOccTime   = 0.0;
+                s[i].neighbors     = NULL;
+                s[i].nNeighbors    = 0;
+                s[i].rateSum       = 0.0;
+                s[i].updatedAt     = 0.0;
+
+            }
 
     return s;
 }

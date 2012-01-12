@@ -35,6 +35,14 @@ main(int argc, char **argv)
     int iRun;
     Results total[args.nruns_arg], res, error;
 
+    res.mobility         = 0.0;
+    res.diffusivity      = 0.0;
+    res.fermiEnergy      = 0.0;
+    res.transportEnergy  = 0.0;
+    res.currentDensity   = 0.0;
+    res.simulationTime   = 0.0;
+    res.equilibrationEnergy = 0.0;    
+    
     // random initialization
     gsl_rng_env_setup();
     T = gsl_rng_gfsr4;
@@ -60,7 +68,8 @@ main(int argc, char **argv)
             total[iRun-1].transportEnergy  = 0.0;
             total[iRun-1].currentDensity   = 0.0;
             total[iRun-1].simulationTime   = 0.0;
-
+            total[iRun-1].equilibrationEnergy = 0.0;
+            
             // here is where el magico happens
             MC_run(total, &iRun);
         }
@@ -74,6 +83,7 @@ main(int argc, char **argv)
         res.transportEnergy += total[iRun].transportEnergy;
         res.currentDensity  += total[iRun].currentDensity;
         res.simulationTime  += total[iRun].simulationTime;
+        res.equilibrationEnergy += total[iRun].equilibrationEnergy;
     }
     res.mobility        /= args.nruns_arg;
     res.diffusivity     /= args.nruns_arg;
@@ -81,6 +91,7 @@ main(int argc, char **argv)
     res.transportEnergy /= args.nruns_arg;
     res.currentDensity  /= args.nruns_arg;
     res.simulationTime  /= args.nruns_arg;
+    res.equilibrationEnergy /= args.nruns_arg;
 
     // find the errors
     for(iRun = 0; iRun < args.nruns_arg; iRun++)
@@ -94,6 +105,9 @@ main(int argc, char **argv)
                                     total[iRun].transportEnergy, 2);
         error.simulationTime  = pow(res.simulationTime -
                                     total[iRun].simulationTime, 2);
+        error.equilibrationEnergy  = pow(res.equilibrationEnergy -
+                                         total[iRun].equilibrationEnergy, 2);
+        
     }
     error.mobility        = sqrt(error.mobility/args.nruns_arg);
     error.diffusivity     = sqrt(error.diffusivity/args.nruns_arg);
@@ -101,7 +115,7 @@ main(int argc, char **argv)
     error.transportEnergy = sqrt(error.transportEnergy/args.nruns_arg);
     error.currentDensity  = sqrt(error.currentDensity/args.nruns_arg);
     error.simulationTime  = sqrt(error.simulationTime/args.nruns_arg);
-
+    error.equilibrationEnergy = sqrt(error.equilibrationEnergy/args.nruns_arg);
     
     // summary
     if(args.summary_given)
@@ -254,6 +268,8 @@ printResults(Results * results, Results * error)
            results->currentDensity, error->currentDensity);
     printf("\tFermi energy:  \t\t\tE_f = %e\n",
       results->fermiEnergy);
+    printf("\tEquilibration Energy: \t\tE_i = %e\n",
+           results->equilibrationEnergy);
     printf("\tSimulated time: \t\tt   = %e\n\n",
            results->simulationTime);
 

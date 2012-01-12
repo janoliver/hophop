@@ -39,6 +39,7 @@ void MC_run(Results * total, int * iRun)
     total[*iRun-1].transportEnergy = res.transportEnergy;
     total[*iRun-1].currentDensity  = res.currentDensity;
     total[*iRun-1].simulationTime  = res.simulationTime;
+    total[*iRun-1].equilibrationEnergy = res.equilibrationEnergy;
 
     // write output files
     if(args.outputfolder_given)

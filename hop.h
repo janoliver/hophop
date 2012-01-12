@@ -51,6 +51,7 @@ typedef struct results {
     double fermiEnergy;
     double transportEnergy;
     double currentDensity;
+    double equilibrationEnergy;
     size_t nHops;
     size_t nFailedAttempts;
 } Results;

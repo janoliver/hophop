@@ -11,6 +11,7 @@ MC_calculateResults(Site * sites, Carrier * carriers, Results * res)
     res->fermiEnergy     = calcFermiEnergy(sites, res);
     res->transportEnergy = calcTransportEnergy(sites, res);
     res->currentDensity  = calcCurrentDensity(carriers, res);
+    res->equilibrationEnergy = calcEquilibrationEnergy(sites, res);
 }
 
 /**
@@ -29,6 +30,22 @@ calcMobility(Carrier * carriers, Results * results)
     
     return ez / (args.ncarriers_arg *
                  args.field_arg * results->simulationTime);
+}
+
+/**
+   This is the average energy weighted by occupation time of this energy.
+   It should be something like the equlibration energy.
+ */
+double
+calcEquilibrationEnergy(Site * sites, Results * results)
+{
+    size_t i;
+    double sum = 0;
+    
+    for(i = 0; i < args.nsites_arg; ++i)
+        sum += sites[i].totalOccTime * sites[i].energy;
+   
+    return sum / (args.ncarriers_arg * results->simulationTime);
 }
 
 /**

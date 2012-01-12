@@ -21,9 +21,9 @@ MC_simulation(Site * sites, Carrier * carriers, Results * res, int * iRun)
     struct timezone tz;
 
     // initialize some results
-    res->simulationTime = 0.0;
-    res->nHops          = 0;
-    res->nFailedAttempts= 0;
+    res->simulationTime  = 0.0;
+    res->nHops           = 0;
+    res->nFailedAttempts = 0;
 
     // if the accept/reject method is chosen, initialize tables
     ALT alias_tables;
@@ -197,9 +197,9 @@ hop(Carrier * c, SLE * dest, Vector * dist,
     {
         dest->nTransitions++;
         
-        orig->totalOccTime += res->simulationTime - orig->tempOccTime;
-        orig->tempOccTime   = 0.0;
-        dest->s->tempOccTime   = res->simulationTime;
+        orig->totalOccTime  += res->simulationTime - orig->tempOccTime;
+        orig->tempOccTime    = 0.0;
+        dest->s->tempOccTime = res->simulationTime;
 
         c->dx += dist->x;
         c->dy += dist->y;

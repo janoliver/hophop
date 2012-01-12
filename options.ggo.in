@@ -24,6 +24,7 @@ option "field" F "The electric field strength in z-direction." float default="0.
 option "temperature" T "The temperature of the simulation." float default="0.3" optional  
 option "gaussian" - "Use a Gaussian DOS with std. dev. sigma. g(x) = exp(-1/2*(x/sigma)^2)" flag off
 option "ar" - "Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2" flag off
+option "lattice" - "Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc" flag off
 
 text "\n"
 

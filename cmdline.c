@@ -29,7 +29,7 @@ const char *gengetopt_args_info_purpose = "This software simulates hopping in di
 
 const char *gengetopt_args_info_usage = "Usage: hop [OPTIONS]...";
 
-const char *gengetopt_args_info_description = "Built at: 2012-01-11_18:54\n";
+const char *gengetopt_args_info_description = "Built at: 2012-01-12_09:23\n";
 
 const char *gengetopt_args_info_help[] = {
   "  -h, --help                    Print help and exit",
@@ -49,6 +49,7 @@ const char *gengetopt_args_info_help[] = {
   "  -T, --temperature=FLOAT       The temperature of the simulation.  \n                                  (default=`0.3')",
   "      --gaussian                Use a Gaussian DOS with std. dev. sigma. g(x) = \n                                  exp(-1/2*(x/sigma)^2)  (default=off)",
   "      --ar                      Use Walker's random number generation and the \n                                  accept/reject technique for finding the next \n                                  transition. This is efficient for high \n                                  concentrations around n=N/2  (default=off)",
+  "      --lattice                 Distribute sites on a lattice with distance \n                                  unity. Control nearest neighbor hopping and \n                                  so on with --rc  (default=off)",
   "\n",
   "  -I, --simulation=LONG         The number of hops during which statistics are \n                                  collected.  (default=`1000000000')",
   "  -R, --relaxation=LONG         The number of hops to relax.  \n                                  (default=`100000000')",
@@ -132,6 +133,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->temperature_given = 0 ;
   args_info->gaussian_given = 0 ;
   args_info->ar_given = 0 ;
+  args_info->lattice_given = 0 ;
   args_info->simulation_given = 0 ;
   args_info->relaxation_given = 0 ;
   args_info->removesoftpairs_given = 0 ;
@@ -177,6 +179,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->temperature_orig = NULL;
   args_info->gaussian_flag = 0;
   args_info->ar_flag = 0;
+  args_info->lattice_flag = 0;
   args_info->simulation_arg = 1000000000;
   args_info->simulation_orig = NULL;
   args_info->relaxation_arg = 100000000;
@@ -223,19 +226,20 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->temperature_help = gengetopt_args_info_help[14] ;
   args_info->gaussian_help = gengetopt_args_info_help[15] ;
   args_info->ar_help = gengetopt_args_info_help[16] ;
-  args_info->simulation_help = gengetopt_args_info_help[18] ;
-  args_info->relaxation_help = gengetopt_args_info_help[19] ;
-  args_info->removesoftpairs_help = gengetopt_args_info_help[20] ;
-  args_info->softpairthreshold_help = gengetopt_args_info_help[21] ;
-  args_info->nruns_help = gengetopt_args_info_help[22] ;
-  args_info->parallel_help = gengetopt_args_info_help[23] ;
-  args_info->quiet_help = gengetopt_args_info_help[25] ;
-  args_info->outputfolder_help = gengetopt_args_info_help[26] ;
-  args_info->transitions_help = gengetopt_args_info_help[27] ;
-  args_info->summary_help = gengetopt_args_info_help[28] ;
-  args_info->comment_help = gengetopt_args_info_help[29] ;
-  args_info->conf_file_help = gengetopt_args_info_help[30] ;
-  args_info->memreq_help = gengetopt_args_info_help[31] ;
+  args_info->lattice_help = gengetopt_args_info_help[17] ;
+  args_info->simulation_help = gengetopt_args_info_help[19] ;
+  args_info->relaxation_help = gengetopt_args_info_help[20] ;
+  args_info->removesoftpairs_help = gengetopt_args_info_help[21] ;
+  args_info->softpairthreshold_help = gengetopt_args_info_help[22] ;
+  args_info->nruns_help = gengetopt_args_info_help[23] ;
+  args_info->parallel_help = gengetopt_args_info_help[24] ;
+  args_info->quiet_help = gengetopt_args_info_help[26] ;
+  args_info->outputfolder_help = gengetopt_args_info_help[27] ;
+  args_info->transitions_help = gengetopt_args_info_help[28] ;
+  args_info->summary_help = gengetopt_args_info_help[29] ;
+  args_info->comment_help = gengetopt_args_info_help[30] ;
+  args_info->conf_file_help = gengetopt_args_info_help[31] ;
+  args_info->memreq_help = gengetopt_args_info_help[32] ;
   
 }
 
@@ -405,6 +409,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "gaussian", 0, 0 );
   if (args_info->ar_given)
     write_into_file(outfile, "ar", 0, 0 );
+  if (args_info->lattice_given)
+    write_into_file(outfile, "lattice", 0, 0 );
   if (args_info->simulation_given)
     write_into_file(outfile, "simulation", args_info->simulation_orig, 0);
   if (args_info->relaxation_given)
@@ -710,6 +716,7 @@ cmdline_parser_internal (
         { "temperature",	1, NULL, 'T' },
         { "gaussian",	0, NULL, 0 },
         { "ar",	0, NULL, 0 },
+        { "lattice",	0, NULL, 0 },
         { "simulation",	1, NULL, 'I' },
         { "relaxation",	1, NULL, 'R' },
         { "removesoftpairs",	0, NULL, 0 },
@@ -1002,6 +1009,18 @@ cmdline_parser_internal (
             if (update_arg((void *)&(args_info->ar_flag), 0, &(args_info->ar_given),
                 &(local_args_info.ar_given), optarg, 0, 0, ARG_FLAG,
                 check_ambiguity, override, 1, 0, "ar", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc.  */
+          else if (strcmp (long_options[option_index].name, "lattice") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->lattice_flag), 0, &(args_info->lattice_given),
+                &(local_args_info.lattice_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "lattice", '-',
                 additional_error))
               goto failure;
           

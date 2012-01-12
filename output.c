@@ -180,6 +180,7 @@ writeResults(Results * res, int iRun)
         fprintf(file, "diffusivity x/y   ");
         fprintf(file, "current density   ");
         fprintf(file, "fermi energy      ");
+        fprintf(file, "Equilibration en. ");
         fprintf(file, "random seed\n");
     }
 
@@ -188,7 +189,8 @@ writeResults(Results * res, int iRun)
     fprintf(file, "%e      ", res->mobility);
     fprintf(file, "%e      ", res->diffusivity);
     fprintf(file, "%e      ", res->currentDensity);
-    fprintf(file, "%f         ", res->fermiEnergy);
+    fprintf(file, "%e      ", res->fermiEnergy);
+    fprintf(file, "%e      ", res->equilibrationEnergy);
     fprintf(file, "%lu\n", RSEED);
 
     fclose(file);
@@ -253,6 +255,8 @@ writeSummary(Results * res, Results * error)
         fprintf(file, "Error diffus. x/y ");
         fprintf(file, "Current density   ");
         fprintf(file, "Erro curr. dens.  ");
+        fprintf(file, "Equilibration en. ");
+        fprintf(file, "Error Eq. en.     ");
         fprintf(file, "Comment           ");
         fprintf(file, "\n");
     }
@@ -273,6 +277,8 @@ writeSummary(Results * res, Results * error)
     fprintf(file, "%e      ", error->diffusivity);
     fprintf(file, "%e      ", res->currentDensity);
     fprintf(file, "%e      ", error->currentDensity);
+    fprintf(file, "%e      ", res->equilibrationEnergy);
+    fprintf(file, "%e      ", error->equilibrationEnergy);
     if(args.comment_given)
         fprintf(file, "%s", args.comment_arg);
     fprintf(file, "\n");
