@@ -1,13 +1,11 @@
 #  Created by Jan Oliver Oelerich
 
 package "hop"
-version "@PACKAGE_VERSION@"
+version "1.2"
 
 purpose "This software simulates hopping in disordered semiconductors with \
 hopping on localized states. It uses Monte-Carlo simulation techniques. \
 See the README file to learn more."
-
-description "Built at: @BUILD_TIME@"
 
 option "length" l "This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!" int optional    
 option "X" X "The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional

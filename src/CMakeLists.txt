@@ -5,8 +5,10 @@ SET(PACKAGE_VERSION 1.2)
 SET(cflags "-Wall -O3 -ffast-math -march=native")
 
 # gengetopt
-#SET(gengetopt "/import/vtthomes/oelerich/software/bin/gengetopt")
 SET(gengetopt "gengetopt")
+SET(rst2html "rst2html")
+SET(rst2man "rst2man")
+SET(gzip "gzip")
 
 # generate current time
 execute_process(
@@ -20,20 +22,24 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 PROJECT(hopping C)
 
-CONFIGURE_FILE(options.ggo.in options.ggo @ONLY) 
-
 ADD_CUSTOM_COMMAND(
-        COMMAND ${gengetopt} --conf-parser -i options.ggo
+        COMMAND ${gengetopt} --conf-parser -i ../res/options.ggo
         OUTPUT cmdline.h cmdline.c
+)
+
+ADD_CUSTOM_TARGET(doc ALL
+        COMMAND ${rst2html} ../res/README.rst ../doc/README.html
+        COMMAND ${rst2man} ../res/README.rst ../doc/hop.1
+        COMMAND ${gzip} ../doc/hop.1
 )
 
 SET_DIRECTORY_PROPERTIES(
         PROPERTIES 
-        ADDITIONAL_MAKE_CLEAN_FILES cmdline.h;cmdline.c;options.ggo
+        ADDITIONAL_MAKE_CLEAN_FILES cmdline.h;cmdline.c;../doc/README.html
 )
 
 ADD_EXECUTABLE(hop 
-                   hop.c hop.h
+                    hop.c hop.h
                    mc.c 
                    mc_init.c 
                    mc_hopping.c 
@@ -51,3 +57,4 @@ TARGET_LINK_LIBRARIES(hop
 SET(CMAKE_CXX_FLAGS "${cflags} -fopenmp")
 
 INSTALL(TARGETS hop DESTINATION bin)
+INSTALL(FILES ../doc/hop.1.gz DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1/)
