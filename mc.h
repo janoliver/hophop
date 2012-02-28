@@ -6,15 +6,13 @@
 #include "hop.h"
 
 // hopping_mc.c
-int timeval_subtract(struct timeval * result,
-                     struct timeval * x, struct timeval * y);
+int timeval_subtract (struct timeval *result,
+                      struct timeval *x, struct timeval *y);
 
 // analyze_mc.c
-double calcMobility(Carrier * carriers, Results * results);
-double calcDiffusivity(Carrier * carriers, Results * results);
-double calcFermiEnergy(Site * sites, Results * results);
-double calcTransportEnergy(Site * sites, Results * results);
-double calcCurrentDensity(Carrier * carriers, Results * results);
-double calcEquilibrationEnergy(Site * sites, Results * results);
+double calcMobility (Carrier * carriers, Results * results);
+double calcDiffusivity (Carrier * carriers, Results * results);
+double calcCurrentDensity (Carrier * carriers, Results * results);
+double calcEquilibrationEnergy (Site * sites, Results * results);
 
 #endif /* MC_H */
