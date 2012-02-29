@@ -38,7 +38,7 @@ text "\n"
 option "quiet" q "Don't say anything." flag off
 option "outputfolder" o "The name of the output folder if one wants output files." string optional
 option "transitions" - "Save all transitions to a file. (Can be big, scales with -l^3!) Only valid when --outputfolder is given" flag off
-option "summary" - "The name of the summary file to which one summary result line is then written." string optional 
-option "comment" - "Specify a string that is appended to the line in the summary file for better overview over the simulated data." string optional
+option "summary" y "The name of the summary file to which one summary result line is then written." string optional 
+option "comment" c "Specify a string that is appended to the line in the summary file for better overview over the simulated data." string optional
 option "conf_file" f "Location of a configuration file for the simulation." string optional  
-option "memreq" - "Estimates the used memory for the specified parameter set. Print's the information and exits immediately" flag off
+option "memreq" m "Estimates the used memory for the specified parameter set. Print's the information and exits immediately" flag off

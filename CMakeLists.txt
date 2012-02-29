@@ -1,14 +1,12 @@
 # version
 SET(PACKAGE_VERSION 1.2)
+SET(PACKAGE_NAME "hop")
 
 # optional CFLAGS
-SET(cflags "-Wall -O3 -ffast-math -march=native")
+SET(CMAKE_C_FLAGS "-Wall -O3 -ffast-math -march=native -fopenmp")
 
 # gengetopt
 SET(gengetopt "gengetopt")
-SET(rst2html "rst2html")
-SET(rst2man "rst2man")
-SET(gzip "gzip")
 
 # generate current time
 execute_process(
@@ -23,23 +21,17 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(hopping C)
 
 ADD_CUSTOM_COMMAND(
-        COMMAND ${gengetopt} --conf-parser -i ../res/options.ggo
+        COMMAND ${gengetopt} --conf-parser --set-version=${PACKAGE_VERSION} --set-package=${PACKAGE_NAME} --show-required -l  -i options.ggo
         OUTPUT cmdline.h cmdline.c
-)
-
-ADD_CUSTOM_TARGET(doc ALL
-        COMMAND ${rst2html} ../res/README.rst ../doc/README.html
-        COMMAND ${rst2man} ../res/README.rst ../doc/hop.1
-        COMMAND ${gzip} ../doc/hop.1
 )
 
 SET_DIRECTORY_PROPERTIES(
         PROPERTIES 
-        ADDITIONAL_MAKE_CLEAN_FILES cmdline.h;cmdline.c;../doc/README.html
+        ADDITIONAL_MAKE_CLEAN_FILES "cmdline.h;cmdline.c"
 )
 
 ADD_EXECUTABLE(hop 
-                    hop.c hop.h
+                   hop.c hop.h
                    mc.c 
                    mc_init.c 
                    mc_hopping.c 
@@ -48,13 +40,15 @@ ADD_EXECUTABLE(hop
                    cmdline.c cmdline.h
 )
 
+ADD_CUSTOM_TARGET(doc ALL
+      COMMAND rst2html README.rst > doc/README.html)
+
 TARGET_LINK_LIBRARIES(hop 
                           m 
                           gsl gslcblas 
                           gomp
 )
 
-SET(CMAKE_CXX_FLAGS "${cflags} -fopenmp")
+#SET(CMAKE_CXX_FLAGS "${cflags} -fopenmp")
 
 INSTALL(TARGETS hop DESTINATION bin)
-INSTALL(FILES ../doc/hop.1.gz DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1/)

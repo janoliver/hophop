@@ -39,6 +39,7 @@ gomp
 
 Usage
 =====
+
 See ``hop --help``
 
 Units

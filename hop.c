@@ -53,7 +53,9 @@ main (int argc, char **argv)
     else
         nThreads = omp_get_max_threads ();
 
+    // set the number of threads
     omp_set_num_threads (nThreads);
+    
 #pragma omp parallel if(args.parallel_given) shared(total) private(iRun)
     {
 #pragma omp for schedule(dynamic)
@@ -70,6 +72,7 @@ main (int argc, char **argv)
             MC_run (total, &iRun);
         }
     }
+    
     // perform the averaging
     for (iRun = 0; iRun < args.nruns_arg; iRun++)
     {
