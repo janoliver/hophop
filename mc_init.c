@@ -182,13 +182,13 @@ MC_createHoppingRates (Site * sites)
             if (k < prms.nsites)
                 setNeighbors (&sites[k], cells);
 
-        if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
+        if (serialOutput ())
         {
             printf ("\r\tInitializing...: \t\t%2d%%", (int) l);
             fflush (stdout);
         }
     }
-    if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
+    if (serialOutput ())
         printf (" Done.\n");
 
     // free cells
@@ -241,7 +241,7 @@ MC_removeSoftPairs (Site * sites)
     if (nSoftPairs > 0)
     {
         // some output
-        if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
+        if (serialOutput ())
             printf ("\tRemoving Softpairs...:");
 
         temp = newSoftpair;
@@ -335,7 +335,7 @@ MC_removeSoftPairs (Site * sites)
             }
         }
         // some output
-        if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
+        if (serialOutput ())
             printf ("\t\tDone. %d Softpairs found.\n", counter);
 
         // recursive call if there are still softpairs

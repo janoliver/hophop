@@ -44,7 +44,7 @@ writeSitesConfig (Site * sites, int iRun)
     fclose (file);
 
     // some output
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (serialOutput ())
         printf ("\tWrote site configuration to \t\t%s\n", fileName);
 }
 
@@ -80,7 +80,7 @@ writeSites (Site * sites, int iRun)
     fclose (file);
 
     // some output
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (serialOutput ())
         printf ("\tWrote site result information to \t%s\n", fileName);
 }
 
@@ -121,7 +121,7 @@ writeTransitions (Site * sites, int iRun)
     fclose (file);
 
     // some output
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (serialOutput ())
         printf ("\tWrote transitions information to \t%s\n", fileName);
 }
 
@@ -143,7 +143,7 @@ writeConfig (int iRun)
     cmdline_parser_file_save (fileName, prms.cmdlineargs);
 
     // some output
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (serialOutput ())
         printf ("\tWrote configuration file to \t\t%s\n", fileName);
 }
 
@@ -195,7 +195,7 @@ writeResults (Results * res, int iRun)
     fclose (file);
 
     // some output
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (serialOutput ())
         printf ("\n\tWrote results to \t\t\t%s\n", fileName);
 }
 
@@ -283,6 +283,6 @@ writeSummary (Results * res, Results * error)
     fclose (file);
 
     // some output
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (serialOutput ())
         printf ("\nExtended summary file %s\n", fileName);
 }

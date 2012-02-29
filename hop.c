@@ -146,7 +146,7 @@ printSettings ()
     printf ("\tNumber of carriers: \t\tn = %d\n", prms.ncarriers);
     printf ("\tHops of relaxation: \t\tR = %lu\n", prms.relaxation);
     printf ("\tHops of simulation: \t\tI = %lu\n", prms.simulation);
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (!serialOutput () && !prms.quiet)
         printf ("\n");
 }
 

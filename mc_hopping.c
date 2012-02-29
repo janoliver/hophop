@@ -39,13 +39,13 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun)
         while (res->nHops < prms.relaxation / 100 * j)
             hoppingStep (sites, carriers, res, false, &alias_tables);
 
-        if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
+        if (serialOutput ())
         {
             printf ("\r\tRelaxing...:  \t\t\t%2d%%", (int) j);
             fflush (stdout);
         }
     }
-    if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
+    if (serialOutput ())
         printf (" Done.\n");
 
     // actual simulation, time and hop counting
@@ -55,12 +55,12 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun)
     gettimeofday (&start, &tz);
     res->simulationTime = 0.0;
     res->nHops = 0;
-    for (j = 0; j < 100; j++)
+    for (j = 0; j <= 100; j++)
     {
         while (res->nHops <= prms.simulation / 100 * j)
             hoppingStep (sites, carriers, res, true, &alias_tables);
 
-        if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
+        if (serialOutput ())
         {
             printf ("\r\tSimulating...: \t\t\t%2d%%", (int) j);
             fflush (stdout);
@@ -75,14 +75,14 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun)
             sites[j].totalOccTime += res->simulationTime - sites[j].tempOccTime;
 
     double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (!serialOutput () && !prms.quiet)
         printf
-            ("Finished %d. Iteration (total %d): \n\t%d successful hops/s (%ld successful, %ld failed)\n",
-             *iRun, prms.number_runs, (int) (res->nHops / elapsed), res->nHops,
+            ("Finished %d. Iteration (total %d): \n\t%d successful hops/sec (%ld failed)\n",
+             *iRun, prms.number_runs, (int) (res->nHops / elapsed),
              res->nFailedAttempts);
-    if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
-        printf (" Done. %d successful hops/s (%ld successful, %ld failed)\n",
-                (int) (res->nHops / elapsed), res->nHops, res->nFailedAttempts);
+    if (serialOutput ())
+        printf (" Done. %d successful hops/sec (%ld failed)\n",
+                (int) (res->nHops / elapsed), res->nFailedAttempts);
 
     // free the memory for the alias method
     if (prms.accept_reject)
@@ -138,7 +138,6 @@ hoppingStep (Site * sites, Carrier * carriers,
     else
     {
         double randomHopProb, probSum;
-
 
         // heap
         c = &carriers[0];

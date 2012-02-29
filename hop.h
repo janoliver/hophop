@@ -155,6 +155,6 @@ void writeSummary (Results * res, Results * error);
 // params
 bool strArgGiven (char *arg);
 void generateParams (Params * prms, int argc, char **argv);
-
+bool serialOutput ();
 
 #endif /* HOP_H */

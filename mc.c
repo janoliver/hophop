@@ -16,10 +16,10 @@ MC_run (Results * total, int *iRun)
     gsl_rng_set (prms.r, prms.rseed_used);
 
     // some output
-    if (!prms.quiet && prms.parallel && prms.number_runs > 1)
+    if (!serialOutput () && !prms.quiet)
         printf ("Starting %d. Iteration (total %d): Thread ID %d\n", *iRun,
                 prms.number_runs, omp_get_thread_num ());
-    if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
+    if (serialOutput ())
         printf ("\nRunning %d. iteration (total %d):\n", *iRun,
                 prms.number_runs);
 
