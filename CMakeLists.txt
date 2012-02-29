@@ -3,7 +3,7 @@ SET(PACKAGE_VERSION 1.2)
 SET(PACKAGE_NAME "hop")
 
 # optional CFLAGS
-SET(CMAKE_C_FLAGS "-Wall -g -ffast-math -march=native -fopenmp")
+SET(CMAKE_C_FLAGS "-Wall -O3 -ffast-math -march=native -fopenmp")
 
 # gengetopt
 SET(gengetopt "gengetopt")

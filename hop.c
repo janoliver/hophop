@@ -38,15 +38,9 @@ main (int argc, char **argv)
     res.simulationTime = 0.0;
     res.equilibrationEnergy = 0.0;
 
-    // averaging loop
-    int nThreads = 0;
-    if (prms.number_runs <= omp_get_max_threads ())
-        nThreads = prms.number_runs;
-    else
-        nThreads = omp_get_max_threads ();
-
     // set the number of threads
-    omp_set_num_threads (nThreads);
+    omp_set_num_threads (GSL_MIN(omp_get_max_threads (),
+                                 prms.number_runs));
 
 #pragma omp parallel if(prms.parallel) shared(total) private(iRun)
     {
