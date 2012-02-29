@@ -218,7 +218,7 @@ checkOutputFolder (int iRun)
 void
 writeSummary (Results * res, Results * error)
 {
-    if (!strArgGiven (prms.output_summary))
+    if (!strArgGiven(prms.output_summary))
         return;
 
     char fileName[1024];
@@ -276,7 +276,7 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%e      ", error->currentDensity);
     fprintf (file, "%e      ", res->equilibrationEnergy);
     fprintf (file, "%e      ", error->equilibrationEnergy);
-    if (strArgGiven (prms.comment))
+    if (strArgGiven(prms.comment))
         fprintf (file, "%s", prms.comment);
     fprintf (file, "\n");
 

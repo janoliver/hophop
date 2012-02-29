@@ -47,7 +47,7 @@ main (int argc, char **argv)
 
     // set the number of threads
     omp_set_num_threads (nThreads);
-
+    
 #pragma omp parallel if(prms.parallel) shared(total) private(iRun)
     {
 #pragma omp for schedule(dynamic)
@@ -64,7 +64,7 @@ main (int argc, char **argv)
             MC_run (total, &iRun);
         }
     }
-
+    
     // perform the averaging
     for (iRun = 0; iRun < prms.number_runs; iRun++)
     {
@@ -99,7 +99,7 @@ main (int argc, char **argv)
         sqrt (error.equilibrationEnergy / prms.number_runs);
 
     // summary
-    if (strArgGiven (prms.output_summary))
+    if (strArgGiven(prms.output_summary))
         writeSummary (&res, &error);
 
     // output results to the command line
@@ -188,8 +188,7 @@ printEstimatedMemory ()
 
     // neighbor lists
     mem +=
-        pow (prms.cutoff_radius,
-             3) * 4. / 3. * M_PI * prms.nsites * sizeof (SLE);
+        pow (prms.cutoff_radius, 3) * 4. / 3. * M_PI * prms.nsites * sizeof (SLE);
 
     // parallelization
     if (prms.parallel && prms.number_runs >= omp_get_max_threads ())

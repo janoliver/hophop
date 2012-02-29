@@ -20,8 +20,7 @@ MC_run (Results * total, int *iRun)
         printf ("Starting %d. Iteration (total %d): Thread ID %d\n", *iRun,
                 prms.number_runs, omp_get_thread_num ());
     if (!prms.quiet && (!prms.parallel || prms.number_runs == 1))
-        printf ("\nRunning %d. iteration (total %d):\n", *iRun,
-                prms.number_runs);
+        printf ("\nRunning %d. iteration (total %d):\n", *iRun, prms.number_runs);
 
     // create the sites, cells, carriers, hopping rates
     sites = MC_createSites ();
@@ -43,7 +42,7 @@ MC_run (Results * total, int *iRun)
     total[*iRun - 1].equilibrationEnergy = res.equilibrationEnergy;
 
     // write output files
-    if (strArgGiven (prms.output_folder))
+    if (strArgGiven(prms.output_folder))
     {
         writeResults (&res, *iRun);
         writeConfig (*iRun);

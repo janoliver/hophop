@@ -23,7 +23,7 @@
 typedef struct params
 {
     // all parameters here
-    int length_x, length_y, length_z;
+    int length_x, length_y, length_z;    
     int nx, ny, nz;
     int ncarriers;
     int nsites;
@@ -43,12 +43,12 @@ typedef struct params
     int number_runs;
     bool parallel;
     bool quiet;
-    char *output_folder;
+    char * output_folder;
     bool output_transitions;
-    char *output_summary;
-    char *comment;
+    char * output_summary;
+    char * comment;
     bool memreq;
-
+    
     // random number stuff
     long rseed, rseed_used;
     time_t curtime;
@@ -56,7 +56,7 @@ typedef struct params
     const gsl_rng_type *T;
     gsl_rng *r;
 
-    struct gengetopt_args_info *cmdlineargs;
+    struct gengetopt_args_info * cmdlineargs;
 
 } Params;
 
@@ -153,7 +153,7 @@ void writeResults (Results * res, int iRun);
 void writeSummary (Results * res, Results * error);
 
 // params
-bool strArgGiven (char *arg);
+bool strArgGiven(char * arg);
 void generateParams (Params * prms, int argc, char **argv);
 
 

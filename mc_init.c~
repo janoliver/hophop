@@ -97,8 +97,7 @@ MC_distributeCarriers (Site * sites)
         c[i].dz = 0.0;
         c[i].nFailedAttempts = 0;
         c[i].nHops = 0;
-        c[i].occTime =
-            (float) gsl_ran_exponential (prms.r, 1.0) / sites[i].rateSum;
+        c[i].occTime = (float) gsl_ran_exponential (prms.r, 1.0) / sites[i].rateSum;
 
         // now insert the carrier into the heap
         while (i > 0 && c[i].occTime < c[i / 2].occTime)
@@ -178,7 +177,8 @@ MC_createHoppingRates (Site * sites)
     {
         // this weirdness with 99 takes care of site numbers that
         // cannot be divided by 100.
-        for (k = l * prms.nsites / 99; k < ((l + 1) * prms.nsites / 99); ++k)
+        for (k = l * prms.nsites / 99;
+             k < ((l + 1) * prms.nsites / 99); ++k)
             if (k < prms.nsites)
                 setNeighbors (&sites[k], cells);
 
@@ -329,7 +329,8 @@ MC_removeSoftPairs (Site * sites)
             neighbor = sites[j].neighbors;
             while (neighbor)
             {
-                if (neighbor->rate / sites[j].rateSum > prms.softpairthreshold)
+                if (neighbor->rate / sites[j].rateSum >
+                    prms.softpairthreshold)
                     counter++;
                 neighbor = neighbor->next;
             }

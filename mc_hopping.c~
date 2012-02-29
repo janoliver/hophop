@@ -264,8 +264,7 @@ updateCarrier (Carrier * c)
 {
     int smallest, i = 0;
 
-    c[0].occTime +=
-        (float) gsl_ran_exponential (prms.r, 1.0) / c[0].site->rateSum;
+    c[0].occTime += (float) gsl_ran_exponential (prms.r, 1.0) / c[0].site->rateSum;
 
     // children always sit at c[2i+1] and c[2i+2]
     Carrier tmp;
