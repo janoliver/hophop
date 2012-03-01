@@ -27,13 +27,21 @@
 
 const char *gengetopt_args_info_purpose = "This software simulates hopping in disordered semiconductors with hopping on \nlocalized states. It uses Monte-Carlo simulation techniques. See the README \nfile to learn more.";
 
-const char *gengetopt_args_info_usage = "Usage: hop [-h|--help] [-V|--version] [-lINT|--length=INT] [-XINT|--X=INT] \n         [-YINT|--Y=INT] [-ZINT|--Z=INT] [-nINT|--ncarriers=INT] \n         [-NINT|--nsites=INT] [-sFLOAT|--sigma=FLOAT] \n         [-pFLOAT|--exponent=FLOAT] [-aFLOAT|--llength=FLOAT] \n         [-rFLOAT|--rc=FLOAT] [--rseed=LONG] [-FFLOAT|--field=FLOAT] \n         [-TFLOAT|--temperature=FLOAT] [--gaussian] [--ar] [--lattice] [--be] \n         [-ILONG|--simulation=LONG] [-RLONG|--relaxation=LONG] \n         [--removesoftpairs] [--softpairthreshold=FLOAT] [-iINT|--nruns=INT] \n         [-P|--parallel] [-q|--quiet] [-oSTRING|--outputfolder=STRING] \n         [--transitions] [-ySTRING|--summary=STRING] \n         [-cSTRING|--comment=STRING] [-fSTRING|--conf_file=STRING] \n         [-m|--memreq]";
+const char *gengetopt_args_info_usage = "Usage: hop [-h|--help] [-V|--version] [-q|--quiet] \n         [-fSTRING|--conf_file=STRING] [-m|--memreq] [--rseed=LONG] \n         [-iINT|--nruns=INT] [-P|--parallel] [-lINT|--length=INT] \n         [-XINT|--X=INT] [-YINT|--Y=INT] [-ZINT|--Z=INT] \n         [-nINT|--ncarriers=INT] [-NINT|--nsites=INT] [-sFLOAT|--sigma=FLOAT] \n         [-pFLOAT|--exponent=FLOAT] [-aFLOAT|--llength=FLOAT] \n         [-rFLOAT|--rc=FLOAT] [-FFLOAT|--field=FLOAT] \n         [-TFLOAT|--temperature=FLOAT] [--gaussian] [--lattice] \n         [--removesoftpairs] [--softpairthreshold=FLOAT] [--ar] \n         [-ILONG|--simulation=LONG] [-RLONG|--relaxation=LONG] [--be] \n         [--be_it=LONG] [--be_oit=LONG] [--tol_abs=FLOAT] [--tol_rel=FLOAT] \n         [-oSTRING|--outputfolder=STRING] [--transitions] \n         [-ySTRING|--summary=STRING] [-cSTRING|--comment=STRING]";
 
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
   "  -h, --help                    Print help and exit",
   "  -V, --version                 Print version and exit",
+  "  -q, --quiet                   Don't say anything.  (default=off)",
+  "  -f, --conf_file=STRING        Location of a configuration file for the \n                                  simulation.",
+  "  -m, --memreq                  Estimates the used memory for the specified \n                                  parameter set. Print's the information and \n                                  exits immediately  (default=off)",
+  "      --rseed=LONG              Set the random seed manually.",
+  "  -i, --nruns=INT               The number of runs to average over.  \n                                  (default=`1')",
+  "  -P, --parallel                If the runs given with the --nruns option \n                                  should be executed using mutliple cores and \n                                  parallelization. This suppresses any progress \n                                  output of the runs but will be very fast on \n                                  multicore systems.  (default=off)",
+  "\nSystem information:",
+  "  Parameters to describe the physical situation we are dealing with.",
   "  -l, --length=INT              This parameter specifies the length of the \n                                  (cubic) sample. If it parameter is set, the \n                                  options X,Y,Z are ignored!",
   "  -X, --X=INT                   The x-length of the sample. Right now, only \n                                  cubic samples should be used, so rather use \n                                  the parameter --length.  (default=`50')",
   "  -Y, --Y=INT                   The y-length of the sample. Right now, only \n                                  cubic samples should be used, so rather use \n                                  the parameter --length.  (default=`50')",
@@ -44,29 +52,29 @@ const char *gengetopt_args_info_help[] = {
   "  -p, --exponent=FLOAT          The exponent of the DOS g(x) = \n                                  exp(-(x/sigma)^p)  (default=`2.0')",
   "  -a, --llength=FLOAT           Localization length of the sites, assumed equal \n                                  for all of them.  (default=`0.215')",
   "  -r, --rc=FLOAT                Determines up to which distance sites should be \n                                  neighbors.  (default=`3')",
-  "      --rseed=LONG              Set the random seed manually.",
   "  -F, --field=FLOAT             The electric field strength in z-direction.  \n                                  (default=`0.3')",
   "  -T, --temperature=FLOAT       The temperature of the simulation.  \n                                  (default=`0.3')",
   "      --gaussian                Use a Gaussian DOS with std. dev. sigma. g(x) = \n                                  exp(-1/2*(x/sigma)^2)  (default=off)",
-  "      --ar                      Use Walker's random number generation and the \n                                  accept/reject technique for finding the next \n                                  transition. This is efficient for high \n                                  concentrations around n=N/2  (default=off)",
   "      --lattice                 Distribute sites on a lattice with distance \n                                  unity. Control nearest neighbor hopping and \n                                  so on with --rc  (default=off)",
-  "\n",
-  "      --be                      Use balance equations  (default=off)",
-  "\n",
-  "  -I, --simulation=LONG         The number of hops during which statistics are \n                                  collected.  (default=`1000000000')",
-  "  -R, --relaxation=LONG         The number of hops to relax.  \n                                  (default=`100000000')",
   "      --removesoftpairs         Remove softpairs.  (default=off)",
   "      --softpairthreshold=FLOAT The min hopping rate ratio to define a softpair \n                                   (default=`0.95')",
-  "  -i, --nruns=INT               The number of runs to average over.  \n                                  (default=`1')",
-  "  -P, --parallel                If the runs given with the --nruns option \n                                  should be executed using mutliple cores and \n                                  parallelization. This suppresses any progress \n                                  output of the runs but will be very fast on \n                                  multicore systems.  (default=off)",
-  "\n",
-  "  -q, --quiet                   Don't say anything.  (default=off)",
+  "\nMonte carlo simulation:",
+  "  The following options matter only, when the system is simulated using a monte \n  carlo simulation (which is the default)",
+  "      --ar                      Use Walker's random number generation and the \n                                  accept/reject technique for finding the next \n                                  transition. This is efficient for high \n                                  concentrations around n=N/2  (default=off)",
+  "  -I, --simulation=LONG         The number of hops during which statistics are \n                                  collected.  (default=`1000000000')",
+  "  -R, --relaxation=LONG         The number of hops to relax.  \n                                  (default=`100000000')",
+  "\nBalance equations:",
+  "  These options only matter, when the solution is found by solving the balance \n  equations. (setting the --be flag)",
+  "      --be                      Solve balance equations  (default=off)",
+  "      --be_it=LONG              Max inner iterations after which the \n                                  calculation is stopped. If 0 is specified, \n                                  the default is Number of sites - 1  \n                                  (default=`0')",
+  "      --be_oit=LONG             Max outer iterations or restarts of the \n                                  algorithm.  (default=`1')",
+  "      --tol_abs=FLOAT           absolute tolerance for finding the solution  \n                                  (default=`1e-8')",
+  "      --tol_rel=FLOAT           relative tolerance for finding the solution  \n                                  (default=`1e-8')",
+  "\nOutput:",
   "  -o, --outputfolder=STRING     The name of the output folder if one wants \n                                  output files.",
   "      --transitions             Save all transitions to a file. (Can be big, \n                                  scales with -l^3!) Only valid when \n                                  --outputfolder is given  (default=off)",
   "  -y, --summary=STRING          The name of the summary file to which one \n                                  summary result line is then written.",
   "  -c, --comment=STRING          Specify a string that is appended to the line \n                                  in the summary file for better overview over \n                                  the simulated data.",
-  "  -f, --conf_file=STRING        Location of a configuration file for the \n                                  simulation.",
-  "  -m, --memreq                  Estimates the used memory for the specified \n                                  parameter set. Print's the information and \n                                  exits immediately  (default=off)",
     0
 };
 
@@ -120,6 +128,12 @@ void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
   args_info->version_given = 0 ;
+  args_info->quiet_given = 0 ;
+  args_info->conf_file_given = 0 ;
+  args_info->memreq_given = 0 ;
+  args_info->rseed_given = 0 ;
+  args_info->nruns_given = 0 ;
+  args_info->parallel_given = 0 ;
   args_info->length_given = 0 ;
   args_info->X_given = 0 ;
   args_info->Y_given = 0 ;
@@ -130,32 +144,38 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->exponent_given = 0 ;
   args_info->llength_given = 0 ;
   args_info->rc_given = 0 ;
-  args_info->rseed_given = 0 ;
   args_info->field_given = 0 ;
   args_info->temperature_given = 0 ;
   args_info->gaussian_given = 0 ;
-  args_info->ar_given = 0 ;
   args_info->lattice_given = 0 ;
-  args_info->be_given = 0 ;
-  args_info->simulation_given = 0 ;
-  args_info->relaxation_given = 0 ;
   args_info->removesoftpairs_given = 0 ;
   args_info->softpairthreshold_given = 0 ;
-  args_info->nruns_given = 0 ;
-  args_info->parallel_given = 0 ;
-  args_info->quiet_given = 0 ;
+  args_info->ar_given = 0 ;
+  args_info->simulation_given = 0 ;
+  args_info->relaxation_given = 0 ;
+  args_info->be_given = 0 ;
+  args_info->be_it_given = 0 ;
+  args_info->be_oit_given = 0 ;
+  args_info->tol_abs_given = 0 ;
+  args_info->tol_rel_given = 0 ;
   args_info->outputfolder_given = 0 ;
   args_info->transitions_given = 0 ;
   args_info->summary_given = 0 ;
   args_info->comment_given = 0 ;
-  args_info->conf_file_given = 0 ;
-  args_info->memreq_given = 0 ;
 }
 
 static
 void clear_args (struct gengetopt_args_info *args_info)
 {
   FIX_UNUSED (args_info);
+  args_info->quiet_flag = 0;
+  args_info->conf_file_arg = NULL;
+  args_info->conf_file_orig = NULL;
+  args_info->memreq_flag = 0;
+  args_info->rseed_orig = NULL;
+  args_info->nruns_arg = 1;
+  args_info->nruns_orig = NULL;
+  args_info->parallel_flag = 0;
   args_info->length_orig = NULL;
   args_info->X_arg = 50;
   args_info->X_orig = NULL;
@@ -175,26 +195,29 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->llength_orig = NULL;
   args_info->rc_arg = 3;
   args_info->rc_orig = NULL;
-  args_info->rseed_orig = NULL;
   args_info->field_arg = 0.3;
   args_info->field_orig = NULL;
   args_info->temperature_arg = 0.3;
   args_info->temperature_orig = NULL;
   args_info->gaussian_flag = 0;
-  args_info->ar_flag = 0;
   args_info->lattice_flag = 0;
-  args_info->be_flag = 0;
+  args_info->removesoftpairs_flag = 0;
+  args_info->softpairthreshold_arg = 0.95;
+  args_info->softpairthreshold_orig = NULL;
+  args_info->ar_flag = 0;
   args_info->simulation_arg = 1000000000;
   args_info->simulation_orig = NULL;
   args_info->relaxation_arg = 100000000;
   args_info->relaxation_orig = NULL;
-  args_info->removesoftpairs_flag = 0;
-  args_info->softpairthreshold_arg = 0.95;
-  args_info->softpairthreshold_orig = NULL;
-  args_info->nruns_arg = 1;
-  args_info->nruns_orig = NULL;
-  args_info->parallel_flag = 0;
-  args_info->quiet_flag = 0;
+  args_info->be_flag = 0;
+  args_info->be_it_arg = 0;
+  args_info->be_it_orig = NULL;
+  args_info->be_oit_arg = 1;
+  args_info->be_oit_orig = NULL;
+  args_info->tol_abs_arg = 1e-8;
+  args_info->tol_abs_orig = NULL;
+  args_info->tol_rel_arg = 1e-8;
+  args_info->tol_rel_orig = NULL;
   args_info->outputfolder_arg = NULL;
   args_info->outputfolder_orig = NULL;
   args_info->transitions_flag = 0;
@@ -202,9 +225,6 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->summary_orig = NULL;
   args_info->comment_arg = NULL;
   args_info->comment_orig = NULL;
-  args_info->conf_file_arg = NULL;
-  args_info->conf_file_orig = NULL;
-  args_info->memreq_flag = 0;
   
 }
 
@@ -215,36 +235,40 @@ void init_args_info(struct gengetopt_args_info *args_info)
 
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
-  args_info->length_help = gengetopt_args_info_help[2] ;
-  args_info->X_help = gengetopt_args_info_help[3] ;
-  args_info->Y_help = gengetopt_args_info_help[4] ;
-  args_info->Z_help = gengetopt_args_info_help[5] ;
-  args_info->ncarriers_help = gengetopt_args_info_help[6] ;
-  args_info->nsites_help = gengetopt_args_info_help[7] ;
-  args_info->sigma_help = gengetopt_args_info_help[8] ;
-  args_info->exponent_help = gengetopt_args_info_help[9] ;
-  args_info->llength_help = gengetopt_args_info_help[10] ;
-  args_info->rc_help = gengetopt_args_info_help[11] ;
-  args_info->rseed_help = gengetopt_args_info_help[12] ;
-  args_info->field_help = gengetopt_args_info_help[13] ;
-  args_info->temperature_help = gengetopt_args_info_help[14] ;
-  args_info->gaussian_help = gengetopt_args_info_help[15] ;
-  args_info->ar_help = gengetopt_args_info_help[16] ;
-  args_info->lattice_help = gengetopt_args_info_help[17] ;
-  args_info->be_help = gengetopt_args_info_help[19] ;
-  args_info->simulation_help = gengetopt_args_info_help[21] ;
-  args_info->relaxation_help = gengetopt_args_info_help[22] ;
-  args_info->removesoftpairs_help = gengetopt_args_info_help[23] ;
-  args_info->softpairthreshold_help = gengetopt_args_info_help[24] ;
-  args_info->nruns_help = gengetopt_args_info_help[25] ;
-  args_info->parallel_help = gengetopt_args_info_help[26] ;
-  args_info->quiet_help = gengetopt_args_info_help[28] ;
-  args_info->outputfolder_help = gengetopt_args_info_help[29] ;
-  args_info->transitions_help = gengetopt_args_info_help[30] ;
-  args_info->summary_help = gengetopt_args_info_help[31] ;
-  args_info->comment_help = gengetopt_args_info_help[32] ;
-  args_info->conf_file_help = gengetopt_args_info_help[33] ;
-  args_info->memreq_help = gengetopt_args_info_help[34] ;
+  args_info->quiet_help = gengetopt_args_info_help[2] ;
+  args_info->conf_file_help = gengetopt_args_info_help[3] ;
+  args_info->memreq_help = gengetopt_args_info_help[4] ;
+  args_info->rseed_help = gengetopt_args_info_help[5] ;
+  args_info->nruns_help = gengetopt_args_info_help[6] ;
+  args_info->parallel_help = gengetopt_args_info_help[7] ;
+  args_info->length_help = gengetopt_args_info_help[10] ;
+  args_info->X_help = gengetopt_args_info_help[11] ;
+  args_info->Y_help = gengetopt_args_info_help[12] ;
+  args_info->Z_help = gengetopt_args_info_help[13] ;
+  args_info->ncarriers_help = gengetopt_args_info_help[14] ;
+  args_info->nsites_help = gengetopt_args_info_help[15] ;
+  args_info->sigma_help = gengetopt_args_info_help[16] ;
+  args_info->exponent_help = gengetopt_args_info_help[17] ;
+  args_info->llength_help = gengetopt_args_info_help[18] ;
+  args_info->rc_help = gengetopt_args_info_help[19] ;
+  args_info->field_help = gengetopt_args_info_help[20] ;
+  args_info->temperature_help = gengetopt_args_info_help[21] ;
+  args_info->gaussian_help = gengetopt_args_info_help[22] ;
+  args_info->lattice_help = gengetopt_args_info_help[23] ;
+  args_info->removesoftpairs_help = gengetopt_args_info_help[24] ;
+  args_info->softpairthreshold_help = gengetopt_args_info_help[25] ;
+  args_info->ar_help = gengetopt_args_info_help[28] ;
+  args_info->simulation_help = gengetopt_args_info_help[29] ;
+  args_info->relaxation_help = gengetopt_args_info_help[30] ;
+  args_info->be_help = gengetopt_args_info_help[33] ;
+  args_info->be_it_help = gengetopt_args_info_help[34] ;
+  args_info->be_oit_help = gengetopt_args_info_help[35] ;
+  args_info->tol_abs_help = gengetopt_args_info_help[36] ;
+  args_info->tol_rel_help = gengetopt_args_info_help[37] ;
+  args_info->outputfolder_help = gengetopt_args_info_help[39] ;
+  args_info->transitions_help = gengetopt_args_info_help[40] ;
+  args_info->summary_help = gengetopt_args_info_help[41] ;
+  args_info->comment_help = gengetopt_args_info_help[42] ;
   
 }
 
@@ -325,6 +349,10 @@ static void
 cmdline_parser_release (struct gengetopt_args_info *args_info)
 {
 
+  free_string_field (&(args_info->conf_file_arg));
+  free_string_field (&(args_info->conf_file_orig));
+  free_string_field (&(args_info->rseed_orig));
+  free_string_field (&(args_info->nruns_orig));
   free_string_field (&(args_info->length_orig));
   free_string_field (&(args_info->X_orig));
   free_string_field (&(args_info->Y_orig));
@@ -335,21 +363,21 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->exponent_orig));
   free_string_field (&(args_info->llength_orig));
   free_string_field (&(args_info->rc_orig));
-  free_string_field (&(args_info->rseed_orig));
   free_string_field (&(args_info->field_orig));
   free_string_field (&(args_info->temperature_orig));
+  free_string_field (&(args_info->softpairthreshold_orig));
   free_string_field (&(args_info->simulation_orig));
   free_string_field (&(args_info->relaxation_orig));
-  free_string_field (&(args_info->softpairthreshold_orig));
-  free_string_field (&(args_info->nruns_orig));
+  free_string_field (&(args_info->be_it_orig));
+  free_string_field (&(args_info->be_oit_orig));
+  free_string_field (&(args_info->tol_abs_orig));
+  free_string_field (&(args_info->tol_rel_orig));
   free_string_field (&(args_info->outputfolder_arg));
   free_string_field (&(args_info->outputfolder_orig));
   free_string_field (&(args_info->summary_arg));
   free_string_field (&(args_info->summary_orig));
   free_string_field (&(args_info->comment_arg));
   free_string_field (&(args_info->comment_orig));
-  free_string_field (&(args_info->conf_file_arg));
-  free_string_field (&(args_info->conf_file_orig));
   
   
 
@@ -384,6 +412,18 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
     write_into_file(outfile, "version", 0, 0 );
+  if (args_info->quiet_given)
+    write_into_file(outfile, "quiet", 0, 0 );
+  if (args_info->conf_file_given)
+    write_into_file(outfile, "conf_file", args_info->conf_file_orig, 0);
+  if (args_info->memreq_given)
+    write_into_file(outfile, "memreq", 0, 0 );
+  if (args_info->rseed_given)
+    write_into_file(outfile, "rseed", args_info->rseed_orig, 0);
+  if (args_info->nruns_given)
+    write_into_file(outfile, "nruns", args_info->nruns_orig, 0);
+  if (args_info->parallel_given)
+    write_into_file(outfile, "parallel", 0, 0 );
   if (args_info->length_given)
     write_into_file(outfile, "length", args_info->length_orig, 0);
   if (args_info->X_given)
@@ -404,34 +444,34 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "llength", args_info->llength_orig, 0);
   if (args_info->rc_given)
     write_into_file(outfile, "rc", args_info->rc_orig, 0);
-  if (args_info->rseed_given)
-    write_into_file(outfile, "rseed", args_info->rseed_orig, 0);
   if (args_info->field_given)
     write_into_file(outfile, "field", args_info->field_orig, 0);
   if (args_info->temperature_given)
     write_into_file(outfile, "temperature", args_info->temperature_orig, 0);
   if (args_info->gaussian_given)
     write_into_file(outfile, "gaussian", 0, 0 );
-  if (args_info->ar_given)
-    write_into_file(outfile, "ar", 0, 0 );
   if (args_info->lattice_given)
     write_into_file(outfile, "lattice", 0, 0 );
-  if (args_info->be_given)
-    write_into_file(outfile, "be", 0, 0 );
-  if (args_info->simulation_given)
-    write_into_file(outfile, "simulation", args_info->simulation_orig, 0);
-  if (args_info->relaxation_given)
-    write_into_file(outfile, "relaxation", args_info->relaxation_orig, 0);
   if (args_info->removesoftpairs_given)
     write_into_file(outfile, "removesoftpairs", 0, 0 );
   if (args_info->softpairthreshold_given)
     write_into_file(outfile, "softpairthreshold", args_info->softpairthreshold_orig, 0);
-  if (args_info->nruns_given)
-    write_into_file(outfile, "nruns", args_info->nruns_orig, 0);
-  if (args_info->parallel_given)
-    write_into_file(outfile, "parallel", 0, 0 );
-  if (args_info->quiet_given)
-    write_into_file(outfile, "quiet", 0, 0 );
+  if (args_info->ar_given)
+    write_into_file(outfile, "ar", 0, 0 );
+  if (args_info->simulation_given)
+    write_into_file(outfile, "simulation", args_info->simulation_orig, 0);
+  if (args_info->relaxation_given)
+    write_into_file(outfile, "relaxation", args_info->relaxation_orig, 0);
+  if (args_info->be_given)
+    write_into_file(outfile, "be", 0, 0 );
+  if (args_info->be_it_given)
+    write_into_file(outfile, "be_it", args_info->be_it_orig, 0);
+  if (args_info->be_oit_given)
+    write_into_file(outfile, "be_oit", args_info->be_oit_orig, 0);
+  if (args_info->tol_abs_given)
+    write_into_file(outfile, "tol_abs", args_info->tol_abs_orig, 0);
+  if (args_info->tol_rel_given)
+    write_into_file(outfile, "tol_rel", args_info->tol_rel_orig, 0);
   if (args_info->outputfolder_given)
     write_into_file(outfile, "outputfolder", args_info->outputfolder_orig, 0);
   if (args_info->transitions_given)
@@ -440,10 +480,6 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "summary", args_info->summary_orig, 0);
   if (args_info->comment_given)
     write_into_file(outfile, "comment", args_info->comment_orig, 0);
-  if (args_info->conf_file_given)
-    write_into_file(outfile, "conf_file", args_info->conf_file_orig, 0);
-  if (args_info->memreq_given)
-    write_into_file(outfile, "memreq", 0, 0 );
   
 
   i = EXIT_SUCCESS;
@@ -708,6 +744,12 @@ cmdline_parser_internal (
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
+        { "quiet",	0, NULL, 'q' },
+        { "conf_file",	1, NULL, 'f' },
+        { "memreq",	0, NULL, 'm' },
+        { "rseed",	1, NULL, 0 },
+        { "nruns",	1, NULL, 'i' },
+        { "parallel",	0, NULL, 'P' },
         { "length",	1, NULL, 'l' },
         { "X",	1, NULL, 'X' },
         { "Y",	1, NULL, 'Y' },
@@ -718,30 +760,28 @@ cmdline_parser_internal (
         { "exponent",	1, NULL, 'p' },
         { "llength",	1, NULL, 'a' },
         { "rc",	1, NULL, 'r' },
-        { "rseed",	1, NULL, 0 },
         { "field",	1, NULL, 'F' },
         { "temperature",	1, NULL, 'T' },
         { "gaussian",	0, NULL, 0 },
-        { "ar",	0, NULL, 0 },
         { "lattice",	0, NULL, 0 },
-        { "be",	0, NULL, 0 },
-        { "simulation",	1, NULL, 'I' },
-        { "relaxation",	1, NULL, 'R' },
         { "removesoftpairs",	0, NULL, 0 },
         { "softpairthreshold",	1, NULL, 0 },
-        { "nruns",	1, NULL, 'i' },
-        { "parallel",	0, NULL, 'P' },
-        { "quiet",	0, NULL, 'q' },
+        { "ar",	0, NULL, 0 },
+        { "simulation",	1, NULL, 'I' },
+        { "relaxation",	1, NULL, 'R' },
+        { "be",	0, NULL, 0 },
+        { "be_it",	1, NULL, 0 },
+        { "be_oit",	1, NULL, 0 },
+        { "tol_abs",	1, NULL, 0 },
+        { "tol_rel",	1, NULL, 0 },
         { "outputfolder",	1, NULL, 'o' },
         { "transitions",	0, NULL, 0 },
         { "summary",	1, NULL, 'y' },
         { "comment",	1, NULL, 'c' },
-        { "conf_file",	1, NULL, 'f' },
-        { "memreq",	0, NULL, 'm' },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVl:X:Y:Z:n:N:s:p:a:r:F:T:I:R:i:Pqo:y:c:f:m", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVqf:mi:Pl:X:Y:Z:n:N:s:p:a:r:F:T:I:R:o:y:c:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -757,6 +797,60 @@ cmdline_parser_internal (
           cmdline_parser_free (&local_args_info);
           exit (EXIT_SUCCESS);
 
+        case 'q':	/* Don't say anything..  */
+        
+        
+          if (update_arg((void *)&(args_info->quiet_flag), 0, &(args_info->quiet_given),
+              &(local_args_info.quiet_given), optarg, 0, 0, ARG_FLAG,
+              check_ambiguity, override, 1, 0, "quiet", 'q',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'f':	/* Location of a configuration file for the simulation..  */
+        
+        
+          if (update_arg( (void *)&(args_info->conf_file_arg), 
+               &(args_info->conf_file_orig), &(args_info->conf_file_given),
+              &(local_args_info.conf_file_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "conf_file", 'f',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'm':	/* Estimates the used memory for the specified parameter set. Print's the information and exits immediately.  */
+        
+        
+          if (update_arg((void *)&(args_info->memreq_flag), 0, &(args_info->memreq_given),
+              &(local_args_info.memreq_given), optarg, 0, 0, ARG_FLAG,
+              check_ambiguity, override, 1, 0, "memreq", 'm',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'i':	/* The number of runs to average over..  */
+        
+        
+          if (update_arg( (void *)&(args_info->nruns_arg), 
+               &(args_info->nruns_orig), &(args_info->nruns_given),
+              &(local_args_info.nruns_given), optarg, 0, "1", ARG_INT,
+              check_ambiguity, override, 0, 0,
+              "nruns", 'i',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'P':	/* If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems..  */
+        
+        
+          if (update_arg((void *)&(args_info->parallel_flag), 0, &(args_info->parallel_given),
+              &(local_args_info.parallel_given), optarg, 0, 0, ARG_FLAG,
+              check_ambiguity, override, 1, 0, "parallel", 'P',
+              additional_error))
+            goto failure;
+        
+          break;
         case 'l':	/* This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!.  */
         
         
@@ -925,38 +1019,6 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'i':	/* The number of runs to average over..  */
-        
-        
-          if (update_arg( (void *)&(args_info->nruns_arg), 
-               &(args_info->nruns_orig), &(args_info->nruns_given),
-              &(local_args_info.nruns_given), optarg, 0, "1", ARG_INT,
-              check_ambiguity, override, 0, 0,
-              "nruns", 'i',
-              additional_error))
-            goto failure;
-        
-          break;
-        case 'P':	/* If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems..  */
-        
-        
-          if (update_arg((void *)&(args_info->parallel_flag), 0, &(args_info->parallel_given),
-              &(local_args_info.parallel_given), optarg, 0, 0, ARG_FLAG,
-              check_ambiguity, override, 1, 0, "parallel", 'P',
-              additional_error))
-            goto failure;
-        
-          break;
-        case 'q':	/* Don't say anything..  */
-        
-        
-          if (update_arg((void *)&(args_info->quiet_flag), 0, &(args_info->quiet_given),
-              &(local_args_info.quiet_given), optarg, 0, 0, ARG_FLAG,
-              check_ambiguity, override, 1, 0, "quiet", 'q',
-              additional_error))
-            goto failure;
-        
-          break;
         case 'o':	/* The name of the output folder if one wants output files..  */
         
         
@@ -993,28 +1055,6 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'f':	/* Location of a configuration file for the simulation..  */
-        
-        
-          if (update_arg( (void *)&(args_info->conf_file_arg), 
-               &(args_info->conf_file_orig), &(args_info->conf_file_given),
-              &(local_args_info.conf_file_given), optarg, 0, 0, ARG_STRING,
-              check_ambiguity, override, 0, 0,
-              "conf_file", 'f',
-              additional_error))
-            goto failure;
-        
-          break;
-        case 'm':	/* Estimates the used memory for the specified parameter set. Print's the information and exits immediately.  */
-        
-        
-          if (update_arg((void *)&(args_info->memreq_flag), 0, &(args_info->memreq_given),
-              &(local_args_info.memreq_given), optarg, 0, 0, ARG_FLAG,
-              check_ambiguity, override, 1, 0, "memreq", 'm',
-              additional_error))
-            goto failure;
-        
-          break;
 
         case 0:	/* Long option with no short option */
           /* Set the random seed manually..  */
@@ -1043,18 +1083,6 @@ cmdline_parser_internal (
               goto failure;
           
           }
-          /* Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2.  */
-          else if (strcmp (long_options[option_index].name, "ar") == 0)
-          {
-          
-          
-            if (update_arg((void *)&(args_info->ar_flag), 0, &(args_info->ar_given),
-                &(local_args_info.ar_given), optarg, 0, 0, ARG_FLAG,
-                check_ambiguity, override, 1, 0, "ar", '-',
-                additional_error))
-              goto failure;
-          
-          }
           /* Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc.  */
           else if (strcmp (long_options[option_index].name, "lattice") == 0)
           {
@@ -1063,18 +1091,6 @@ cmdline_parser_internal (
             if (update_arg((void *)&(args_info->lattice_flag), 0, &(args_info->lattice_given),
                 &(local_args_info.lattice_given), optarg, 0, 0, ARG_FLAG,
                 check_ambiguity, override, 1, 0, "lattice", '-',
-                additional_error))
-              goto failure;
-          
-          }
-          /* Use balance equations.  */
-          else if (strcmp (long_options[option_index].name, "be") == 0)
-          {
-          
-          
-            if (update_arg((void *)&(args_info->be_flag), 0, &(args_info->be_given),
-                &(local_args_info.be_given), optarg, 0, 0, ARG_FLAG,
-                check_ambiguity, override, 1, 0, "be", '-',
                 additional_error))
               goto failure;
           
@@ -1101,6 +1117,86 @@ cmdline_parser_internal (
                 &(local_args_info.softpairthreshold_given), optarg, 0, "0.95", ARG_FLOAT,
                 check_ambiguity, override, 0, 0,
                 "softpairthreshold", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2.  */
+          else if (strcmp (long_options[option_index].name, "ar") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->ar_flag), 0, &(args_info->ar_given),
+                &(local_args_info.ar_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "ar", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Solve balance equations.  */
+          else if (strcmp (long_options[option_index].name, "be") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->be_flag), 0, &(args_info->be_given),
+                &(local_args_info.be_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "be", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Max inner iterations after which the calculation is stopped. If 0 is specified, the default is Number of sites - 1.  */
+          else if (strcmp (long_options[option_index].name, "be_it") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->be_it_arg), 
+                 &(args_info->be_it_orig), &(args_info->be_it_given),
+                &(local_args_info.be_it_given), optarg, 0, "0", ARG_LONG,
+                check_ambiguity, override, 0, 0,
+                "be_it", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Max outer iterations or restarts of the algorithm..  */
+          else if (strcmp (long_options[option_index].name, "be_oit") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->be_oit_arg), 
+                 &(args_info->be_oit_orig), &(args_info->be_oit_given),
+                &(local_args_info.be_oit_given), optarg, 0, "1", ARG_LONG,
+                check_ambiguity, override, 0, 0,
+                "be_oit", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* absolute tolerance for finding the solution.  */
+          else if (strcmp (long_options[option_index].name, "tol_abs") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->tol_abs_arg), 
+                 &(args_info->tol_abs_orig), &(args_info->tol_abs_given),
+                &(local_args_info.tol_abs_given), optarg, 0, "1e-8", ARG_FLOAT,
+                check_ambiguity, override, 0, 0,
+                "tol_abs", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* relative tolerance for finding the solution.  */
+          else if (strcmp (long_options[option_index].name, "tol_rel") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->tol_rel_arg), 
+                 &(args_info->tol_rel_orig), &(args_info->tol_rel_given),
+                &(local_args_info.tol_rel_given), optarg, 0, "1e-8", ARG_FLOAT,
+                check_ambiguity, override, 0, 0,
+                "tol_rel", '-',
                 additional_error))
               goto failure;
           

@@ -148,11 +148,11 @@ createCells (Site * sites)
         tx = sites[i].x / prms.cutoff_radius;
         ty = sites[i].y / prms.cutoff_radius;
         tz = sites[i].z / prms.cutoff_radius;
-        
+
         temp = getCell3D (c, tx, ty, tz);
         if (temp->counter == 0)
             temp->siteList = NULL;
-        
+
         temp->counter++;
 
         head = temp->siteList;
@@ -364,10 +364,10 @@ setNeighbors (Site * s, Cell * cells)
     neighbors = NULL;
 
     // make sure, cells are only used once
-    int * used = malloc(27 * sizeof(int));
+    int *used = malloc (27 * sizeof (int));
     int counter = 0, m, cont = 0;
 
-    for(m = 0; m < 27; ++m)
+    for (m = 0; m < 27; ++m)
         used[m] = -1;
 
     // now, find all the neighbors
@@ -375,37 +375,40 @@ setNeighbors (Site * s, Cell * cells)
         for (k = -1; k <= 1; k++)
             for (l = -1; l <= 1; l++)
             {
-                
+
                 c = getCell3D (cells, i + floor (s->x / prms.cutoff_radius),
                                floor (k + s->y / prms.cutoff_radius),
                                floor (l + s->z / prms.cutoff_radius));
 
                 cont = 0;
-                for(m = 0; m < 27; ++m)
-                    if(used[m] == c->index) {
+                for (m = 0; m < 27; ++m)
+                    if (used[m] == c->index)
+                    {
                         cont = 1;
                         break;
                     }
-                
-                if(!cont)
+
+                if (!cont)
                 {
                     siteList = c->siteList;
                     used[counter++] = c->index;
-                    
+
                     while (siteList)
                     {
                         // if this is not the same Site as s and
                         // is within the cutoff radius, attach it 
                         // to the neighbor list and count one up.
                         d = distance (s, siteList->s);
-                        
+
                         if (s->index != siteList->s->index &&
-                            pow (d.x, 2.0) + pow (d.y, 2.0) + pow (d.z, 2.0) < rc2)
+                            pow (d.x, 2.0) + pow (d.y, 2.0) + pow (d.z,
+                                                                   2.0) < rc2)
                         {
-                            
+
                             neighbors = (SLE *) malloc (sizeof (SLE));
                             neighbors->s = siteList->s;
-                            neighbors->rate = calcHoppingRate (*s, *siteList->s);
+                            neighbors->rate =
+                                calcHoppingRate (*s, *siteList->s);
                             neighbors->dist = d;
                             neighbors->nTransitions = 0;
                             s->rateSum += neighbors->rate;
@@ -419,8 +422,8 @@ setNeighbors (Site * s, Cell * cells)
                 }
             }
 
-    free(used);
-    
+    free (used);
+
     // sort the neighbors according to the rate to save computation
     // time while simulating
     s->neighbors = sortNeighbors (s->neighbors);

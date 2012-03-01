@@ -1,11 +1,20 @@
 #  Created by Jan Oliver Oelerich
 
 package "hop"
-version "1.2"
+version "1.3"
 
 purpose "This software simulates hopping in disordered semiconductors with \
 hopping on localized states. It uses Monte-Carlo simulation techniques. \
 See the README file to learn more."
+
+option "quiet" q "Don't say anything." flag off
+option "conf_file" f "Location of a configuration file for the simulation." string optional  
+option "memreq" m "Estimates the used memory for the specified parameter set. Print's the information and exits immediately" flag off
+option "rseed" - "Set the random seed manually." long optional
+option "nruns" i "The number of runs to average over." int default="1" optional
+option "parallel" P "If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems." flag off
+
+section "System information" sectiondesc="Parameters to describe the physical situation we are dealing with."
 
 option "length" l "This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!" int optional    
 option "X" X "The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional
@@ -16,33 +25,31 @@ option "nsites" N "The number of localized states. This value has to be bigger t
 option "sigma" s "The width of the DOS specified with --exponent." float default="1.0" optional
 option "exponent" p "The exponent of the DOS g(x) = exp(-(x/sigma)^p)" float optional default="2.0"
 option "llength" a "Localization length of the sites, assumed equal for all of them." float default="0.215" optional 
-option "rc" r "Determines up to which distance sites should be neighbors." float default="3" optional 
-option "rseed" - "Set the random seed manually." long optional 
+option "rc" r "Determines up to which distance sites should be neighbors." float default="3" optional  
 option "field" F "The electric field strength in z-direction." float default="0.3" optional 
 option "temperature" T "The temperature of the simulation." float default="0.3" optional  
 option "gaussian" - "Use a Gaussian DOS with std. dev. sigma. g(x) = exp(-1/2*(x/sigma)^2)" flag off
-option "ar" - "Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2" flag off
 option "lattice" - "Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc" flag off
-
-text "\n"
-
-option "be" - "Use balance equations" flag off
-
-text "\n"
-
-option "simulation" I "The number of hops during which statistics are collected." long default="1000000000" optional
-option "relaxation" R "The number of hops to relax." long default="100000000" optional  
 option "removesoftpairs" - "Remove softpairs." flag off
 option "softpairthreshold" - "The min hopping rate ratio to define a softpair" float default="0.95" optional  
-option "nruns" i "The number of runs to average over." int default="1" optional
-option "parallel" P "If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems." flag off
 
-text "\n"
+section "Monte carlo simulation" sectiondesc="The following options matter only, when the system is simulated using a monte carlo simulation (which is the default)"
 
-option "quiet" q "Don't say anything." flag off
+option "ar" - "Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2" flag off
+option "simulation" I "The number of hops during which statistics are collected." long default="1000000000" optional
+option "relaxation" R "The number of hops to relax." long default="100000000" optional  
+
+section "Balance equations" sectiondesc="These options only matter, when the solution is found by solving the balance equations. (setting the --be flag)"
+
+option "be" - "Solve balance equations" flag off
+option "be_it" - "Max inner iterations after which the calculation is stopped. If 0 is specified, the default is Number of sites - 1" long default="0" optional
+option "be_oit" - "Max outer iterations or restarts of the algorithm." long default="1" optional
+option "tol_abs" - "absolute tolerance for finding the solution" float default="1e-8" optional
+option "tol_rel" - "relative tolerance for finding the solution" float default="1e-8" optional
+
+section "Output"
+
 option "outputfolder" o "The name of the output folder if one wants output files." string optional
 option "transitions" - "Save all transitions to a file. (Can be big, scales with -l^3!) Only valid when --outputfolder is given" flag off
 option "summary" y "The name of the summary file to which one summary result line is then written." string optional 
 option "comment" c "Specify a string that is appended to the line in the summary file for better overview over the simulated data." string optional
-option "conf_file" f "Location of a configuration file for the simulation." string optional  
-option "memreq" m "Estimates the used memory for the specified parameter set. Print's the information and exits immediately" flag off

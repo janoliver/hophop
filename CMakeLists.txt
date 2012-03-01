@@ -3,16 +3,10 @@ SET(PACKAGE_VERSION 1.2)
 SET(PACKAGE_NAME "hop")
 
 # optional CFLAGS
-SET(CMAKE_C_FLAGS "-Wall -O3 -ffast-math -march=native -fopenmp")
+SET(CMAKE_C_FLAGS "-O3 -ffast-math -march=native -fopenmp")
 
 # gengetopt
 SET(gengetopt "gengetopt")
-
-# generate current time
-execute_process(
-        COMMAND date +%Y-%m-%d_%H:%M
-        OUTPUT_VARIABLE BUILD_TIME
-)
 
 # compilation -----------------------------------------------------
 
@@ -40,18 +34,13 @@ ADD_EXECUTABLE(hop
                    params.c
                    be.c
                    cmdline.c cmdline.h
+                   mgmres.c mgmres.h
 )
-
-ADD_CUSTOM_TARGET(doc ALL
-      COMMAND rst2html README.rst > doc/README.html)
 
 TARGET_LINK_LIBRARIES(hop 
                           m 
                           gsl gslcblas 
                           gomp
-                          superlu
 )
-
-#SET(CMAKE_CXX_FLAGS "${cflags} -fopenmp")
 
 INSTALL(TARGETS hop DESTINATION bin)

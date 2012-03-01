@@ -39,6 +39,21 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
+  int quiet_flag;	/**< @brief Don't say anything. (default=off).  */
+  const char *quiet_help; /**< @brief Don't say anything. help description.  */
+  char * conf_file_arg;	/**< @brief Location of a configuration file for the simulation..  */
+  char * conf_file_orig;	/**< @brief Location of a configuration file for the simulation. original value given at command line.  */
+  const char *conf_file_help; /**< @brief Location of a configuration file for the simulation. help description.  */
+  int memreq_flag;	/**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately (default=off).  */
+  const char *memreq_help; /**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately help description.  */
+  long rseed_arg;	/**< @brief Set the random seed manually..  */
+  char * rseed_orig;	/**< @brief Set the random seed manually. original value given at command line.  */
+  const char *rseed_help; /**< @brief Set the random seed manually. help description.  */
+  int nruns_arg;	/**< @brief The number of runs to average over. (default='1').  */
+  char * nruns_orig;	/**< @brief The number of runs to average over. original value given at command line.  */
+  const char *nruns_help; /**< @brief The number of runs to average over. help description.  */
+  int parallel_flag;	/**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. (default=off).  */
+  const char *parallel_help; /**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. help description.  */
   int length_arg;	/**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!.  */
   char * length_orig;	/**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! original value given at command line.  */
   const char *length_help; /**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! help description.  */
@@ -69,9 +84,6 @@ struct gengetopt_args_info
   float rc_arg;	/**< @brief Determines up to which distance sites should be neighbors. (default='3').  */
   char * rc_orig;	/**< @brief Determines up to which distance sites should be neighbors. original value given at command line.  */
   const char *rc_help; /**< @brief Determines up to which distance sites should be neighbors. help description.  */
-  long rseed_arg;	/**< @brief Set the random seed manually..  */
-  char * rseed_orig;	/**< @brief Set the random seed manually. original value given at command line.  */
-  const char *rseed_help; /**< @brief Set the random seed manually. help description.  */
   float field_arg;	/**< @brief The electric field strength in z-direction. (default='0.3').  */
   char * field_orig;	/**< @brief The electric field strength in z-direction. original value given at command line.  */
   const char *field_help; /**< @brief The electric field strength in z-direction. help description.  */
@@ -80,30 +92,35 @@ struct gengetopt_args_info
   const char *temperature_help; /**< @brief The temperature of the simulation. help description.  */
   int gaussian_flag;	/**< @brief Use a Gaussian DOS with std. dev. sigma. g(x) = exp(-1/2*(x/sigma)^2) (default=off).  */
   const char *gaussian_help; /**< @brief Use a Gaussian DOS with std. dev. sigma. g(x) = exp(-1/2*(x/sigma)^2) help description.  */
-  int ar_flag;	/**< @brief Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2 (default=off).  */
-  const char *ar_help; /**< @brief Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2 help description.  */
   int lattice_flag;	/**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc (default=off).  */
   const char *lattice_help; /**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc help description.  */
-  int be_flag;	/**< @brief Use balance equations (default=off).  */
-  const char *be_help; /**< @brief Use balance equations help description.  */
+  int removesoftpairs_flag;	/**< @brief Remove softpairs. (default=off).  */
+  const char *removesoftpairs_help; /**< @brief Remove softpairs. help description.  */
+  float softpairthreshold_arg;	/**< @brief The min hopping rate ratio to define a softpair (default='0.95').  */
+  char * softpairthreshold_orig;	/**< @brief The min hopping rate ratio to define a softpair original value given at command line.  */
+  const char *softpairthreshold_help; /**< @brief The min hopping rate ratio to define a softpair help description.  */
+  int ar_flag;	/**< @brief Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2 (default=off).  */
+  const char *ar_help; /**< @brief Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2 help description.  */
   long simulation_arg;	/**< @brief The number of hops during which statistics are collected. (default='1000000000').  */
   char * simulation_orig;	/**< @brief The number of hops during which statistics are collected. original value given at command line.  */
   const char *simulation_help; /**< @brief The number of hops during which statistics are collected. help description.  */
   long relaxation_arg;	/**< @brief The number of hops to relax. (default='100000000').  */
   char * relaxation_orig;	/**< @brief The number of hops to relax. original value given at command line.  */
   const char *relaxation_help; /**< @brief The number of hops to relax. help description.  */
-  int removesoftpairs_flag;	/**< @brief Remove softpairs. (default=off).  */
-  const char *removesoftpairs_help; /**< @brief Remove softpairs. help description.  */
-  float softpairthreshold_arg;	/**< @brief The min hopping rate ratio to define a softpair (default='0.95').  */
-  char * softpairthreshold_orig;	/**< @brief The min hopping rate ratio to define a softpair original value given at command line.  */
-  const char *softpairthreshold_help; /**< @brief The min hopping rate ratio to define a softpair help description.  */
-  int nruns_arg;	/**< @brief The number of runs to average over. (default='1').  */
-  char * nruns_orig;	/**< @brief The number of runs to average over. original value given at command line.  */
-  const char *nruns_help; /**< @brief The number of runs to average over. help description.  */
-  int parallel_flag;	/**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. (default=off).  */
-  const char *parallel_help; /**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. help description.  */
-  int quiet_flag;	/**< @brief Don't say anything. (default=off).  */
-  const char *quiet_help; /**< @brief Don't say anything. help description.  */
+  int be_flag;	/**< @brief Solve balance equations (default=off).  */
+  const char *be_help; /**< @brief Solve balance equations help description.  */
+  long be_it_arg;	/**< @brief Max inner iterations after which the calculation is stopped. If 0 is specified, the default is Number of sites - 1 (default='0').  */
+  char * be_it_orig;	/**< @brief Max inner iterations after which the calculation is stopped. If 0 is specified, the default is Number of sites - 1 original value given at command line.  */
+  const char *be_it_help; /**< @brief Max inner iterations after which the calculation is stopped. If 0 is specified, the default is Number of sites - 1 help description.  */
+  long be_oit_arg;	/**< @brief Max outer iterations or restarts of the algorithm. (default='1').  */
+  char * be_oit_orig;	/**< @brief Max outer iterations or restarts of the algorithm. original value given at command line.  */
+  const char *be_oit_help; /**< @brief Max outer iterations or restarts of the algorithm. help description.  */
+  float tol_abs_arg;	/**< @brief absolute tolerance for finding the solution (default='1e-8').  */
+  char * tol_abs_orig;	/**< @brief absolute tolerance for finding the solution original value given at command line.  */
+  const char *tol_abs_help; /**< @brief absolute tolerance for finding the solution help description.  */
+  float tol_rel_arg;	/**< @brief relative tolerance for finding the solution (default='1e-8').  */
+  char * tol_rel_orig;	/**< @brief relative tolerance for finding the solution original value given at command line.  */
+  const char *tol_rel_help; /**< @brief relative tolerance for finding the solution help description.  */
   char * outputfolder_arg;	/**< @brief The name of the output folder if one wants output files..  */
   char * outputfolder_orig;	/**< @brief The name of the output folder if one wants output files. original value given at command line.  */
   const char *outputfolder_help; /**< @brief The name of the output folder if one wants output files. help description.  */
@@ -115,14 +132,15 @@ struct gengetopt_args_info
   char * comment_arg;	/**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data..  */
   char * comment_orig;	/**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data. original value given at command line.  */
   const char *comment_help; /**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data. help description.  */
-  char * conf_file_arg;	/**< @brief Location of a configuration file for the simulation..  */
-  char * conf_file_orig;	/**< @brief Location of a configuration file for the simulation. original value given at command line.  */
-  const char *conf_file_help; /**< @brief Location of a configuration file for the simulation. help description.  */
-  int memreq_flag;	/**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately (default=off).  */
-  const char *memreq_help; /**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
+  unsigned int quiet_given ;	/**< @brief Whether quiet was given.  */
+  unsigned int conf_file_given ;	/**< @brief Whether conf_file was given.  */
+  unsigned int memreq_given ;	/**< @brief Whether memreq was given.  */
+  unsigned int rseed_given ;	/**< @brief Whether rseed was given.  */
+  unsigned int nruns_given ;	/**< @brief Whether nruns was given.  */
+  unsigned int parallel_given ;	/**< @brief Whether parallel was given.  */
   unsigned int length_given ;	/**< @brief Whether length was given.  */
   unsigned int X_given ;	/**< @brief Whether X was given.  */
   unsigned int Y_given ;	/**< @brief Whether Y was given.  */
@@ -133,26 +151,24 @@ struct gengetopt_args_info
   unsigned int exponent_given ;	/**< @brief Whether exponent was given.  */
   unsigned int llength_given ;	/**< @brief Whether llength was given.  */
   unsigned int rc_given ;	/**< @brief Whether rc was given.  */
-  unsigned int rseed_given ;	/**< @brief Whether rseed was given.  */
   unsigned int field_given ;	/**< @brief Whether field was given.  */
   unsigned int temperature_given ;	/**< @brief Whether temperature was given.  */
   unsigned int gaussian_given ;	/**< @brief Whether gaussian was given.  */
-  unsigned int ar_given ;	/**< @brief Whether ar was given.  */
   unsigned int lattice_given ;	/**< @brief Whether lattice was given.  */
-  unsigned int be_given ;	/**< @brief Whether be was given.  */
-  unsigned int simulation_given ;	/**< @brief Whether simulation was given.  */
-  unsigned int relaxation_given ;	/**< @brief Whether relaxation was given.  */
   unsigned int removesoftpairs_given ;	/**< @brief Whether removesoftpairs was given.  */
   unsigned int softpairthreshold_given ;	/**< @brief Whether softpairthreshold was given.  */
-  unsigned int nruns_given ;	/**< @brief Whether nruns was given.  */
-  unsigned int parallel_given ;	/**< @brief Whether parallel was given.  */
-  unsigned int quiet_given ;	/**< @brief Whether quiet was given.  */
+  unsigned int ar_given ;	/**< @brief Whether ar was given.  */
+  unsigned int simulation_given ;	/**< @brief Whether simulation was given.  */
+  unsigned int relaxation_given ;	/**< @brief Whether relaxation was given.  */
+  unsigned int be_given ;	/**< @brief Whether be was given.  */
+  unsigned int be_it_given ;	/**< @brief Whether be_it was given.  */
+  unsigned int be_oit_given ;	/**< @brief Whether be_oit was given.  */
+  unsigned int tol_abs_given ;	/**< @brief Whether tol_abs was given.  */
+  unsigned int tol_rel_given ;	/**< @brief Whether tol_rel was given.  */
   unsigned int outputfolder_given ;	/**< @brief Whether outputfolder was given.  */
   unsigned int transitions_given ;	/**< @brief Whether transitions was given.  */
   unsigned int summary_given ;	/**< @brief Whether summary was given.  */
   unsigned int comment_given ;	/**< @brief Whether comment was given.  */
-  unsigned int conf_file_given ;	/**< @brief Whether conf_file was given.  */
-  unsigned int memreq_given ;	/**< @brief Whether memreq was given.  */
 
 } ;
 

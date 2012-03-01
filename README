@@ -1,4 +1,3 @@
-==================================
  A monte carlo hopping simulation
 ==================================
 
@@ -14,7 +13,7 @@ The software determines some key features of the charge transport such as
 
 compilation
 ===========
-Run the following commands to compile the program::
+Run the following commands to compile the program:
 
     cmake .
     make
@@ -30,7 +29,7 @@ gsl
 
 gengetopt
     The gnu getopt generator is used to provide nicely usable command line
-    options and to generate the usage string of the software. (see ``Usage``)
+    options and to generate the usage string of the software. (see `Usage`)
 
 gomp
     This is a openmp library for parallel computing. Parts of the software
@@ -40,7 +39,7 @@ gomp
 Usage
 =====
 
-See ``hop --help``
+See `hop --help`
 
 Units
 =====
@@ -55,7 +54,7 @@ Length
     
 Energies/Temperatures
     All energies are measured in units of the disorder parameter \sigma.
-    Since:: 
+    Since: 
     
         \sigma/kT \approx 3.0
         
@@ -69,10 +68,10 @@ using the indent tool like this: ::
  
        indent -gnu -fc1 -i4 -bli0 -nut -cdb -sc -bap -l80 *.c && rm -rf *~
 
-Block comments should look like this and precede functions etc.::
+Block comments should look like this and precede functions etc.:
 
       /*
        * I am a block comment!
        */
 
-For one-lined comments, use ``//`` 
+For one-lined comments, use `//`

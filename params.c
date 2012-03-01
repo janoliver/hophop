@@ -132,16 +132,19 @@ generateParams (Params * prms, int argc, char **argv)
     prms->output_transitions = (args.transitions_given) ? true : false;
     prms->memreq = (args.memreq_given) ? true : false;
     prms->balance_eq = (args.be_given) ? true : false;
-    
-    
+
+    // balance equation parameters
+    if (args.be_it_arg == 0)
+        args.be_it_arg = prms->nsites - 1;
+    prms->be_abs_tol = args.tol_abs_arg;
+    prms->be_rel_tol = args.tol_rel_arg;
+    prms->be_it = args.be_it_arg;
+    prms->be_outer_it = args.be_oit_arg;
+
     // strings
     prms->output_folder = args.outputfolder_arg;
     prms->output_summary = args.summary_arg;
     prms->comment = args.comment_arg;
-
-    //strcpy(prms->output_folder, args.outputfolder_arg);
-    //strcpy(prms->output_summary, args.summary_arg);
-    //strcpy(prms->comment, args.comment_arg);
 
     // simulation times
     if (0 >= args.relaxation_arg || 0 >= args.simulation_arg)

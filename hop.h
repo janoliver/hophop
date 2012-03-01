@@ -48,8 +48,14 @@ typedef struct params
     char *output_summary;
     char *comment;
     bool memreq;
+
+    // balance eq.
     bool balance_eq;
-    
+    float be_abs_tol;
+    float be_rel_tol;
+    int be_it;
+    int be_outer_it;
+
     // random number stuff
     long rseed, rseed_used;
     time_t curtime;
@@ -168,6 +174,7 @@ double calcEquilibrationEnergy (Site * sites, Results * results);
 
 
 // balance equations
-void beTest();
+void BE_run (Results * total, int *iRun);
+void BE_solve (Site * sites, Results * res, int *iRun);
 
 #endif /* HOP_H */
