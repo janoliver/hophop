@@ -27,7 +27,7 @@
 
 const char *gengetopt_args_info_purpose = "This software simulates hopping in disordered semiconductors with hopping on \nlocalized states. It uses Monte-Carlo simulation techniques. See the README \nfile to learn more.";
 
-const char *gengetopt_args_info_usage = "Usage: hop [-h|--help] [-V|--version] [-lINT|--length=INT] [-XINT|--X=INT] \n         [-YINT|--Y=INT] [-ZINT|--Z=INT] [-nINT|--ncarriers=INT] \n         [-NINT|--nsites=INT] [-sFLOAT|--sigma=FLOAT] \n         [-pFLOAT|--exponent=FLOAT] [-aFLOAT|--llength=FLOAT] \n         [-rFLOAT|--rc=FLOAT] [--rseed=LONG] [-FFLOAT|--field=FLOAT] \n         [-TFLOAT|--temperature=FLOAT] [--gaussian] [--ar] [--lattice] \n         [-ILONG|--simulation=LONG] [-RLONG|--relaxation=LONG] \n         [--removesoftpairs] [--softpairthreshold=FLOAT] [-iINT|--nruns=INT] \n         [-P|--parallel] [-q|--quiet] [-oSTRING|--outputfolder=STRING] \n         [--transitions] [-ySTRING|--summary=STRING] \n         [-cSTRING|--comment=STRING] [-fSTRING|--conf_file=STRING] \n         [-m|--memreq]";
+const char *gengetopt_args_info_usage = "Usage: hop [-h|--help] [-V|--version] [-lINT|--length=INT] [-XINT|--X=INT] \n         [-YINT|--Y=INT] [-ZINT|--Z=INT] [-nINT|--ncarriers=INT] \n         [-NINT|--nsites=INT] [-sFLOAT|--sigma=FLOAT] \n         [-pFLOAT|--exponent=FLOAT] [-aFLOAT|--llength=FLOAT] \n         [-rFLOAT|--rc=FLOAT] [--rseed=LONG] [-FFLOAT|--field=FLOAT] \n         [-TFLOAT|--temperature=FLOAT] [--gaussian] [--ar] [--lattice] [--be] \n         [-ILONG|--simulation=LONG] [-RLONG|--relaxation=LONG] \n         [--removesoftpairs] [--softpairthreshold=FLOAT] [-iINT|--nruns=INT] \n         [-P|--parallel] [-q|--quiet] [-oSTRING|--outputfolder=STRING] \n         [--transitions] [-ySTRING|--summary=STRING] \n         [-cSTRING|--comment=STRING] [-fSTRING|--conf_file=STRING] \n         [-m|--memreq]";
 
 const char *gengetopt_args_info_description = "";
 
@@ -50,6 +50,8 @@ const char *gengetopt_args_info_help[] = {
   "      --gaussian                Use a Gaussian DOS with std. dev. sigma. g(x) = \n                                  exp(-1/2*(x/sigma)^2)  (default=off)",
   "      --ar                      Use Walker's random number generation and the \n                                  accept/reject technique for finding the next \n                                  transition. This is efficient for high \n                                  concentrations around n=N/2  (default=off)",
   "      --lattice                 Distribute sites on a lattice with distance \n                                  unity. Control nearest neighbor hopping and \n                                  so on with --rc  (default=off)",
+  "\n",
+  "      --be                      Use balance equations  (default=off)",
   "\n",
   "  -I, --simulation=LONG         The number of hops during which statistics are \n                                  collected.  (default=`1000000000')",
   "  -R, --relaxation=LONG         The number of hops to relax.  \n                                  (default=`100000000')",
@@ -134,6 +136,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->gaussian_given = 0 ;
   args_info->ar_given = 0 ;
   args_info->lattice_given = 0 ;
+  args_info->be_given = 0 ;
   args_info->simulation_given = 0 ;
   args_info->relaxation_given = 0 ;
   args_info->removesoftpairs_given = 0 ;
@@ -180,6 +183,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->gaussian_flag = 0;
   args_info->ar_flag = 0;
   args_info->lattice_flag = 0;
+  args_info->be_flag = 0;
   args_info->simulation_arg = 1000000000;
   args_info->simulation_orig = NULL;
   args_info->relaxation_arg = 100000000;
@@ -227,19 +231,20 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->gaussian_help = gengetopt_args_info_help[15] ;
   args_info->ar_help = gengetopt_args_info_help[16] ;
   args_info->lattice_help = gengetopt_args_info_help[17] ;
-  args_info->simulation_help = gengetopt_args_info_help[19] ;
-  args_info->relaxation_help = gengetopt_args_info_help[20] ;
-  args_info->removesoftpairs_help = gengetopt_args_info_help[21] ;
-  args_info->softpairthreshold_help = gengetopt_args_info_help[22] ;
-  args_info->nruns_help = gengetopt_args_info_help[23] ;
-  args_info->parallel_help = gengetopt_args_info_help[24] ;
-  args_info->quiet_help = gengetopt_args_info_help[26] ;
-  args_info->outputfolder_help = gengetopt_args_info_help[27] ;
-  args_info->transitions_help = gengetopt_args_info_help[28] ;
-  args_info->summary_help = gengetopt_args_info_help[29] ;
-  args_info->comment_help = gengetopt_args_info_help[30] ;
-  args_info->conf_file_help = gengetopt_args_info_help[31] ;
-  args_info->memreq_help = gengetopt_args_info_help[32] ;
+  args_info->be_help = gengetopt_args_info_help[19] ;
+  args_info->simulation_help = gengetopt_args_info_help[21] ;
+  args_info->relaxation_help = gengetopt_args_info_help[22] ;
+  args_info->removesoftpairs_help = gengetopt_args_info_help[23] ;
+  args_info->softpairthreshold_help = gengetopt_args_info_help[24] ;
+  args_info->nruns_help = gengetopt_args_info_help[25] ;
+  args_info->parallel_help = gengetopt_args_info_help[26] ;
+  args_info->quiet_help = gengetopt_args_info_help[28] ;
+  args_info->outputfolder_help = gengetopt_args_info_help[29] ;
+  args_info->transitions_help = gengetopt_args_info_help[30] ;
+  args_info->summary_help = gengetopt_args_info_help[31] ;
+  args_info->comment_help = gengetopt_args_info_help[32] ;
+  args_info->conf_file_help = gengetopt_args_info_help[33] ;
+  args_info->memreq_help = gengetopt_args_info_help[34] ;
   
 }
 
@@ -411,6 +416,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "ar", 0, 0 );
   if (args_info->lattice_given)
     write_into_file(outfile, "lattice", 0, 0 );
+  if (args_info->be_given)
+    write_into_file(outfile, "be", 0, 0 );
   if (args_info->simulation_given)
     write_into_file(outfile, "simulation", args_info->simulation_orig, 0);
   if (args_info->relaxation_given)
@@ -717,6 +724,7 @@ cmdline_parser_internal (
         { "gaussian",	0, NULL, 0 },
         { "ar",	0, NULL, 0 },
         { "lattice",	0, NULL, 0 },
+        { "be",	0, NULL, 0 },
         { "simulation",	1, NULL, 'I' },
         { "relaxation",	1, NULL, 'R' },
         { "removesoftpairs",	0, NULL, 0 },
@@ -1055,6 +1063,18 @@ cmdline_parser_internal (
             if (update_arg((void *)&(args_info->lattice_flag), 0, &(args_info->lattice_given),
                 &(local_args_info.lattice_given), optarg, 0, 0, ARG_FLAG,
                 check_ambiguity, override, 1, 0, "lattice", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Use balance equations.  */
+          else if (strcmp (long_options[option_index].name, "be") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->be_flag), 0, &(args_info->be_given),
+                &(local_args_info.be_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "be", '-',
                 additional_error))
               goto failure;
           

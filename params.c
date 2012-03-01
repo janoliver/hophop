@@ -131,7 +131,9 @@ generateParams (Params * prms, int argc, char **argv)
     prms->quiet = (args.quiet_given) ? true : false;
     prms->output_transitions = (args.transitions_given) ? true : false;
     prms->memreq = (args.memreq_given) ? true : false;
-
+    prms->balance_eq = (args.be_given) ? true : false;
+    
+    
     // strings
     prms->output_folder = args.outputfolder_arg;
     prms->output_summary = args.summary_arg;
@@ -151,9 +153,9 @@ generateParams (Params * prms, int argc, char **argv)
     prms->simulation = args.simulation_arg;
 
     // calculate number of cells
-    prms->nx = ceil (prms->length_x / args.rc_arg);
-    prms->ny = ceil (prms->length_y / args.rc_arg);
-    prms->nz = ceil (prms->length_z / args.rc_arg);
+    prms->nx = ceil (prms->length_x / prms->cutoff_radius);
+    prms->ny = ceil (prms->length_y / prms->cutoff_radius);
+    prms->nz = ceil (prms->length_z / prms->cutoff_radius);
 
     // check charge carriers
     if (args.ncarriers_arg >= prms->nsites)

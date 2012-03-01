@@ -26,6 +26,10 @@ option "lattice" - "Distribute sites on a lattice with distance unity. Control n
 
 text "\n"
 
+option "be" - "Use balance equations" flag off
+
+text "\n"
+
 option "simulation" I "The number of hops during which statistics are collected." long default="1000000000" optional
 option "relaxation" R "The number of hops to relax." long default="100000000" optional  
 option "removesoftpairs" - "Remove softpairs." flag off

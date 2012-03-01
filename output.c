@@ -2,7 +2,6 @@
 
 #include <sys/stat.h>
 #include "hop.h"
-#include "mc.h"
 
 void checkOutputFolder (int iRun);
 

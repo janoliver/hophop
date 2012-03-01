@@ -38,6 +38,7 @@ ADD_EXECUTABLE(hop
                    mc_analyze.c 
                    output.c 
                    params.c
+                   be.c
                    cmdline.c cmdline.h
 )
 
@@ -48,6 +49,7 @@ TARGET_LINK_LIBRARIES(hop
                           m 
                           gsl gslcblas 
                           gomp
+                          superlu
 )
 
 #SET(CMAKE_CXX_FLAGS "${cflags} -fopenmp")

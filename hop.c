@@ -38,36 +38,46 @@ main (int argc, char **argv)
     res.simulationTime = 0.0;
     res.equilibrationEnergy = 0.0;
 
-    // set the number of threads
-    omp_set_num_threads (GSL_MIN(omp_get_max_threads (),
-                                 prms.number_runs));
+    if(prms.balance_eq) {
+        beTest();
+    }
+    else
+    {
+
+        // set the number of threads
+        omp_set_num_threads (GSL_MIN(omp_get_max_threads (),
+                                     prms.number_runs));
 
 #pragma omp parallel if(prms.parallel) shared(total) private(iRun)
-    {
-#pragma omp for schedule(dynamic)
-        for (iRun = 1; iRun <= prms.number_runs; iRun++)
         {
+#pragma omp for schedule(dynamic)
+            for (iRun = 1; iRun <= prms.number_runs; iRun++)
+            {
 
-            total[iRun - 1].mobility = 0.0;
-            total[iRun - 1].diffusivity = 0.0;
-            total[iRun - 1].currentDensity = 0.0;
-            total[iRun - 1].simulationTime = 0.0;
-            total[iRun - 1].equilibrationEnergy = 0.0;
-
-            // here is where el magico happens
-            MC_run (total, &iRun);
+                total[iRun - 1].mobility = 0.0;
+                total[iRun - 1].diffusivity = 0.0;
+                total[iRun - 1].currentDensity = 0.0;
+                total[iRun - 1].simulationTime = 0.0;
+                total[iRun - 1].equilibrationEnergy = 0.0;
+                
+                // here is where el magico happens
+                MC_run (total, &iRun);
+            }
         }
+    
+        // perform the averaging
+        for (iRun = 0; iRun < prms.number_runs; iRun++)
+        {
+            res.mobility += total[iRun].mobility;
+            res.diffusivity += total[iRun].diffusivity;
+            res.currentDensity += total[iRun].currentDensity;
+            res.simulationTime += total[iRun].simulationTime;
+            res.equilibrationEnergy += total[iRun].equilibrationEnergy;
+        }
+        
     }
 
-    // perform the averaging
-    for (iRun = 0; iRun < prms.number_runs; iRun++)
-    {
-        res.mobility += total[iRun].mobility;
-        res.diffusivity += total[iRun].diffusivity;
-        res.currentDensity += total[iRun].currentDensity;
-        res.simulationTime += total[iRun].simulationTime;
-        res.equilibrationEnergy += total[iRun].equilibrationEnergy;
-    }
+    
     res.mobility /= prms.number_runs;
     res.diffusivity /= prms.number_runs;
     res.currentDensity /= prms.number_runs;

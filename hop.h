@@ -48,7 +48,8 @@ typedef struct params
     char *output_summary;
     char *comment;
     bool memreq;
-
+    bool balance_eq;
+    
     // random number stuff
     long rseed, rseed_used;
     time_t curtime;
@@ -156,5 +157,17 @@ void writeSummary (Results * res, Results * error);
 bool strArgGiven (char *arg);
 void generateParams (Params * prms, int argc, char **argv);
 bool serialOutput ();
+
+//mc
+int timeval_subtract (struct timeval *result,
+                      struct timeval *x, struct timeval *y);
+double calcMobility (Carrier * carriers, Results * results);
+double calcDiffusivity (Carrier * carriers, Results * results);
+double calcCurrentDensity (Carrier * carriers, Results * results);
+double calcEquilibrationEnergy (Site * sites, Results * results);
+
+
+// balance equations
+void beTest();
 
 #endif /* HOP_H */

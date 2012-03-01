@@ -1,6 +1,6 @@
 //  Created by Jan Oliver Oelerich
 
-#include "mc.h"
+#include "hop.h"
 
 void
 MC_run (Results * total, int *iRun)

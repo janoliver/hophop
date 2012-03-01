@@ -1,6 +1,6 @@
 //  Created by Jan Oliver Oelerich
 
-#include "mc.h"
+#include "hop.h"
 
 void hoppingStep (Site * sites, Carrier * carriers, Results * res,
                   bool stat, ALT * tables);

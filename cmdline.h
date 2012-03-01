@@ -84,6 +84,8 @@ struct gengetopt_args_info
   const char *ar_help; /**< @brief Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2 help description.  */
   int lattice_flag;	/**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc (default=off).  */
   const char *lattice_help; /**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc help description.  */
+  int be_flag;	/**< @brief Use balance equations (default=off).  */
+  const char *be_help; /**< @brief Use balance equations help description.  */
   long simulation_arg;	/**< @brief The number of hops during which statistics are collected. (default='1000000000').  */
   char * simulation_orig;	/**< @brief The number of hops during which statistics are collected. original value given at command line.  */
   const char *simulation_help; /**< @brief The number of hops during which statistics are collected. help description.  */
@@ -137,6 +139,7 @@ struct gengetopt_args_info
   unsigned int gaussian_given ;	/**< @brief Whether gaussian was given.  */
   unsigned int ar_given ;	/**< @brief Whether ar was given.  */
   unsigned int lattice_given ;	/**< @brief Whether lattice was given.  */
+  unsigned int be_given ;	/**< @brief Whether be was given.  */
   unsigned int simulation_given ;	/**< @brief Whether simulation was given.  */
   unsigned int relaxation_given ;	/**< @brief Whether relaxation was given.  */
   unsigned int removesoftpairs_given ;	/**< @brief Whether removesoftpairs was given.  */
