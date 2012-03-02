@@ -25,6 +25,7 @@ main (int argc, char **argv)
         return 0;
     }
 
+    //output
     printApplicationHeader ();
     printSettings ();
 
@@ -39,8 +40,8 @@ main (int argc, char **argv)
     res.equilibrationEnergy = 0.0;
 
     // set the number of threads
-    omp_set_num_threads (GSL_MIN (omp_get_max_threads (), prms.number_runs));
-    
+    omp_set_num_threads (prms.nthreads);
+
 #pragma omp parallel if(prms.parallel) shared(total) private(iRun)
     {
 #pragma omp for schedule(dynamic)
@@ -120,10 +121,8 @@ printApplicationHeader ()
 {
     if (prms.quiet)
         return;
-    printf ("\n\t###################################\n");
-    printf ("\t#   Hopping Simulation            #\n");
-    printf ("\t#   by Jan Oliver Oelerich, 2011  #\n");
-    printf ("\t###################################\n");
+    printf ("\n\n################### %s v%s ################### \n",
+            PKG_NAME,PKG_VERSION);
 }
 
 /*
@@ -144,12 +143,33 @@ printSettings ()
     printf ("\tTemperature: \t\t\tT = %2.4f\n", prms.temperature);
     printf ("\tField strength: \t\tF = %2.4f\n", prms.field);
     printf ("\tCut-off radius: \t\tr = %2.4f\n", prms.cutoff_radius);
-    printf ("\tNumber of sites: \t\tN = %d\n", prms.nsites);
-    printf ("\tNumber of carriers: \t\tn = %d\n", prms.ncarriers);
-    printf ("\tHops of relaxation: \t\tR = %lu\n", prms.relaxation);
-    printf ("\tHops of simulation: \t\tI = %lu\n", prms.simulation);
+    printf ("\tNumber of sites: \t\tN = %d\n\n", prms.nsites);
+
+    if(prms.parallel)
+        printf ("\tParallelization: \t\tRunning on %d cores\n",
+                prms.nthreads);
+    else
+        printf ("\tParallelization: \t\tOff\n");
+
+
     printf ("\tMode: \t\t\t\t%s\n",
             prms.balance_eq ? "Balance equations" : "Monte carlo simulation");
+
+    if(prms.balance_eq)
+    {
+        printf ("\tMax. nr. of outer iterations: \t%d\n", prms.be_outer_it);
+        printf ("\tMax. nr. of inner iterations: \t%d\n", prms.be_it);
+        printf ("\tRel. convergence tolerance: \t%e\n", prms.be_rel_tol);
+        printf ("\tAbs. convergence tolerance: \t%e\n", prms.be_abs_tol);
+    }
+    else
+    {
+        printf ("\tNumber of carriers: \t\tn = %d\n", prms.ncarriers);
+        printf ("\tHops of relaxation: \t\tR = %lu\n", prms.relaxation);
+        printf ("\tHops of simulation: \t\tI = %lu\n", prms.simulation);
+        printf ("\tTechnique: \t\t\t%s\n",
+                prms.accept_reject ? "Accept/Reject" : "Standard");
+    }
 
     if (!serialOutput () && !prms.quiet)
         printf ("\n");

@@ -174,6 +174,9 @@ generateParams (Params * prms, int argc, char **argv)
 
     prms->number_runs = args.nruns_arg;
 
+    // threads
+    prms->nthreads = (GSL_MIN (omp_get_max_threads (), prms->number_runs));
+    
 }
 
 /*

@@ -1,6 +1,6 @@
 # version
-SET(PACKAGE_VERSION 1.2)
-SET(PACKAGE_NAME "hop")
+SET(PACKAGE_VERSION "1.2")
+SET(PACKAGE_NAME "HOP")
 
 # optional CFLAGS
 SET(CMAKE_C_FLAGS "-O3 -ffast-math -march=native -fopenmp")
@@ -19,9 +19,19 @@ ADD_CUSTOM_COMMAND(
         OUTPUT cmdline.h cmdline.c
 )
 
+CONFIGURE_FILE(
+        "res/config.h.in"
+        "config.h"
+)
+
+CONFIGURE_FILE(
+        "res/options.ggo.in"
+        "options.ggo"
+)
+
 SET_DIRECTORY_PROPERTIES(
         PROPERTIES 
-        ADDITIONAL_MAKE_CLEAN_FILES "cmdline.h;cmdline.c"
+        ADDITIONAL_MAKE_CLEAN_FILES "cmdline.h;cmdline.c;config.h;options.ggo"
 )
 
 ADD_EXECUTABLE(hop 

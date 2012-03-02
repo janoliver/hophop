@@ -175,7 +175,7 @@ writeResults (Results * res, int iRun)
     // write head
     if (buffer == 0)
     {
-        fprintf (file, "#simul. time        ");
+        fprintf (file, "#simul. time      ");
         fprintf (file, "mobility          ");
         fprintf (file, "diffusivity x/y   ");
         fprintf (file, "current density   ");
@@ -184,13 +184,25 @@ writeResults (Results * res, int iRun)
     }
 
     // write site information
-    fprintf (file, "%f    ", res->simulationTime);
-    fprintf (file, "%e      ", res->mobility);
-    fprintf (file, "%e      ", res->diffusivity);
-    fprintf (file, "%e      ", res->currentDensity);
-    fprintf (file, "%e      ", res->equilibrationEnergy);
-    fprintf (file, "%lu\n", prms.rseed_used);
-
+    if(prms.balance_eq)
+    {
+        fprintf (file, "%-18e", res->simulationTime);
+        fprintf (file, "%-+18e", res->mobility);
+        fprintf (file, "%-+18e", res->diffusivity);
+        fprintf (file, "%-+18e", res->currentDensity);
+        fprintf (file, "%-+18e", res->equilibrationEnergy);
+        fprintf (file, "%lu\n", prms.rseed_used);
+    }
+    else
+    {
+        fprintf (file, "%-+18e", res->simulationTime);
+        fprintf (file, "%-+18e", res->mobility);
+        fprintf (file, "%-+18e", res->diffusivity);
+        fprintf (file, "%-+18e", res->currentDensity);
+        fprintf (file, "%-+18e", res->equilibrationEnergy);
+        fprintf (file, "%lu\n", prms.rseed_used);
+    }
+    
     fclose (file);
 
     // some output
@@ -254,27 +266,30 @@ writeSummary (Results * res, Results * error)
         fprintf (file, "Erro curr. dens.  ");
         fprintf (file, "Equilibration en. ");
         fprintf (file, "Error Eq. en.     ");
+        fprintf (file, "Mode              ");
         fprintf (file, "Comment           ");
         fprintf (file, "\n");
     }
 
     // write site information
-    fprintf (file, "%e      ", prms.exponent);
-    fprintf (file, "%-10d        ", prms.length_x);
-    fprintf (file, "%-10d        ", prms.ncarriers);
-    fprintf (file, "%e      ", prms.loclength);
-    fprintf (file, "%e      ", prms.temperature);
-    fprintf (file, "%e      ", prms.field);
+    fprintf (file, "%-+18e", prms.exponent);
+    fprintf (file, "%-18d", prms.length_x);
+    fprintf (file, "%-18d", prms.ncarriers);
+    fprintf (file, "%-+18e", prms.loclength);
+    fprintf (file, "%-+18e", prms.temperature);
+    fprintf (file, "%-+18e", prms.field);
 
-    fprintf (file, "%e      ", res->simulationTime);
-    fprintf (file, "%e      ", res->mobility);
-    fprintf (file, "%e      ", error->mobility);
-    fprintf (file, "%e      ", res->diffusivity);
-    fprintf (file, "%e      ", error->diffusivity);
-    fprintf (file, "%e      ", res->currentDensity);
-    fprintf (file, "%e      ", error->currentDensity);
-    fprintf (file, "%e      ", res->equilibrationEnergy);
-    fprintf (file, "%e      ", error->equilibrationEnergy);
+    fprintf (file, "%-+18e", res->simulationTime);
+    fprintf (file, "%-+18e", res->mobility);
+    fprintf (file, "%-+18e", error->mobility);
+    fprintf (file, "%-+18e", res->diffusivity);
+    fprintf (file, "%-+18e", error->diffusivity);
+    fprintf (file, "%-+18e", res->currentDensity);
+    fprintf (file, "%-+18e", error->currentDensity);
+    fprintf (file, "%-+18e", res->equilibrationEnergy);
+    fprintf (file, "%-+18e", error->equilibrationEnergy);
+    fprintf (file, "%-18s",
+             prms.balance_eq ? "Balance eq." : "MC Simulation");
     if (strArgGiven (prms.comment))
         fprintf (file, "%s", prms.comment);
     fprintf (file, "\n");

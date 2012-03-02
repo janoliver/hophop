@@ -77,7 +77,7 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun)
     double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
     if (!serialOutput () && !prms.quiet)
         printf
-            ("Finished %d. Iteration (total %d): \n\t%d successful hops/sec (%ld failed)\n",
+            ("Finished %d. Iteration (total %d): %d successful hops/sec (%ld failed)\n",
              *iRun, prms.number_runs, (int) (res->nHops / elapsed),
              res->nFailedAttempts);
     if (serialOutput ())

@@ -18,6 +18,8 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_math.h>
 
+#include "config.h"
+
 #include "cmdline.h"
 
 typedef struct params
@@ -48,6 +50,7 @@ typedef struct params
     char *output_summary;
     char *comment;
     bool memreq;
+    int nthreads;
 
     // balance eq.
     bool balance_eq;
