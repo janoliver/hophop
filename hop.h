@@ -111,6 +111,7 @@ typedef struct results
     double equilibrationEnergy;
     size_t nHops;
     size_t nFailedAttempts;
+    double avgenergy;
 } Results;
 
 typedef struct vector
@@ -174,7 +175,7 @@ double calcMobility (Carrier * carriers, Results * results);
 double calcDiffusivity (Carrier * carriers, Results * results);
 double calcCurrentDensity (Carrier * carriers, Results * results);
 double calcEquilibrationEnergy (Site * sites, Results * results);
-
+double calcAverageEnergy (Carrier * carriers);
 
 // balance equations
 void BE_run (Results * total, int *iRun);

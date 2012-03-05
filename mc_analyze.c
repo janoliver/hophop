@@ -10,6 +10,7 @@ MC_calculateResults (Site * sites, Carrier * carriers, Results * res)
     res->diffusivity = calcDiffusivity (carriers, res);
     res->currentDensity = calcCurrentDensity (carriers, res);
     res->equilibrationEnergy = calcEquilibrationEnergy (sites, res);
+    res->avgenergy = calcAverageEnergy(carriers);
 }
 
 /*
@@ -94,4 +95,19 @@ calcCurrentDensity (Carrier * carriers, Results * results)
     for (i = 0; i < prms.ncarriers; ++i)
         ez += carriers[i].dz;
     return ez / (results->simulationTime * prms.nsites);
+}
+
+/*
+ * The average energy of the charge carriers at the present moment
+ * is calculated here. 
+ */
+double
+calcAverageEnergy (Carrier * carriers)
+{
+    int i;
+    double avg = 0;
+    for (i = 0; i < prms.ncarriers; ++i)
+        avg += carriers[i].site->energy;
+    
+    return avg / prms.ncarriers;
 }

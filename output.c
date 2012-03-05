@@ -266,6 +266,8 @@ writeSummary (Results * res, Results * error)
         fprintf (file, "Erro curr. dens.  ");
         fprintf (file, "Equilibration en. ");
         fprintf (file, "Error Eq. en.     ");
+        fprintf (file, "Average energy    ");
+        fprintf (file, "Error avg. en.    ");
         fprintf (file, "Mode              ");
         fprintf (file, "Comment           ");
         fprintf (file, "\n");
@@ -288,6 +290,8 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%-+18e", error->currentDensity);
     fprintf (file, "%-+18e", res->equilibrationEnergy);
     fprintf (file, "%-+18e", error->equilibrationEnergy);
+    fprintf (file, "%-+18e", res->avgenergy);
+    fprintf (file, "%-+18e", error->avgenergy);
     fprintf (file, "%-18s",
              prms.balance_eq ? "Balance eq." : "MC Simulation");
     if (strArgGiven (prms.comment))

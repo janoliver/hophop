@@ -147,7 +147,7 @@ generateParams (Params * prms, int argc, char **argv)
     prms->comment = args.comment_arg;
 
     // simulation times
-    if (0 >= args.relaxation_arg || 0 >= args.simulation_arg)
+    if (0 > args.relaxation_arg || 0 > args.simulation_arg)
     {
         printf ("Please choose valid simulation times\n");
         exit (1);

@@ -38,7 +38,8 @@ main (int argc, char **argv)
     res.currentDensity = 0.0;
     res.simulationTime = 0.0;
     res.equilibrationEnergy = 0.0;
-
+    res.avgenergy = 0.0;
+    
     // set the number of threads
     omp_set_num_threads (prms.nthreads);
 
@@ -53,6 +54,7 @@ main (int argc, char **argv)
             total[iRun - 1].currentDensity = 0.0;
             total[iRun - 1].simulationTime = 0.0;
             total[iRun - 1].equilibrationEnergy = 0.0;
+            total[iRun - 1].avgenergy = 0.0;
 
             // here is where el magico happens
             if (prms.balance_eq)
@@ -74,6 +76,7 @@ main (int argc, char **argv)
         res.currentDensity += total[iRun].currentDensity;
         res.simulationTime += total[iRun].simulationTime;
         res.equilibrationEnergy += total[iRun].equilibrationEnergy;
+        res.avgenergy += total[iRun].avgenergy;
     }
 
 
@@ -82,6 +85,7 @@ main (int argc, char **argv)
     res.currentDensity /= prms.number_runs;
     res.simulationTime /= prms.number_runs;
     res.equilibrationEnergy /= prms.number_runs;
+    res.avgenergy /= prms.number_runs;
 
     // find the errors
     for (iRun = 0; iRun < prms.number_runs; iRun++)
@@ -92,6 +96,8 @@ main (int argc, char **argv)
                                     total[iRun].simulationTime, 2);
         error.equilibrationEnergy = pow (res.equilibrationEnergy -
                                          total[iRun].equilibrationEnergy, 2);
+        error.avgenergy = pow (res.avgenergy -
+                               total[iRun].avgenergy, 2);
 
     }
     error.mobility = sqrt (error.mobility / prms.number_runs);
@@ -100,6 +106,8 @@ main (int argc, char **argv)
     error.simulationTime = sqrt (error.simulationTime / prms.number_runs);
     error.equilibrationEnergy =
         sqrt (error.equilibrationEnergy / prms.number_runs);
+    error.avgenergy =
+        sqrt (error.avgenergy / prms.number_runs);
 
     // summary
     if (strArgGiven (prms.output_summary))

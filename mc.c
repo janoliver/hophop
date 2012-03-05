@@ -41,6 +41,7 @@ MC_run (Results * total, int *iRun)
     total[*iRun - 1].currentDensity = res.currentDensity;
     total[*iRun - 1].simulationTime = res.simulationTime;
     total[*iRun - 1].equilibrationEnergy = res.equilibrationEnergy;
+    total[*iRun - 1].avgenergy = res.avgenergy;
 
     // write output files
     if (strArgGiven (prms.output_folder))
