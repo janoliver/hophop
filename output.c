@@ -279,8 +279,8 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%-+18e", prms.exponent);
     fprintf (file, "%-18d", prms.length_x);
     fprintf (file, "%-18d", prms.ncarriers);
-    fprintf (file, "%-+18e", prms.relaxation);
-    fprintf (file, "%-+18e", prms.simulation);
+    fprintf (file, "%+18d", prms.relaxation);
+    fprintf (file, "%+18d", prms.simulation);
     fprintf (file, "%-+18e", prms.loclength);
     fprintf (file, "%-+18e", prms.temperature);
     fprintf (file, "%-+18e", prms.field);
