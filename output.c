@@ -254,6 +254,8 @@ writeSummary (Results * res, Results * error)
         fprintf (file, "#DOS exponent     ");
         fprintf (file, "System size       ");
         fprintf (file, "Number carriers   ");
+        fprintf (file, "relaxation hops   ");
+        fprintf (file, "simulation hops   ");
         fprintf (file, "Localization len. ");
         fprintf (file, "Temperature       ");
         fprintf (file, "Electric field    ");
@@ -277,6 +279,8 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%-+18e", prms.exponent);
     fprintf (file, "%-18d", prms.length_x);
     fprintf (file, "%-18d", prms.ncarriers);
+    fprintf (file, "%-+18e", prms.relaxation);
+    fprintf (file, "%-+18e", prms.simulation);
     fprintf (file, "%-+18e", prms.loclength);
     fprintf (file, "%-+18e", prms.temperature);
     fprintf (file, "%-+18e", prms.field);
