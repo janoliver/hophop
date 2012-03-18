@@ -106,6 +106,7 @@ typedef struct results
 {
     double mobility;
     double diffusivity;
+    double einsteinrelation;
     double simulationTime;
     double currentDensity;
     double equilibrationEnergy;
@@ -173,6 +174,7 @@ int timeval_subtract (struct timeval *result,
                       struct timeval *x, struct timeval *y);
 double calcMobility (Carrier * carriers, Results * results);
 double calcDiffusivity (Carrier * carriers, Results * results);
+double calcEinsteinRelation (Carrier * carriers, Results * results);
 double calcCurrentDensity (Carrier * carriers, Results * results);
 double calcEquilibrationEnergy (Site * sites, Results * results);
 double calcAverageEnergy (Carrier * carriers);

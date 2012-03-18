@@ -39,13 +39,15 @@ main (int argc, char **argv)
     res.simulationTime = 0.0;
     res.equilibrationEnergy = 0.0;
     res.avgenergy = 0.0;
-
+    res.einsteinrelation = 0.0;
+    
     error.mobility = 0.0;
     error.diffusivity = 0.0;
     error.currentDensity = 0.0;
     error.simulationTime = 0.0;
     error.equilibrationEnergy = 0.0;
     error.avgenergy = 0.0;
+    error.einsteinrelation = 0.0;
     
     // set the number of threads
     omp_set_num_threads (prms.nthreads);
@@ -62,7 +64,8 @@ main (int argc, char **argv)
             total[iRun - 1].simulationTime = 0.0;
             total[iRun - 1].equilibrationEnergy = 0.0;
             total[iRun - 1].avgenergy = 0.0;
-
+            total[iRun - 1].einsteinrelation = 0.0;
+            
             // here is where el magico happens
             if (prms.balance_eq)
             {
@@ -84,6 +87,7 @@ main (int argc, char **argv)
         res.simulationTime += total[iRun].simulationTime;
         res.equilibrationEnergy += total[iRun].equilibrationEnergy;
         res.avgenergy += total[iRun].avgenergy;
+        res.einsteinrelation += total[iRun].einsteinrelation;
     }
 
     res.mobility /= prms.number_runs;
@@ -92,7 +96,8 @@ main (int argc, char **argv)
     res.simulationTime /= prms.number_runs;
     res.equilibrationEnergy /= prms.number_runs;
     res.avgenergy /= prms.number_runs;
-
+    res.einsteinrelation /= prms.number_runs;
+    
     // find the errors
     for (iRun = 0; iRun < prms.number_runs; iRun++)
     {
@@ -104,7 +109,8 @@ main (int argc, char **argv)
                                          total[iRun].equilibrationEnergy, 2);
         error.avgenergy += pow (res.avgenergy -
                                total[iRun].avgenergy, 2);
-
+        error.einsteinrelation += pow (res.einsteinrelation -
+                               total[iRun].einsteinrelation, 2);
     }
     error.mobility = sqrt (error.mobility / prms.number_runs);
     error.diffusivity = sqrt (error.diffusivity / prms.number_runs);
@@ -114,7 +120,9 @@ main (int argc, char **argv)
         sqrt (error.equilibrationEnergy / prms.number_runs);
     error.avgenergy =
         sqrt (error.avgenergy / prms.number_runs);
-
+    error.einsteinrelation =
+        sqrt (error.einsteinrelation / prms.number_runs);
+    
     // summary
     if (strArgGiven (prms.output_summary))
         writeSummary (&res, &error);
@@ -211,8 +219,8 @@ printResults (Results * results, Results * error)
 
     printf ("\tDiffusivity perp. to field:  \tD   = %e (+- %e)\n",
             results->diffusivity, error->diffusivity);
-    printf ("\tEinstein rel. perp. to field: \tu/D = %e e/o\n",
-            results->mobility / results->diffusivity);
+    printf ("\tEinstein rel. perp. to field: \tu/D = %e (+- %e) e/o\n",
+            results->einsteinrelation, error->einsteinrelation);
     printf ("\tCurrent density (z-dir):  \tj   = %e (+- %e)\n",
             results->currentDensity, error->currentDensity);
     printf ("\tEquilibration Energy: \t\tE_i = %e\n",

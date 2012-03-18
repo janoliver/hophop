@@ -264,12 +264,15 @@ writeSummary (Results * res, Results * error)
         fprintf (file, "Error mobility    ");
         fprintf (file, "Diffusivity x/y   ");
         fprintf (file, "Error diffus. x/y ");
+        fprintf (file, "Einstein relation ");
+        fprintf (file, "Error ER          ");
         fprintf (file, "Current density   ");
         fprintf (file, "Erro curr. dens.  ");
         fprintf (file, "Equilibration en. ");
         fprintf (file, "Error Eq. en.     ");
         fprintf (file, "Average energy    ");
         fprintf (file, "Error avg. en.    ");
+        fprintf (file, "random seed       ");
         fprintf (file, "Mode              ");
         fprintf (file, "Comment           ");
         fprintf (file, "\n");
@@ -290,12 +293,15 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%-+18e", error->mobility);
     fprintf (file, "%-+18e", res->diffusivity);
     fprintf (file, "%-+18e", error->diffusivity);
+    fprintf (file, "%-+18e", res->einsteinrelation);
+    fprintf (file, "%-+18e", error->einsteinrelation);
     fprintf (file, "%-+18e", res->currentDensity);
     fprintf (file, "%-+18e", error->currentDensity);
     fprintf (file, "%-+18e", res->equilibrationEnergy);
     fprintf (file, "%-+18e", error->equilibrationEnergy);
     fprintf (file, "%-+18e", res->avgenergy);
     fprintf (file, "%-+18e", error->avgenergy);
+    fprintf (file, "%-18d", prms.rseed);
     fprintf (file, "%-18s",
              prms.balance_eq ? "Balance eq." : "MC Simulation");
     if (strArgGiven (prms.comment))

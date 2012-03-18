@@ -42,7 +42,8 @@ MC_run (Results * total, int *iRun)
     total[*iRun - 1].simulationTime = res.simulationTime;
     total[*iRun - 1].equilibrationEnergy = res.equilibrationEnergy;
     total[*iRun - 1].avgenergy = res.avgenergy;
-
+    total[*iRun - 1].einsteinrelation = res.einsteinrelation;
+    
     // write output files
     if (strArgGiven (prms.output_folder))
     {

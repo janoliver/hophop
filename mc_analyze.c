@@ -11,6 +11,7 @@ MC_calculateResults (Site * sites, Carrier * carriers, Results * res)
     res->currentDensity = calcCurrentDensity (carriers, res);
     res->equilibrationEnergy = calcEquilibrationEnergy (sites, res);
     res->avgenergy = calcAverageEnergy(carriers);
+    res->einsteinrelation = calcEinsteinRelation(carriers, res);
 }
 
 /*
@@ -82,6 +83,33 @@ calcDiffusivity (Carrier * carriers, Results * results)
     //ds = (ez2 - sez) / (2 * results->simulationTime);
     dp = (ex2 + ey2) / (4 * results->simulationTime);
     return dp;
+}
+
+/*
+ * Calculate the einstein relation in units of e/sigma.
+ */
+double
+calcEinsteinRelation(Carrier * carriers, Results * results)
+{
+    double ex, ey, ex2, ey2, ez;
+    int i;
+    ex = 0.0;
+    ey = 0.0;
+    ez = 0.0;
+    ex2 = 0.0;
+    ey2 = 0.0;
+
+    for (i = 0; i < prms.ncarriers; ++i)
+    {
+        ex2 += pow (carriers[i].dx, 2.0);
+        ey2 += pow (carriers[i].dy, 2.0);
+        ez += carriers[i].dz;
+    }
+    ex2 = ex2 / prms.ncarriers;
+    ey2 = ey2 / prms.ncarriers;
+    
+    return (4. * ez) / (prms.ncarriers * prms.field * (ex2 + ey2) );
+
 }
 
 /*
