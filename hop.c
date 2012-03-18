@@ -39,6 +39,13 @@ main (int argc, char **argv)
     res.simulationTime = 0.0;
     res.equilibrationEnergy = 0.0;
     res.avgenergy = 0.0;
+
+    error.mobility = 0.0;
+    error.diffusivity = 0.0;
+    error.currentDensity = 0.0;
+    error.simulationTime = 0.0;
+    error.equilibrationEnergy = 0.0;
+    error.avgenergy = 0.0;
     
     // set the number of threads
     omp_set_num_threads (prms.nthreads);
@@ -79,7 +86,6 @@ main (int argc, char **argv)
         res.avgenergy += total[iRun].avgenergy;
     }
 
-
     res.mobility /= prms.number_runs;
     res.diffusivity /= prms.number_runs;
     res.currentDensity /= prms.number_runs;
@@ -90,13 +96,13 @@ main (int argc, char **argv)
     // find the errors
     for (iRun = 0; iRun < prms.number_runs; iRun++)
     {
-        error.mobility = pow (res.mobility - total[iRun].mobility, 2);
-        error.diffusivity = pow (res.diffusivity - total[iRun].diffusivity, 2);
-        error.simulationTime = pow (res.simulationTime -
+        error.mobility += pow (res.mobility - total[iRun].mobility, 2);
+        error.diffusivity += pow (res.diffusivity - total[iRun].diffusivity, 2);
+        error.simulationTime += pow (res.simulationTime -
                                     total[iRun].simulationTime, 2);
-        error.equilibrationEnergy = pow (res.equilibrationEnergy -
+        error.equilibrationEnergy += pow (res.equilibrationEnergy -
                                          total[iRun].equilibrationEnergy, 2);
-        error.avgenergy = pow (res.avgenergy -
+        error.avgenergy += pow (res.avgenergy -
                                total[iRun].avgenergy, 2);
 
     }

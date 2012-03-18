@@ -195,7 +195,7 @@ MC_createHoppingRates (Site * sites)
         printf (" Done.\n");
 
     // free cells
-    for (l = 0; l < sizeof (cells) / sizeof (Cell); ++l)
+    for (l = 0; l <  prms.nx * prms.ny * prms.nz; ++l)
     {
         sList = cells[l].siteList;
         while (sList)

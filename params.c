@@ -3,34 +3,35 @@
 /*
  * Initialize all the params and make some rudimentary checks.
  */
+struct gengetopt_args_info args;
+
 void
 generateParams (Params * prms, int argc, char **argv)
 {
 
+    // the gengetopt arguments
+    struct cmdline_parser_params *params;
+    params = cmdline_parser_params_create ();
+    prms->cmdlineargs = &args;
+    
+    // init command line parser and exit if anything went wrong
+    if (cmdline_parser (argc, argv, &args) != 0)
+    {
+        printf ("Commandline error\n");
+        exit (1);
+    }
+    
     // random number and timer stuff
     prms->loctime = localtime (&prms->curtime);
     gsl_rng_env_setup ();
     prms->T = gsl_rng_gfsr4;
     prms->r = gsl_rng_alloc (prms->T);
 
-    // the gengetopt arguments
-    struct gengetopt_args_info args;
-    struct cmdline_parser_params *params;
-    params = cmdline_parser_params_create ();
-    prms->cmdlineargs = &args;
-
     // random seed
     prms->rseed = 0;
     if (args.rseed_given)
     {
         prms->rseed = args.rseed_arg;
-    }
-
-    // init command line parser and exit if anything went wrong
-    if (cmdline_parser (argc, argv, &args) != 0)
-    {
-        printf ("Commandline error\n");
-        exit (1);
     }
 
     // do we have to load a config file?
@@ -176,6 +177,9 @@ generateParams (Params * prms, int argc, char **argv)
 
     // threads
     prms->nthreads = (GSL_MIN (omp_get_max_threads (), prms->number_runs));
+
+    // free memory
+    free(params);
     
 }
 
