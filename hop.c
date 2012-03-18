@@ -211,8 +211,8 @@ printResults (Results * results, Results * error)
 
     printf ("\tDiffusivity perp. to field:  \tD   = %e (+- %e)\n",
             results->diffusivity, error->diffusivity);
-    printf ("\tEinstein rel. perp. to field: \tD/u = %e\n",
-            results->diffusivity / (results->mobility * prms.temperature));
+    printf ("\tEinstein rel. perp. to field: \tu/D = %e e/o\n",
+            results->mobility / results->diffusivity);
     printf ("\tCurrent density (z-dir):  \tj   = %e (+- %e)\n",
             results->currentDensity, error->currentDensity);
     printf ("\tEquilibration Energy: \t\tE_i = %e\n",

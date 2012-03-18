@@ -451,9 +451,11 @@ calcHoppingRate (Site i, Site j)
     r *= exp (-2.0 * dist / prms.loclength);
 
     // energy part
-    if (dE > 0)
+    if (dE > 0 && prms.temperature > 0)
         r *= exp (-1.0 * dE / prms.temperature);
-
+    if (dE > 0 && prms.temperature == 0)
+        r = 0;
+    
     return r;
 }
 

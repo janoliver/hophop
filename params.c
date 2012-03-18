@@ -116,7 +116,7 @@ generateParams (Params * prms, int argc, char **argv)
     prms->field = args.field_arg;
 
     // temperature
-    if (0 >= args.temperature_arg)
+    if (0 > args.temperature_arg)
     {
         printf ("Please choose a valid temperature!\n");
         exit (1);
