@@ -159,8 +159,8 @@ BE_solve (Site * sites, Results * res, int *iRun)
     }
 
     // perform the calculation
-    pmgmres_ilu_cr (prms.nsites, nnz, ia, ja, a, x, rhs, 1000,
-                    1000, prms.be_abs_tol, prms.be_rel_tol);
+    pmgmres_ilu_cr (prms.nsites, nnz, ia, ja, a, x, rhs, prms.be_outer_it,
+                    prms.be_it, prms.be_abs_tol, prms.be_rel_tol);
 
     //timer
     gettimeofday (&end, &tz);
