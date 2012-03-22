@@ -34,8 +34,8 @@ AL_run (Results * total, int *iRun)
 
     // convert from units of kT to sigma
     total[*iRun - 1].analytic_mobility /= prms.temperature;
-    total[*iRun - 1].analytic_fermienergy /= prms.temperature;
-    total[*iRun - 1].analytic_transportenergy /= prms.temperature;
+    total[*iRun - 1].analytic_fermienergy *= prms.temperature;
+    total[*iRun - 1].analytic_transportenergy *= prms.temperature;
 
 }
 
