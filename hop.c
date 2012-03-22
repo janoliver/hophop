@@ -68,8 +68,6 @@ main (int argc, char **argv)
     if (strArgGiven (prms.output_summary))
         writeSummary (&res, &error);
 
-    printf ("%e", res.analytic_mobility);
-
     // output results to the command line
     printResults (&res, &error);
 
@@ -152,7 +150,14 @@ printResults (Results * results, Results * error)
     printf ("\nResults:\n");
     printf ("\tMobility in field-direction: \tu   = %e (+- %e)\n",
             results->mobility, error->mobility);
+    printf ("\tAnalytically calculated mob.: \tu   = %e\n",
+            results->analytic_mobility);
+    printf ("\tAnalytic Fermi level: \t\tE_f = %e\n",
+            results->analytic_fermienergy);
+    printf ("\tAnalytic transport energy: \tE_t = %e\n",
+            results->analytic_transportenergy);
 
+    
     if (prms.balance_eq)
     {
         printf ("\n");

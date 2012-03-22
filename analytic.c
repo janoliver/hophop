@@ -91,7 +91,10 @@ al_calcFermiEnergy (Results * res)
     while (upper - lower > precision)
     {
         res->analytic_fermienergy = (upper + lower) / 2.0;
-        gsl_integration_qagiu (&F, 0, 0, 1e-7, 1000000, w, &result, &error);
+        if(prms.gaussian)
+            gsl_integration_qagi (&F, 0, 1e-7, 1000000, w, &result, &error);
+        else
+            gsl_integration_qagiu (&F, 0, 0, 1e-7, 1000000, w, &result, &error);
 
         if (result < (float) prms.ncarriers / prms.nsites)
             upper = res->analytic_fermienergy;
@@ -113,7 +116,10 @@ al_normalizeDos (Results * res)
     gsl_function F;
     F.function = &al_DOSunnormalized;
 
-    gsl_integration_qagiu (&F, 0, 0, 1e-7, 1000000, w, &(dosnorm), &error);
+    if (prms.gaussian)
+        gsl_integration_qagi (&F, 0, 1e-7, 1000000, w, &(dosnorm), &error);
+    else
+        gsl_integration_qagiu (&F, 0, 0, 1e-7, 1000000, w, &(dosnorm), &error);
 
 }
 
@@ -155,6 +161,7 @@ al_calcTransportEnergy (Results * res)
     rightside =
         al_RadiusIntegral (x, res) / (pow (result, 4. / 3.) * 1.5 * factor);
 
+    // a transport energy higher than 0 makes no sense.
     if (fabs (rightside - 1.0) > 0.01)
         x = 0;
 
