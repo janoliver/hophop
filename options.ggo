@@ -22,13 +22,12 @@ option "Y" Y "The y-length of the sample. Right now, only cubic samples should b
 option "Z" Z "The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional 
 option "ncarriers" n "The number of charge carriers in the system." int default="10" optional
 option "nsites" N "The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length." int optional default="125000"
-option "sigma" s "The width of the DOS specified with --exponent." float default="1.0" optional
-option "exponent" p "The exponent of the DOS g(x) = exp(-(x/sigma)^p)" float optional default="2.0"
+option "exponent" p "The exponent of the DOS g(x) = exp(-(x)^p)" float optional default="2.0"
 option "llength" a "Localization length of the sites, assumed equal for all of them." float default="0.215" optional 
 option "rc" - "Determines up to which distance sites should be neighbors." float default="3" optional  
 option "field" F "The electric field strength in z-direction." float default="0.3" optional 
 option "temperature" T "The temperature of the simulation." float default="0.3" optional  
-option "gaussian" - "Use a Gaussian DOS with std. dev. sigma. g(x) = exp(-1/2*(x/sigma)^2)" flag off
+option "gaussian" - "Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2)" flag off
 option "lattice" - "Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc" flag off
 option "removesoftpairs" - "Remove softpairs." flag off
 option "softpairthreshold" - "The min hopping rate ratio to define a softpair" float default="0.95" optional  

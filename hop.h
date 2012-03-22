@@ -33,7 +33,6 @@ typedef struct params
     int nx, ny, nz;
     int ncarriers;
     int nsites;
-    float sigma;
     float exponent;
     float loclength;
     float cutoff_radius;

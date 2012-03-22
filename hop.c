@@ -101,7 +101,6 @@ printSettings ()
     printf ("\t3D sample size: \t\t%d x %d x %d\n",
             prms.length_x, prms.length_y, prms.length_z);
     printf ("\tDOS exponent: \t\t\tp = %1.1f\n", prms.exponent);
-    printf ("\tDOS width: \t\t\ts = %2.4f\n", prms.sigma);
     printf ("\tLocalization length of sites: \ta = %2.4f\n", prms.loclength);
     printf ("\tTemperature: \t\t\tT = %2.4f\n", prms.temperature);
     printf ("\tField strength: \t\tF = %2.4f\n", prms.field);

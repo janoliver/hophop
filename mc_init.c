@@ -52,10 +52,10 @@ MC_createSites ()
                 }
 
                 if (!prms.gaussian)
-                    s[i].energy = (float) gsl_ran_exppow (prms.r, prms.sigma,
+                    s[i].energy = (float) gsl_ran_exppow (prms.r, 1.,
                                                           prms.exponent);
                 else
-                    s[i].energy = (float) gsl_ran_gaussian (prms.r, prms.sigma);
+                    s[i].energy = (float) gsl_ran_gaussian (prms.r, 1.);
 
                 s[i].carrier = NULL;
                 s[i].visited = 0;

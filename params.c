@@ -79,15 +79,7 @@ generateParams (Params * prms, int argc, char **argv)
         exit (1);
     }
     prms->cutoff_radius = args.rc_arg;
-
-    // sigma
-    if (0 >= args.sigma_arg)
-    {
-        printf ("Please choose a valid sigma!\n");
-        exit (1);
-    }
-    prms->sigma = args.sigma_arg;
-
+    
     // exponent
     if (0 >= args.exponent_arg)
     {

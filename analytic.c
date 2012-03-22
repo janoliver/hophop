@@ -33,9 +33,9 @@ AL_run (Results * total, int *iRun)
     al_calcMobility (&(total[*iRun - 1]));
 
     // convert from units of kT to sigma
-    total[*iRun - 1].analytic_mobility *= prms.sigma / prms.temperature;
-    total[*iRun - 1].analytic_fermienergy *= prms.sigma / prms.temperature;
-    total[*iRun - 1].analytic_transportenergy *= prms.sigma / prms.temperature;
+    total[*iRun - 1].analytic_mobility /= prms.temperature;
+    total[*iRun - 1].analytic_fermienergy /= prms.temperature;
+    total[*iRun - 1].analytic_transportenergy /= prms.temperature;
 
 }
 
@@ -173,7 +173,7 @@ al_calcTransportEnergy (Results * res)
 double
 al_DOSunnormalized (double x, void *p)
 {
-    return exp (-pow (x / prms.sigma * prms.temperature, prms.exponent));
+    return exp (-pow (x * prms.temperature, prms.exponent));
 }
 
 double
