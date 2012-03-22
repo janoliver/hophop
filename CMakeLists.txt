@@ -46,7 +46,7 @@ ADD_EXECUTABLE(hop
                    analytic.c
                    helper.c
                    cmdline.c cmdline.h
-                   mgmres.c
+                   mgmres.c mgmres.h
 )
 
 TARGET_LINK_LIBRARIES(hop 

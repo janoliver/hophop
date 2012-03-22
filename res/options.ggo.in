@@ -42,7 +42,7 @@ option "relaxation" R "The number of hops to relax." long default="100000000" op
 section "Balance equations" sectiondesc="These options only matter, when the solution is found by solving the balance equations. (setting the --be flag)"
 
 option "be" - "Solve balance equations" flag off
-option "be_it" - "Max inner iterations after which the calculation is stopped. If 0 is specified, the default is Number of sites - 1" long default="0" optional
+option "be_it" - "Max inner iterations after which the calculation is stopped. " long default="1000" optional
 option "be_oit" - "Max outer iterations or restarts of the algorithm." long default="1" optional
 option "tol_abs" - "absolute tolerance for finding the solution" float default="1e-8" optional
 option "tol_rel" - "relative tolerance for finding the solution" float default="1e-8" optional

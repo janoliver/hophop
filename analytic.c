@@ -32,6 +32,11 @@ AL_run (Results * total, int *iRun)
     al_calcTransportEnergy (&(total[*iRun - 1]));
     al_calcMobility (&(total[*iRun - 1]));
 
+    // convert from units of kT to sigma
+    total[*iRun - 1].analytic_mobility *= prms.sigma / prms.temperature;
+    total[*iRun - 1].analytic_fermienergy *= prms.sigma / prms.temperature;
+    total[*iRun - 1].analytic_transportenergy *= prms.sigma / prms.temperature;
+
 }
 
 /*
@@ -43,7 +48,7 @@ al_calcMobility (Results * res)
 
     double error, int1, int2, radius, prefactor, exponent, end;
 
-    end = res->analytic_transportenergy / prms.temperature;
+    end = res->analytic_transportenergy;
 
     gsl_function F;
 
@@ -61,11 +66,11 @@ al_calcMobility (Results * res)
     radius = 1 / (pow (prefactor * int1, 1.0 / 3.0));
     exponent =
         -2 * radius / prms.loclength + end -
-        res->analytic_fermienergy / prms.temperature;
+        res->analytic_fermienergy;
 
     // mobility
     res->analytic_mobility =
-        exp (exponent - log (prefactor * radius * int2)) / prms.temperature;
+        exp (exponent - log (prefactor * radius * int2)); 
 }
 
 /*
@@ -94,7 +99,7 @@ al_calcFermiEnergy (Results * res)
             lower = res->analytic_fermienergy;
     }
 
-    res->analytic_fermienergy *= prms.temperature;
+    //res->analytic_fermienergy *= prms.temperature;
 }
 
 /*
@@ -153,7 +158,7 @@ al_calcTransportEnergy (Results * res)
     if (fabs (rightside - 1.0) > 0.01)
         x = 0;
 
-    res->analytic_transportenergy = x * prms.temperature;
+    res->analytic_transportenergy = x;
 }
 
 // the following are helper functions --------------
@@ -161,7 +166,7 @@ al_calcTransportEnergy (Results * res)
 double
 al_DOSunnormalized (double x, void *p)
 {
-    return exp (-pow (x / prms.sigma, prms.exponent));
+    return exp (-pow (x / prms.sigma * prms.temperature, prms.exponent));
 }
 
 double
@@ -173,7 +178,7 @@ al_DOS (double x, Results * params)
 double
 al_fermidirac (double x, Results * params)
 {
-    return 1 / (1 + exp (params->analytic_fermienergy / prms.temperature - x));
+    return 1 / (1 + exp (params->analytic_fermienergy - x));
 }
 
 double
