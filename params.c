@@ -169,6 +169,11 @@ generateParams (Params * prms, int argc, char **argv)
     }
     prms->ncarriers = args.ncarriers_arg;
 
+    // currently, the balance equations can only handle one single carrier.
+    // therefore, if we use them, ncarriers is set to 1
+    if (prms.balance_eq)
+        prms.ncarriers = 1;
+
     // number of runs
     if (args.nruns_arg < 1)
         args.nruns_arg = 1;
