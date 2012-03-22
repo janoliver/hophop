@@ -131,7 +131,7 @@ al_calcTransportEnergy (Results * res)
 {
 
     double precision = 0.0000000001;
-    double upper = 40.0, lower = 0.0, x;
+    double upper = 40.0, lower = -20.0, x;
     double result, error, rightside;
 
     gsl_function F;
@@ -163,6 +163,9 @@ al_calcTransportEnergy (Results * res)
 
     // a transport energy higher than 0 makes no sense.
     if (fabs (rightside - 1.0) > 0.01)
+        x = 0;
+
+    if (x < 0 && !prms.gaussian)
         x = 0;
 
     res->analytic_transportenergy = x;
