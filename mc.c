@@ -31,23 +31,13 @@ MC_run (Results * total, int *iRun)
     carriers = MC_distributeCarriers (sites);
 
     // simulate
-    Results res;
-    MC_simulation (sites, carriers, &res, iRun);
-    MC_calculateResults (sites, carriers, &res);
+    MC_simulation (sites, carriers, &(total[*iRun - 1]), iRun);
+    MC_calculateResults (sites, carriers, &(total[*iRun - 1]));
 
-    // add results to the total result struct for averaging
-    total[*iRun - 1].mobility = res.mobility;
-    total[*iRun - 1].diffusivity = res.diffusivity;
-    total[*iRun - 1].currentDensity = res.currentDensity;
-    total[*iRun - 1].simulationTime = res.simulationTime;
-    total[*iRun - 1].equilibrationEnergy = res.equilibrationEnergy;
-    total[*iRun - 1].avgenergy = res.avgenergy;
-    total[*iRun - 1].einsteinrelation = res.einsteinrelation;
-    
     // write output files
     if (strArgGiven (prms.output_folder))
     {
-        writeResults (&res, *iRun);
+        writeResults (&(total[*iRun - 1]), *iRun);
         writeConfig (*iRun);
         writeSites (sites, *iRun);
         writeSitesConfig (sites, *iRun);

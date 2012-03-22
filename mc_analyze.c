@@ -10,8 +10,8 @@ MC_calculateResults (Site * sites, Carrier * carriers, Results * res)
     res->diffusivity = calcDiffusivity (carriers, res);
     res->currentDensity = calcCurrentDensity (carriers, res);
     res->equilibrationEnergy = calcEquilibrationEnergy (sites, res);
-    res->avgenergy = calcAverageEnergy(carriers);
-    res->einsteinrelation = calcEinsteinRelation(carriers, res);
+    res->avgenergy = calcAverageEnergy (carriers);
+    res->einsteinrelation = calcEinsteinRelation (carriers, res);
 }
 
 /*
@@ -89,7 +89,7 @@ calcDiffusivity (Carrier * carriers, Results * results)
  * Calculate the einstein relation in units of e/sigma.
  */
 double
-calcEinsteinRelation(Carrier * carriers, Results * results)
+calcEinsteinRelation (Carrier * carriers, Results * results)
 {
     double ex, ey, ex2, ey2, ez;
     int i;
@@ -107,9 +107,9 @@ calcEinsteinRelation(Carrier * carriers, Results * results)
     }
     ex2 = ex2 / prms.ncarriers;
     ey2 = ey2 / prms.ncarriers;
-    ez  = ez / prms.ncarriers;
-    
-    return (4. * ez) / (prms.field * (ex2 + ey2) );
+    ez = ez / prms.ncarriers;
+
+    return (4. * ez) / (prms.field * (ex2 + ey2));
 
 }
 
@@ -137,6 +137,6 @@ calcAverageEnergy (Carrier * carriers)
     double avg = 0;
     for (i = 0; i < prms.ncarriers; ++i)
         avg += carriers[i].site->energy;
-    
+
     return avg / prms.ncarriers;
 }

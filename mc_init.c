@@ -195,7 +195,7 @@ MC_createHoppingRates (Site * sites)
         printf (" Done.\n");
 
     // free cells
-    for (l = 0; l <  prms.nx * prms.ny * prms.nz; ++l)
+    for (l = 0; l < prms.nx * prms.ny * prms.nz; ++l)
     {
         sList = cells[l].siteList;
         while (sList)
@@ -455,7 +455,7 @@ calcHoppingRate (Site i, Site j)
         r *= exp (-1.0 * dE / prms.temperature);
     if (dE > 0 && prms.temperature == 0)
         r = 0;
-    
+
     return r;
 }
 

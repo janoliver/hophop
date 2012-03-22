@@ -17,6 +17,10 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_math.h>
+#include <gsl/gsl_integration.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_const_cgsm.h>
+#include <gsl/gsl_const_mksa.h>
 
 #include "config.h"
 
@@ -66,6 +70,9 @@ typedef struct params
     const gsl_rng_type *T;
     gsl_rng *r;
 
+    // analytics
+    float percthresh;
+
     struct gengetopt_args_info *cmdlineargs;
 
 } Params;
@@ -113,6 +120,12 @@ typedef struct results
     size_t nHops;
     size_t nFailedAttempts;
     double avgenergy;
+
+    // these values are calculated analytically
+    // in analytic.c
+    double analytic_mobility;
+    double analytic_transportenergy;
+    double analytic_fermienergy;
 } Results;
 
 typedef struct vector
@@ -148,13 +161,11 @@ typedef struct softpair
 
 extern Params prms;
 
-void MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun);
-Site *MC_createSites ();
-Carrier *MC_distributeCarriers (Site * sites);
-void MC_createHoppingRates (Site * sites);
-void MC_removeSoftPairs (Site * sites);
-void MC_calculateResults (Site * sites, Carrier * carriers, Results * res);
-void MC_run (Results * total, int *iRun);
+// helpers
+void average_results (Results * res, Results * total, Results * error);
+void init_results (Results * res);
+void add_results_to_results (Results * res, Results * to_add);
+void divide_results_by_scalar (Results * res, double scalar);
 
 // output.c
 void writeSites (Site * sites, int iRun);
@@ -170,6 +181,14 @@ void generateParams (Params * prms, int argc, char **argv);
 bool serialOutput ();
 
 //mc
+void MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun);
+Site *MC_createSites ();
+Carrier *MC_distributeCarriers (Site * sites);
+void MC_createHoppingRates (Site * sites);
+void MC_removeSoftPairs (Site * sites);
+void MC_calculateResults (Site * sites, Carrier * carriers, Results * res);
+void MC_run (Results * total, int *iRun);
+
 int timeval_subtract (struct timeval *result,
                       struct timeval *x, struct timeval *y);
 double calcMobility (Carrier * carriers, Results * results);
@@ -182,5 +201,9 @@ double calcAverageEnergy (Carrier * carriers);
 // balance equations
 void BE_run (Results * total, int *iRun);
 void BE_solve (Site * sites, Results * res, int *iRun);
+
+// analytic calculator
+void AL_run (Results * total, int *iRun);
+
 
 #endif /* HOP_H */

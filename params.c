@@ -13,14 +13,14 @@ generateParams (Params * prms, int argc, char **argv)
     struct cmdline_parser_params *params;
     params = cmdline_parser_params_create ();
     prms->cmdlineargs = &args;
-    
+
     // init command line parser and exit if anything went wrong
     if (cmdline_parser (argc, argv, &args) != 0)
     {
         printf ("Commandline error\n");
         exit (1);
     }
-    
+
     // random number and timer stuff
     prms->loctime = localtime (&prms->curtime);
     gsl_rng_env_setup ();
@@ -178,9 +178,17 @@ generateParams (Params * prms, int argc, char **argv)
     // threads
     prms->nthreads = (GSL_MIN (omp_get_max_threads (), prms->number_runs));
 
+    // analytics
+    if (args.percolation_threshold_arg <= 0)
+    {
+        printf ("This is not a valid percolation threshold.\n");
+        exit (1);
+    }
+    prms->percthresh = args.percolation_threshold_arg;
+
     // free memory
-    free(params);
-    
+    free (params);
+
 }
 
 /*

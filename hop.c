@@ -32,23 +32,9 @@ main (int argc, char **argv)
     // start simulation
     int iRun;
     Results total[prms.number_runs], res, error;
+    init_results (&res);
+    init_results (&error);
 
-    res.mobility = 0.0;
-    res.diffusivity = 0.0;
-    res.currentDensity = 0.0;
-    res.simulationTime = 0.0;
-    res.equilibrationEnergy = 0.0;
-    res.avgenergy = 0.0;
-    res.einsteinrelation = 0.0;
-    
-    error.mobility = 0.0;
-    error.diffusivity = 0.0;
-    error.currentDensity = 0.0;
-    error.simulationTime = 0.0;
-    error.equilibrationEnergy = 0.0;
-    error.avgenergy = 0.0;
-    error.einsteinrelation = 0.0;
-    
     // set the number of threads
     omp_set_num_threads (prms.nthreads);
 
@@ -58,14 +44,8 @@ main (int argc, char **argv)
         for (iRun = 1; iRun <= prms.number_runs; iRun++)
         {
 
-            total[iRun - 1].mobility = 0.0;
-            total[iRun - 1].diffusivity = 0.0;
-            total[iRun - 1].currentDensity = 0.0;
-            total[iRun - 1].simulationTime = 0.0;
-            total[iRun - 1].equilibrationEnergy = 0.0;
-            total[iRun - 1].avgenergy = 0.0;
-            total[iRun - 1].einsteinrelation = 0.0;
-            
+            init_results (&(total[iRun - 1]));
+
             // here is where el magico happens
             if (prms.balance_eq)
             {
@@ -75,57 +55,20 @@ main (int argc, char **argv)
             {
                 MC_run (total, &iRun);
             }
+
+            // always run analytic calculations as well
+            AL_run (total, &iRun);
         }
     }
 
-    // perform the averaging
-    for (iRun = 0; iRun < prms.number_runs; iRun++)
-    {
-        res.mobility += total[iRun].mobility;
-        res.diffusivity += total[iRun].diffusivity;
-        res.currentDensity += total[iRun].currentDensity;
-        res.simulationTime += total[iRun].simulationTime;
-        res.equilibrationEnergy += total[iRun].equilibrationEnergy;
-        res.avgenergy += total[iRun].avgenergy;
-        res.einsteinrelation += total[iRun].einsteinrelation;
-    }
+    // average results (see helper.c)
+    average_results (&res, total, &error);
 
-    res.mobility /= prms.number_runs;
-    res.diffusivity /= prms.number_runs;
-    res.currentDensity /= prms.number_runs;
-    res.simulationTime /= prms.number_runs;
-    res.equilibrationEnergy /= prms.number_runs;
-    res.avgenergy /= prms.number_runs;
-    res.einsteinrelation /= prms.number_runs;
-    
-    // find the errors
-    for (iRun = 0; iRun < prms.number_runs; iRun++)
-    {
-        error.mobility += pow (res.mobility - total[iRun].mobility, 2);
-        error.diffusivity += pow (res.diffusivity - total[iRun].diffusivity, 2);
-        error.simulationTime += pow (res.simulationTime -
-                                    total[iRun].simulationTime, 2);
-        error.equilibrationEnergy += pow (res.equilibrationEnergy -
-                                         total[iRun].equilibrationEnergy, 2);
-        error.avgenergy += pow (res.avgenergy -
-                               total[iRun].avgenergy, 2);
-        error.einsteinrelation += pow (res.einsteinrelation -
-                               total[iRun].einsteinrelation, 2);
-    }
-    error.mobility = sqrt (error.mobility / prms.number_runs);
-    error.diffusivity = sqrt (error.diffusivity / prms.number_runs);
-    error.currentDensity = sqrt (error.currentDensity / prms.number_runs);
-    error.simulationTime = sqrt (error.simulationTime / prms.number_runs);
-    error.equilibrationEnergy =
-        sqrt (error.equilibrationEnergy / prms.number_runs);
-    error.avgenergy =
-        sqrt (error.avgenergy / prms.number_runs);
-    error.einsteinrelation =
-        sqrt (error.einsteinrelation / prms.number_runs);
-    
     // summary
     if (strArgGiven (prms.output_summary))
         writeSummary (&res, &error);
+
+    printf ("%e", res.analytic_mobility);
 
     // output results to the command line
     printResults (&res, &error);
@@ -144,7 +87,7 @@ printApplicationHeader ()
     if (prms.quiet)
         return;
     printf ("\n\n################### %s v%s ################### \n",
-            PKG_NAME,PKG_VERSION);
+            PKG_NAME, PKG_VERSION);
 }
 
 /*
@@ -167,9 +110,8 @@ printSettings ()
     printf ("\tCut-off radius: \t\tr = %2.4f\n", prms.cutoff_radius);
     printf ("\tNumber of sites: \t\tN = %d\n\n", prms.nsites);
 
-    if(prms.parallel)
-        printf ("\tParallelization: \t\tRunning on %d cores\n",
-                prms.nthreads);
+    if (prms.parallel)
+        printf ("\tParallelization: \t\tRunning on %d cores\n", prms.nthreads);
     else
         printf ("\tParallelization: \t\tOff\n");
 
@@ -177,7 +119,7 @@ printSettings ()
     printf ("\tMode: \t\t\t\t%s\n",
             prms.balance_eq ? "Balance equations" : "Monte carlo simulation");
 
-    if(prms.balance_eq)
+    if (prms.balance_eq)
     {
         printf ("\tMax. nr. of outer iterations: \t%d\n", prms.be_outer_it);
         printf ("\tMax. nr. of inner iterations: \t%d\n", prms.be_it);

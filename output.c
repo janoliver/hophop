@@ -184,7 +184,7 @@ writeResults (Results * res, int iRun)
     }
 
     // write site information
-    if(prms.balance_eq)
+    if (prms.balance_eq)
     {
         fprintf (file, "%-18e", res->simulationTime);
         fprintf (file, "%-+18e", res->mobility);
@@ -202,7 +202,7 @@ writeResults (Results * res, int iRun)
         fprintf (file, "%-+18e", res->equilibrationEnergy);
         fprintf (file, "%lu\n", prms.rseed_used);
     }
-    
+
     fclose (file);
 
     // some output
@@ -302,8 +302,7 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%-+18e", res->avgenergy);
     fprintf (file, "%-+18e", error->avgenergy);
     fprintf (file, "%-18d", prms.rseed);
-    fprintf (file, "%-18s",
-             prms.balance_eq ? "Balance eq." : "MC Simulation");
+    fprintf (file, "%-18s", prms.balance_eq ? "Balance eq." : "MC Simulation");
     if (strArgGiven (prms.comment))
         fprintf (file, "%s", prms.comment);
     fprintf (file, "\n");

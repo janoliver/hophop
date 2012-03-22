@@ -28,20 +28,12 @@ BE_run (Results * total, int *iRun)
         MC_removeSoftPairs (sites);
 
     // solve
-    Results res;
-    BE_solve (sites, &res, iRun);
-
-    // add results to the total result struct for averaging
-    total[*iRun - 1].mobility = res.mobility;
-    total[*iRun - 1].diffusivity = res.diffusivity;
-    total[*iRun - 1].currentDensity = res.currentDensity;
-    total[*iRun - 1].simulationTime = res.simulationTime;
-    total[*iRun - 1].equilibrationEnergy = res.equilibrationEnergy;
+    BE_solve (sites, &(total[*iRun - 1]), iRun);
 
     // write output files
     if (strArgGiven (prms.output_folder))
     {
-        writeResults (&res, *iRun);
+        writeResults (&(total[*iRun - 1]), *iRun);
         writeConfig (*iRun);
         writeSites (sites, *iRun);
         writeSitesConfig (sites, *iRun);
@@ -99,7 +91,7 @@ BE_solve (Site * sites, Results * res, int *iRun)
     }
 
     //allocate memory
-    ia = malloc (sizeof (int) * (prms.nsites+1));
+    ia = malloc (sizeof (int) * (prms.nsites + 1));
     ja = malloc (sizeof (int) * nnz);
     a = malloc (sizeof (double) * nnz);
     rhs = calloc (prms.nsites, sizeof (double));
@@ -108,14 +100,14 @@ BE_solve (Site * sites, Results * res, int *iRun)
     // create the arrays
     int counter = 0;
     ia[0] = 0;
-    for(i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < prms.nsites; ++i)
     {
         // first element is always 1
         a[counter] = 1;
         ja[counter] = i;
         counter++;
     }
-    
+
     for (i = 1; i < prms.nsites; ++i)
     {
         // where does the current row begin?
@@ -125,7 +117,7 @@ BE_solve (Site * sites, Results * res, int *iRun)
         a[counter] = -1 * sites[i].rateSum;
         ja[counter] = i;
         counter++;
-        
+
         // now the neighbors
         neighbor = sites[i].neighbors;
         while (neighbor)
@@ -136,7 +128,8 @@ BE_solve (Site * sites, Results * res, int *iRun)
             neighbor2 = neighbor->s->neighbors;
             while (neighbor2)
             {
-                if(neighbor2->s->index == i) {
+                if (neighbor2->s->index == i)
+                {
                     a[counter] = neighbor2->rate;
                     break;
                 }

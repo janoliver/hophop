@@ -47,6 +47,10 @@ option "be_oit" - "Max outer iterations or restarts of the algorithm." long defa
 option "tol_abs" - "absolute tolerance for finding the solution" float default="1e-8" optional
 option "tol_rel" - "relative tolerance for finding the solution" float default="1e-8" optional
 
+section "Analytic calculations" sectiondesc="These options control the analytic calculation of several properties of the system, like the transport energy or the mobility."
+
+option "percolation_threshold" B "The percolation threshold." float default="2.7" optional
+
 section "Output"
 
 option "outputfolder" o "The name of the output folder if one wants output files." string optional
