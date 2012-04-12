@@ -56,8 +56,9 @@ main (int argc, char **argv)
                 MC_run (total, &iRun);
             }
 
-            // always run analytic calculations as well
-            AL_run (total, &iRun);
+            // run analytic calculations as well ?
+            if(prms.analytic)
+                AL_run (total, &iRun);
         }
     }
 

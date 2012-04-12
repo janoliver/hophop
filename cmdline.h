@@ -118,6 +118,8 @@ struct gengetopt_args_info
   float tol_rel_arg;	/**< @brief relative tolerance for finding the solution (default='1e-8').  */
   char * tol_rel_orig;	/**< @brief relative tolerance for finding the solution original value given at command line.  */
   const char *tol_rel_help; /**< @brief relative tolerance for finding the solution help description.  */
+  int an_flag;	/**< @brief Also try to calculate stuff analytically (default=off).  */
+  const char *an_help; /**< @brief Also try to calculate stuff analytically help description.  */
   float percolation_threshold_arg;	/**< @brief The percolation threshold. (default='2.7').  */
   char * percolation_threshold_orig;	/**< @brief The percolation threshold. original value given at command line.  */
   const char *percolation_threshold_help; /**< @brief The percolation threshold. help description.  */
@@ -164,6 +166,7 @@ struct gengetopt_args_info
   unsigned int be_oit_given ;	/**< @brief Whether be_oit was given.  */
   unsigned int tol_abs_given ;	/**< @brief Whether tol_abs was given.  */
   unsigned int tol_rel_given ;	/**< @brief Whether tol_rel was given.  */
+  unsigned int an_given ;	/**< @brief Whether an was given.  */
   unsigned int percolation_threshold_given ;	/**< @brief Whether percolation_threshold was given.  */
   unsigned int outputfolder_given ;	/**< @brief Whether outputfolder was given.  */
   unsigned int transitions_given ;	/**< @brief Whether transitions was given.  */

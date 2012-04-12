@@ -27,7 +27,7 @@
 
 const char *gengetopt_args_info_purpose = "This software simulates hopping in disordered semiconductors with hopping on \nlocalized states. It uses Monte-Carlo simulation techniques. See the README \nfile to learn more.";
 
-const char *gengetopt_args_info_usage = "Usage: HOP [-h|--help] [-V|--version] [-q|--quiet] \n         [-fSTRING|--conf_file=STRING] [-m|--memreq] [--rseed=LONG] \n         [-iINT|--nruns=INT] [-P|--parallel] [-lINT|--length=INT] \n         [-XINT|--X=INT] [-YINT|--Y=INT] [-ZINT|--Z=INT] \n         [-nINT|--ncarriers=INT] [-NINT|--nsites=INT] \n         [-pFLOAT|--exponent=FLOAT] [-aFLOAT|--llength=FLOAT] [--rc=FLOAT] \n         [-FFLOAT|--field=FLOAT] [-TFLOAT|--temperature=FLOAT] [--gaussian] \n         [--lattice] [--removesoftpairs] [--softpairthreshold=FLOAT] [--ar] \n         [-ILONG|--simulation=LONG] [-RLONG|--relaxation=LONG] [--be] \n         [--be_it=LONG] [--be_oit=LONG] [--tol_abs=FLOAT] [--tol_rel=FLOAT] \n         [-BFLOAT|--percolation_threshold=FLOAT] \n         [-oSTRING|--outputfolder=STRING] [--transitions] \n         [-ySTRING|--summary=STRING] [-cSTRING|--comment=STRING]";
+const char *gengetopt_args_info_usage = "Usage: HOP [-h|--help] [-V|--version] [-q|--quiet] \n         [-fSTRING|--conf_file=STRING] [-m|--memreq] [--rseed=LONG] \n         [-iINT|--nruns=INT] [-P|--parallel] [-lINT|--length=INT] \n         [-XINT|--X=INT] [-YINT|--Y=INT] [-ZINT|--Z=INT] \n         [-nINT|--ncarriers=INT] [-NINT|--nsites=INT] \n         [-pFLOAT|--exponent=FLOAT] [-aFLOAT|--llength=FLOAT] [--rc=FLOAT] \n         [-FFLOAT|--field=FLOAT] [-TFLOAT|--temperature=FLOAT] [--gaussian] \n         [--lattice] [--removesoftpairs] [--softpairthreshold=FLOAT] [--ar] \n         [-ILONG|--simulation=LONG] [-RLONG|--relaxation=LONG] [--be] \n         [--be_it=LONG] [--be_oit=LONG] [--tol_abs=FLOAT] [--tol_rel=FLOAT] \n         [--an] [-BFLOAT|--percolation_threshold=FLOAT] \n         [-oSTRING|--outputfolder=STRING] [--transitions] \n         [-ySTRING|--summary=STRING] [-cSTRING|--comment=STRING]";
 
 const char *gengetopt_args_info_description = "";
 
@@ -71,6 +71,7 @@ const char *gengetopt_args_info_help[] = {
   "      --tol_rel=FLOAT           relative tolerance for finding the solution  \n                                  (default=`1e-8')",
   "\nAnalytic calculations:",
   "  These options control the analytic calculation of several properties of the \n  system, like the transport energy or the mobility.",
+  "      --an                      Also try to calculate stuff analytically  \n                                  (default=off)",
   "  -B, --percolation_threshold=FLOAT\n                                The percolation threshold.  (default=`2.7')",
   "\nOutput:",
   "  -o, --outputfolder=STRING     The name of the output folder if one wants \n                                  output files.",
@@ -159,6 +160,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->be_oit_given = 0 ;
   args_info->tol_abs_given = 0 ;
   args_info->tol_rel_given = 0 ;
+  args_info->an_given = 0 ;
   args_info->percolation_threshold_given = 0 ;
   args_info->outputfolder_given = 0 ;
   args_info->transitions_given = 0 ;
@@ -218,6 +220,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->tol_abs_orig = NULL;
   args_info->tol_rel_arg = 1e-8;
   args_info->tol_rel_orig = NULL;
+  args_info->an_flag = 0;
   args_info->percolation_threshold_arg = 2.7;
   args_info->percolation_threshold_orig = NULL;
   args_info->outputfolder_arg = NULL;
@@ -266,11 +269,12 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->be_oit_help = gengetopt_args_info_help[34] ;
   args_info->tol_abs_help = gengetopt_args_info_help[35] ;
   args_info->tol_rel_help = gengetopt_args_info_help[36] ;
-  args_info->percolation_threshold_help = gengetopt_args_info_help[39] ;
-  args_info->outputfolder_help = gengetopt_args_info_help[41] ;
-  args_info->transitions_help = gengetopt_args_info_help[42] ;
-  args_info->summary_help = gengetopt_args_info_help[43] ;
-  args_info->comment_help = gengetopt_args_info_help[44] ;
+  args_info->an_help = gengetopt_args_info_help[39] ;
+  args_info->percolation_threshold_help = gengetopt_args_info_help[40] ;
+  args_info->outputfolder_help = gengetopt_args_info_help[42] ;
+  args_info->transitions_help = gengetopt_args_info_help[43] ;
+  args_info->summary_help = gengetopt_args_info_help[44] ;
+  args_info->comment_help = gengetopt_args_info_help[45] ;
   
 }
 
@@ -472,6 +476,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "tol_abs", args_info->tol_abs_orig, 0);
   if (args_info->tol_rel_given)
     write_into_file(outfile, "tol_rel", args_info->tol_rel_orig, 0);
+  if (args_info->an_given)
+    write_into_file(outfile, "an", 0, 0 );
   if (args_info->percolation_threshold_given)
     write_into_file(outfile, "percolation_threshold", args_info->percolation_threshold_orig, 0);
   if (args_info->outputfolder_given)
@@ -775,6 +781,7 @@ cmdline_parser_internal (
         { "be_oit",	1, NULL, 0 },
         { "tol_abs",	1, NULL, 0 },
         { "tol_rel",	1, NULL, 0 },
+        { "an",	0, NULL, 0 },
         { "percolation_threshold",	1, NULL, 'B' },
         { "outputfolder",	1, NULL, 'o' },
         { "transitions",	0, NULL, 0 },
@@ -1201,6 +1208,18 @@ cmdline_parser_internal (
                 &(local_args_info.tol_rel_given), optarg, 0, "1e-8", ARG_FLOAT,
                 check_ambiguity, override, 0, 0,
                 "tol_rel", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Also try to calculate stuff analytically.  */
+          else if (strcmp (long_options[option_index].name, "an") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->an_flag), 0, &(args_info->an_given),
+                &(local_args_info.an_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "an", '-',
                 additional_error))
               goto failure;
           

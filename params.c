@@ -125,7 +125,8 @@ generateParams (Params * prms, int argc, char **argv)
     prms->output_transitions = (args.transitions_given) ? true : false;
     prms->memreq = (args.memreq_given) ? true : false;
     prms->balance_eq = (args.be_given) ? true : false;
-
+    prms->analytic = (args.an_given) ? true : false;
+    
     // balance equation parameters
     if (args.be_it_arg == 0)
         args.be_it_arg = prms->nsites - 1;
@@ -182,7 +183,7 @@ generateParams (Params * prms, int argc, char **argv)
         exit (1);
     }
     prms->percthresh = args.percolation_threshold_arg;
-
+    
     // free memory
     free (params);
 

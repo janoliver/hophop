@@ -48,6 +48,7 @@ option "tol_rel" - "relative tolerance for finding the solution" float default="
 
 section "Analytic calculations" sectiondesc="These options control the analytic calculation of several properties of the system, like the transport energy or the mobility."
 
+option "an" - "Also try to calculate stuff analytically" flag off
 option "percolation_threshold" B "The percolation threshold." float default="2.7" optional
 
 section "Output"
