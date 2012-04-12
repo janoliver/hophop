@@ -105,11 +105,11 @@ calcEinsteinRelation (Carrier * carriers, Results * results)
         ey2 += pow (carriers[i].dy, 2.0);
         ez += carriers[i].dz;
     }
-    ex2 = ex2 / prms.ncarriers;
-    ey2 = ey2 / prms.ncarriers;
-    ez = ez / prms.ncarriers;
+    ex2 /= prms.ncarriers;
+    ey2 /= prms.ncarriers;
+    ez /= prms.ncarriers;
 
-    return (4. * ez) / (prms.field * (ex2 + ey2));
+    return (4. * ez) / (prms.field * (ex2 + ey2)) * prms.temperature;
 
 }
 
