@@ -57,7 +57,7 @@ main (int argc, char **argv)
             }
 
             // run analytic calculations as well ?
-            if(prms.analytic)
+            if (prms.analytic)
                 AL_run (total, &iRun);
         }
     }
@@ -157,7 +157,7 @@ printResults (Results * results, Results * error)
     printf ("\tAnalytic transport energy: \tE_t = %e\n",
             results->analytic_transportenergy);
 
-    
+
     if (prms.balance_eq)
     {
         printf ("\n");

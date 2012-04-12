@@ -505,7 +505,8 @@ dmatrix (int nrl, int nrh, int ncl, int nch)
         printf ("\n");
         printf ("DMATRIX - Fatal error!\n");
         printf ("  Failure allocating pointers to rows.\n");
-        printf ("  Tried to allocate %lu bytes\n", (size_t) ((nrow + 1) * sizeof (double *)));
+        printf ("  Tried to allocate %lu bytes\n",
+                (size_t) ((nrow + 1) * sizeof (double *)));
         exit (1);
     }
     m = m + 1;
@@ -520,7 +521,8 @@ dmatrix (int nrl, int nrh, int ncl, int nch)
         printf ("\n");
         printf ("DMATRIX - Fatal error!\n");
         printf ("  Failure allocating rows.\n");
-        printf ("  Tried to allocate %lu bytes\n", (size_t) ((nrow * ncol + 1) * sizeof (double)));
+        printf ("  Tried to allocate %lu bytes\n",
+                (size_t) ((nrow * ncol + 1) * sizeof (double)));
         exit (1);
     }
     m[nrl] = m[nrl] + 1;

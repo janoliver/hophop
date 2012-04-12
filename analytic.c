@@ -64,13 +64,10 @@ al_calcMobility (Results * res)
     // calculate some variables
     prefactor = 4 * M_PI / (3 * prms.percthresh);
     radius = 1 / (pow (prefactor * int1, 1.0 / 3.0));
-    exponent =
-        -2 * radius / prms.loclength + end -
-        res->analytic_fermienergy;
+    exponent = -2 * radius / prms.loclength + end - res->analytic_fermienergy;
 
     // mobility
-    res->analytic_mobility =
-        exp (exponent - log (prefactor * radius * int2)); 
+    res->analytic_mobility = exp (exponent - log (prefactor * radius * int2));
 }
 
 /*
@@ -91,7 +88,7 @@ al_calcFermiEnergy (Results * res)
     while (upper - lower > precision)
     {
         res->analytic_fermienergy = (upper + lower) / 2.0;
-        if(prms.gaussian)
+        if (prms.gaussian)
             gsl_integration_qagi (&F, 0, 1e-7, 1000000, w, &result, &error);
         else
             gsl_integration_qagiu (&F, 0, 0, 1e-7, 1000000, w, &result, &error);

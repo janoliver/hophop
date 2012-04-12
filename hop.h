@@ -72,7 +72,7 @@ typedef struct params
     // analytics
     float percthresh;
     bool analytic;
-    
+
     struct gengetopt_args_info *cmdlineargs;
 
 } Params;
