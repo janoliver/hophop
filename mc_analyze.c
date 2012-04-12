@@ -109,7 +109,7 @@ calcEinsteinRelation (Carrier * carriers, Results * results)
     ey2 /= prms.ncarriers;
     ez /= prms.ncarriers;
 
-    return (4. * ez) / (prms.field * (ex2 + ey2)) * prms.temperature;
+    return (4. * ez) / (prms.field * (ex2 + ey2));
 
 }
 
