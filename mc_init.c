@@ -468,7 +468,7 @@ calcHoppingRate (Site i, Site j)
 Vector
 distance (Site * i, Site * j)
 {
-    int lx, ly, lz;
+    float lx, ly, lz;
     Vector vec;
 
     lx = prms.length_x / 2.;
@@ -481,19 +481,11 @@ distance (Site * i, Site * j)
 
     if (vec.x > lx)
         vec.x -= prms.length_x;
-    if (vec.x < -lx)
-        vec.x += prms.length_x;
-
     if (vec.y > ly)
         vec.y -= prms.length_y;
-    if (vec.y < -ly)
-        vec.y += prms.length_y;
-
     if (vec.z > lz)
         vec.z -= prms.length_z;
-    if (vec.z < -lz)
-        vec.z += prms.length_z;
-
+    
     return vec;
 }
 
@@ -519,9 +511,15 @@ getCell3D (Cell * cells, ssize_t x, ssize_t y, ssize_t z)
         y += prms.ny;
     while (z < 0)
         z += prms.nz;
+    
     return &cells[(x * prms.nx + y) * prms.nz + z];
 }
 
+/*
+ * This function sorts the neighbors according to their rates. This speeds
+ * up the process of choosing the next hopping destination a lot. The
+ * sorting is done using a binary search tree. 
+ */
 SLE *
 sortNeighbors (SLE * list)
 {
