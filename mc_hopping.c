@@ -147,11 +147,8 @@ hoppingStep (Site * sites, Carrier * carriers,
         randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
         probSum = 0.0;
         SLE *neighbor = c->site->neighbors;
-        while (neighbor)
+        while (neighbor && probSum > randomHopProb)
         {
-            if (probSum > randomHopProb)
-                break;
-
             dest = neighbor;
             probSum += neighbor->rate;
             neighbor = neighbor->next;
@@ -161,7 +158,6 @@ hoppingStep (Site * sites, Carrier * carriers,
 
         if (dest->s->carrier == NULL)
         {
-
             // do the hopping and write some statistics
             res->nHops++;
 

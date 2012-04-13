@@ -484,11 +484,19 @@ distance (Site * i, Site * j)
 
     if (vec.x > lx)
         vec.x -= prms.length_x;
+    if (vec.x < -lx)
+        vec.x += prms.length_x;
+
     if (vec.y > ly)
         vec.y -= prms.length_y;
+    if (vec.y < -ly)
+        vec.y += prms.length_y;
+
     if (vec.z > lz)
         vec.z -= prms.length_z;
-
+    if (vec.z < -lz)
+        vec.z += prms.length_z;
+    
     return vec;
 }
 
