@@ -25,7 +25,7 @@ SLE *sortNeighbors (SLE * list);
  * the energy scale!).
  */
 Site *
-MC_createSites ()
+MC_createSites (RunParams * runprms)
 {
     size_t i, j, k, l;
     Site *s;
@@ -46,16 +46,19 @@ MC_createSites ()
                 }
                 else
                 {
-                    s[i].x = (float) gsl_rng_uniform (prms.r) * prms.length_x;
-                    s[i].y = (float) gsl_rng_uniform (prms.r) * prms.length_y;
-                    s[i].z = (float) gsl_rng_uniform (prms.r) * prms.length_z;
+                    s[i].x =
+                        (float) gsl_rng_uniform (runprms->r) * prms.length_x;
+                    s[i].y =
+                        (float) gsl_rng_uniform (runprms->r) * prms.length_y;
+                    s[i].z =
+                        (float) gsl_rng_uniform (runprms->r) * prms.length_z;
                 }
 
                 if (!prms.gaussian)
-                    s[i].energy = (float) gsl_ran_exppow (prms.r, 1.,
+                    s[i].energy = (float) gsl_ran_exppow (runprms->r, 1.,
                                                           prms.exponent);
                 else
-                    s[i].energy = (float) gsl_ran_gaussian (prms.r, 1.);
+                    s[i].energy = (float) gsl_ran_gaussian (runprms->r, 1.);
 
                 s[i].carrier = NULL;
                 s[i].visited = 0;
@@ -80,7 +83,7 @@ MC_createSites ()
  * source of electrons or anything else.
  */
 Carrier *
-MC_distributeCarriers (Site * sites)
+MC_distributeCarriers (Site * sites, RunParams * runprms)
 {
     int i, k;
     Carrier *c;
@@ -99,7 +102,7 @@ MC_distributeCarriers (Site * sites)
         c[i].nFailedAttempts = 0;
         c[i].nHops = 0;
         c[i].occTime =
-            (float) gsl_ran_exponential (prms.r, 1.0) / sites[i].rateSum;
+            (float) gsl_ran_exponential (runprms->r, 1.0) / sites[i].rateSum;
 
         // now insert the carrier into the heap
         while (i > 0 && c[i].occTime < c[i / 2].occTime)
@@ -485,7 +488,7 @@ distance (Site * i, Site * j)
         vec.y -= prms.length_y;
     if (vec.z > lz)
         vec.z -= prms.length_z;
-    
+
     return vec;
 }
 
@@ -511,7 +514,7 @@ getCell3D (Cell * cells, ssize_t x, ssize_t y, ssize_t z)
         y += prms.ny;
     while (z < 0)
         z += prms.nz;
-    
+
     return &cells[(x * prms.nx + y) * prms.nz + z];
 }
 

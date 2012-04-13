@@ -191,7 +191,7 @@ writeResults (Results * res, int iRun)
         fprintf (file, "%-+18e", res->diffusivity);
         fprintf (file, "%-+18e", res->currentDensity);
         fprintf (file, "%-+18e", res->equilibrationEnergy);
-        fprintf (file, "%lu\n", prms.rseed_used);
+        fprintf (file, "%lu\n", prms.rseed);
     }
     else
     {
@@ -200,7 +200,7 @@ writeResults (Results * res, int iRun)
         fprintf (file, "%-+18e", res->diffusivity);
         fprintf (file, "%-+18e", res->currentDensity);
         fprintf (file, "%-+18e", res->equilibrationEnergy);
-        fprintf (file, "%lu\n", prms.rseed_used);
+        fprintf (file, "%lu\n", prms.rseed);
     }
 
     fclose (file);

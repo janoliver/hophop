@@ -63,11 +63,11 @@ typedef struct params
     int be_outer_it;
 
     // random number stuff
-    long rseed, rseed_used;
+    long rseed;
     time_t curtime;
     struct tm *loctime;
     const gsl_rng_type *T;
-    gsl_rng *r;
+    //gsl_rng *r;
 
     // analytics
     float percthresh;
@@ -76,6 +76,15 @@ typedef struct params
     struct gengetopt_args_info *cmdlineargs;
 
 } Params;
+
+// this struct is instantiated for each run of the simulation, also in
+// parallel mode. This is done so that the RNG for example is not shared
+// between runs. 
+typedef struct run_params
+{
+    gsl_rng *r;
+    long rseed_used;
+} RunParams;
 
 struct site_list_element;
 struct site;
@@ -181,13 +190,14 @@ void generateParams (Params * prms, int argc, char **argv);
 bool serialOutput ();
 
 //mc
-void MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun);
-Site *MC_createSites ();
-Carrier *MC_distributeCarriers (Site * sites);
+void MC_simulation (Site * sites, Carrier * carriers, Results * res,
+                    RunParams * runprms, int *iRun);
+Site *MC_createSites (RunParams * runprms);
+Carrier *MC_distributeCarriers (Site * sites, RunParams * runprms);
 void MC_createHoppingRates (Site * sites);
 void MC_removeSoftPairs (Site * sites);
 void MC_calculateResults (Site * sites, Carrier * carriers, Results * res);
-void MC_run (Results * total, int *iRun);
+void MC_run (Results * total, RunParams * runprms, int *iRun);
 
 int timeval_subtract (struct timeval *result,
                       struct timeval *x, struct timeval *y);
@@ -199,7 +209,7 @@ double calcEquilibrationEnergy (Site * sites, Results * results);
 double calcAverageEnergy (Carrier * carriers);
 
 // balance equations
-void BE_run (Results * total, int *iRun);
+void BE_run (Results * total, RunParams * runprms, int *iRun);
 void BE_solve (Site * sites, Results * res, int *iRun);
 
 // analytic calculator

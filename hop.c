@@ -43,22 +43,34 @@ main (int argc, char **argv)
 #pragma omp for schedule(dynamic)
         for (iRun = 1; iRun <= prms.number_runs; iRun++)
         {
-
+            // set the results struct to zero
             init_results (&(total[iRun - 1]));
+
+            // setup random number generator
+            RunParams runprms;
+            runprms.r = gsl_rng_alloc (prms.T);
+            runprms.rseed_used = time (NULL) * iRun;
+            if (prms.rseed != 0)
+                runprms.rseed_used = (unsigned long) prms.rseed + iRun - 1;
+            gsl_rng_set (runprms.r, runprms.rseed_used);
 
             // here is where el magico happens
             if (prms.balance_eq)
             {
-                BE_run (total, &iRun);
+                BE_run (total, &runprms, &iRun);
             }
             else
             {
-                MC_run (total, &iRun);
+                MC_run (total, &runprms, &iRun);
             }
 
             // run analytic calculations as well ?
             if (prms.analytic)
                 AL_run (total, &iRun);
+
+            // free the RNG
+            gsl_rng_free (runprms.r);
+
         }
     }
 
@@ -71,8 +83,6 @@ main (int argc, char **argv)
 
     // output results to the command line
     printResults (&res, &error);
-
-    gsl_rng_free (prms.r);
 
     return 0;
 }

@@ -3,10 +3,10 @@
 #include "hop.h"
 
 void hoppingStep (Site * sites, Carrier * carriers, Results * res,
-                  bool stat, ALT * tables);
+                  bool stat, ALT * tables, RunParams * runprms);
 void hop (Carrier * c, SLE * dest, Vector * dist,
           Results * res, Carrier * carriers, bool stat);
-void updateCarrier (Carrier * carriers);
+void updateCarrier (Carrier * carriers, RunParams * runprms);
 int getTransitionLookupTables (Site * sites, ALT * tables);
 
 /*
@@ -14,7 +14,8 @@ int getTransitionLookupTables (Site * sites, ALT * tables);
  * the passed "time" (in arbitrary units) and ouputs the progress.
  */
 void
-MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun)
+MC_simulation (Site * sites, Carrier * carriers, Results * res,
+               RunParams * runprms, int *iRun)
 {
     size_t j;
     struct timeval start, end, result;
@@ -37,7 +38,7 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun)
     for (j = 0; j <= 100; j++)
     {
         while (res->nHops < prms.relaxation / 100 * j)
-            hoppingStep (sites, carriers, res, false, &alias_tables);
+            hoppingStep (sites, carriers, res, false, &alias_tables, runprms);
 
         if (serialOutput ())
         {
@@ -58,7 +59,7 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun)
     for (j = 0; j <= 100; j++)
     {
         while (res->nHops <= prms.simulation / 100 * j)
-            hoppingStep (sites, carriers, res, true, &alias_tables);
+            hoppingStep (sites, carriers, res, true, &alias_tables, runprms);
 
         if (serialOutput ())
         {
@@ -104,14 +105,14 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res, int *iRun)
  */
 void
 hoppingStep (Site * sites, Carrier * carriers,
-             Results * res, bool stat, ALT * tables)
+             Results * res, bool stat, ALT * tables, RunParams * runprms)
 {
     Carrier *c = NULL;
     SLE *dest = NULL;
 
     if (prms.accept_reject)
     {
-        size_t nextTransitionIndex = gsl_ran_discrete (prms.r, tables->tab);
+        size_t nextTransitionIndex = gsl_ran_discrete (runprms->r, tables->tab);
         //size_t nextTransitionIndex = 10;
         res->simulationTime += tables->total;
 
@@ -143,7 +144,7 @@ hoppingStep (Site * sites, Carrier * carriers,
         c = &carriers[0];
 
         // determine the next destination site
-        randomHopProb = (float) gsl_rng_uniform (prms.r) * c->site->rateSum;
+        randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
         probSum = 0.0;
         SLE *neighbor = c->site->neighbors;
         while (neighbor)
@@ -174,7 +175,7 @@ hoppingStep (Site * sites, Carrier * carriers,
                 c->nFailedAttempts++;
             }
         }
-        updateCarrier (carriers);
+        updateCarrier (carriers, runprms);
     }
 }
 
@@ -259,12 +260,12 @@ timeval_subtract (struct timeval *result, struct timeval *y, struct timeval *x)
  * carrier is assigned a new occupation time.
  */
 void
-updateCarrier (Carrier * c)
+updateCarrier (Carrier * c, RunParams * runprms)
 {
     int smallest, i = 0;
 
     c[0].occTime +=
-        (float) gsl_ran_exponential (prms.r, 1.0) / c[0].site->rateSum;
+        (float) gsl_ran_exponential (runprms->r, 1.0) / c[0].site->rateSum;
 
     // children always sit at c[2i+1] and c[2i+2]
     Carrier tmp;

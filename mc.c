@@ -3,17 +3,10 @@
 #include "hop.h"
 
 void
-MC_run (Results * total, int *iRun)
+MC_run (Results * total, RunParams * runprms, int *iRun)
 {
     Site *sites = NULL;
     Carrier *carriers = NULL;
-
-    // setup random number generator
-    prms.rseed_used = time (NULL) + *iRun;
-    prms.curtime = prms.rseed_used;
-    if (prms.rseed != 0)
-        prms.rseed_used = (unsigned long) prms.rseed + *iRun - 1;
-    gsl_rng_set (prms.r, prms.rseed_used);
 
     // some output
     if (!serialOutput () && !prms.quiet)
@@ -24,14 +17,14 @@ MC_run (Results * total, int *iRun)
                 prms.number_runs);
 
     // create the sites, cells, carriers, hopping rates
-    sites = MC_createSites ();
+    sites = MC_createSites (runprms);
     MC_createHoppingRates (sites);
     if (prms.removesoftpairs)
         MC_removeSoftPairs (sites);
-    carriers = MC_distributeCarriers (sites);
+    carriers = MC_distributeCarriers (sites, runprms);
 
     // simulate
-    MC_simulation (sites, carriers, &(total[*iRun - 1]), iRun);
+    MC_simulation (sites, carriers, &(total[*iRun - 1]), runprms, iRun);
     MC_calculateResults (sites, carriers, &(total[*iRun - 1]));
 
     // write output files

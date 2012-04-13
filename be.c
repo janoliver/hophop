@@ -2,16 +2,9 @@
 #include "mgmres.h"
 
 void
-BE_run (Results * total, int *iRun)
+BE_run (Results * total, RunParams * runprms, int *iRun)
 {
     Site *sites = NULL;
-
-    // setup random number generator
-    prms.rseed_used = time (NULL) + *iRun;
-    prms.curtime = prms.rseed_used;
-    if (prms.rseed != 0)
-        prms.rseed_used = (unsigned long) prms.rseed + *iRun - 1;
-    gsl_rng_set (prms.r, prms.rseed_used);
 
     // some output
     if (!serialOutput () && !prms.quiet)
@@ -22,7 +15,7 @@ BE_run (Results * total, int *iRun)
                 prms.number_runs);
 
     // create the sites, cells, carriers, hopping rates
-    sites = MC_createSites ();
+    sites = MC_createSites (runprms);
     MC_createHoppingRates (sites);
     if (prms.removesoftpairs)
         MC_removeSoftPairs (sites);

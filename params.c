@@ -25,7 +25,7 @@ generateParams (Params * prms, int argc, char **argv)
     prms->loctime = localtime (&prms->curtime);
     gsl_rng_env_setup ();
     prms->T = gsl_rng_gfsr4;
-    prms->r = gsl_rng_alloc (prms->T);
+    //prms->r = gsl_rng_alloc (prms->T);
 
     // random seed
     prms->rseed = 0;
