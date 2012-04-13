@@ -147,7 +147,7 @@ hoppingStep (Site * sites, Carrier * carriers,
         randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
         probSum = 0.0;
         SLE *neighbor = c->site->neighbors;
-        while (neighbor && probSum > randomHopProb)
+        while (neighbor && probSum <= randomHopProb)
         {
             dest = neighbor;
             probSum += neighbor->rate;

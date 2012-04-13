@@ -496,7 +496,7 @@ distance (Site * i, Site * j)
         vec.z -= prms.length_z;
     if (vec.z < -lz)
         vec.z += prms.length_z;
-    
+
     return vec;
 }
 

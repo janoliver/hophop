@@ -3,7 +3,7 @@ SET(PACKAGE_VERSION "1.2.3")
 SET(PACKAGE_NAME "HOP")
 
 # optional CFLAGS
-SET(CMAKE_C_FLAGS "-O3 -ffast-math -fopenmp")
+SET(CMAKE_C_FLAGS "-g -ffast-math -fopenmp")
 
 # gengetopt
 SET(gengetopt "gengetopt")
