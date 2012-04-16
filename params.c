@@ -17,7 +17,7 @@ generateParams (Params * prms, int argc, char **argv)
     // init command line parser and exit if anything went wrong
     if (cmdline_parser (argc, argv, &args) != 0)
     {
-        printf ("Commandline error\n");
+        output (O_FORCE, "Commandline error\n");
         exit (1);
     }
 
@@ -40,7 +40,7 @@ generateParams (Params * prms, int argc, char **argv)
     if (args.conf_file_given &&
         cmdline_parser_config_file (args.conf_file_arg, &args, params) != 0)
     {
-        printf ("Config file does not exist!\n");
+        output (O_FORCE, "Config file does not exist!\n");
         exit (1);
     }
 
@@ -75,7 +75,7 @@ generateParams (Params * prms, int argc, char **argv)
         args.rc_arg > GSL_MIN (GSL_MIN (prms->length_y, prms->length_x),
                                prms->length_z))
     {
-        printf ("Please choose a valid cut-off radius!\n");
+        output (O_FORCE, "Please choose a valid cut-off radius!\n");
         exit (1);
     }
     prms->cutoff_radius = args.rc_arg;
@@ -83,7 +83,7 @@ generateParams (Params * prms, int argc, char **argv)
     // exponent
     if (0 >= args.exponent_arg)
     {
-        printf ("Please choose a valid DOS exponent!\n");
+        output (O_FORCE, "Please choose a valid DOS exponent!\n");
         exit (1);
     }
     prms->exponent = args.exponent_arg;
@@ -91,7 +91,7 @@ generateParams (Params * prms, int argc, char **argv)
     // loclength
     if (0 >= args.llength_arg || args.llength_arg > 2)
     {
-        printf ("Please choose a valid localization length!\n");
+        output (O_FORCE, "Please choose a valid localization length!\n");
         exit (1);
     }
     prms->loclength = args.llength_arg;
@@ -99,7 +99,7 @@ generateParams (Params * prms, int argc, char **argv)
     // softpairthreshold
     if (0 >= args.softpairthreshold_arg)
     {
-        printf ("Please choose a valid softpair threshold\n");
+        output (O_FORCE, "Please choose a valid softpair threshold\n");
         exit (1);
     }
     prms->softpairthreshold = args.softpairthreshold_arg;
@@ -110,7 +110,7 @@ generateParams (Params * prms, int argc, char **argv)
     // temperature
     if (0 > args.temperature_arg)
     {
-        printf ("Please choose a valid temperature!\n");
+        output (O_FORCE, "Please choose a valid temperature!\n");
         exit (1);
     }
     prms->temperature = args.temperature_arg;
@@ -142,7 +142,7 @@ generateParams (Params * prms, int argc, char **argv)
     // simulation times
     if (0 > args.relaxation_arg || 0 > args.simulation_arg)
     {
-        printf ("Please choose valid simulation times\n");
+        output (O_FORCE, "Please choose valid simulation times\n");
         exit (1);
     }
     prms->relaxation = args.relaxation_arg;
@@ -156,7 +156,7 @@ generateParams (Params * prms, int argc, char **argv)
     // check charge carriers
     if (args.ncarriers_arg >= prms->nsites)
     {
-        printf ("Your system is overfilled with carriers.\n");
+        output (O_FORCE, "Your system is overfilled with carriers.\n");
         exit (1);
     }
     prms->ncarriers = args.ncarriers_arg;
@@ -182,7 +182,7 @@ generateParams (Params * prms, int argc, char **argv)
     // analytics
     if (args.percolation_threshold_arg <= 0)
     {
-        printf ("This is not a valid percolation threshold.\n");
+        output (O_FORCE, "This is not a valid percolation threshold.\n");
         exit (1);
     }
     prms->percthresh = args.percolation_threshold_arg;

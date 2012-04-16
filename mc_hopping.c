@@ -19,46 +19,47 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
     size_t j;
 
     // initialize some results
-    res->simulationTime = 0.0;
     res->nHops = 0;
-    res->nFailedAttempts = 0;
 
+    // we need the current simulation time.
+    double simTimeOld = res->simulationTime;
+    
     // relaxation, no time or hop counting
     for (j = 0; j <= 100; j++)
     {
         while (res->nHops < prms.relaxation / 100 * j)
             hoppingStep (sites, carriers, res, false, runprms);
 
-        if (serialOutput ())
-        {
-            printf ("\r\tRelaxing...   (run %d of %d):\t%2d%%", iReRun, prms.number_reruns, (int)j);
-            fflush (stdout);
-        }
+        output (O_SERIAL, "\r\tRelaxing...   (run %d of %d):\t%2d%%", iReRun, prms.number_reruns, (int)j);
+        fflush (stdout);
     }
-    if (serialOutput ())
-        printf (" Done.\n");
+    output (O_SERIAL, " Done.\n");
 
     // actual simulation, time and hop counting
-    res->simulationTime = 0.0;
+    // we need to renormalize the carrier occupation time and simulation time, since
+    // we might have multiple runs due to -x, while simulationTime is counted totally
     res->nHops = 0;
-
+    
     for (j = 0; j < prms.ncarriers; ++j)
-        carriers[j].occTime -= res->simulationTime;
-
+        carriers[j].occTime -= (res->simulationTime - simTimeOld);
+    res->simulationTime = simTimeOld;
+    
     for (j = 0; j <= 100; j++)
     {
         while (res->nHops <= prms.simulation / 100 * j)
             hoppingStep (sites, carriers, res, true, runprms);
 
-        if (serialOutput ())
-        {
-            printf ("\r\tSimulating... (run %d of %d):\t%2d%%", iReRun, prms.number_reruns, (int)j);
-            fflush (stdout);
-        }
+        output (O_SERIAL, "\r\tSimulating... (run %d of %d):\t%2d%%", iReRun, prms.number_reruns, (int)j);
+        fflush (stdout);
     }
-    if (serialOutput ())
-        printf (" Done.\n");
+    output (O_SERIAL, " Done.\n");
 
+    // finish statistics
+    for (j = 0; j < prms.nsites; ++j)
+        if (sites[j].tempOccTime > 0)
+            sites[j].totalOccTime += res->simulationTime - sites[j].tempOccTime;
+    
+    
 }
 
 /*
@@ -90,8 +91,7 @@ hoppingStep (Site * sites, Carrier * carriers,
         neighbor = neighbor->next;
     }
         
-    if(stat)
-        res->simulationTime = c->occTime;
+    res->simulationTime = c->occTime;
 
     if (dest->s->carrier == NULL)
     {

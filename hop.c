@@ -93,9 +93,7 @@ main (int argc, char **argv)
 void
 printApplicationHeader ()
 {
-    if (prms.quiet)
-        return;
-    printf ("\n\n################### %s v%s ################### \n",
+    output (O_BOTH, "\n\n################### %s v%s ################### \n",
             PKG_NAME, PKG_VERSION);
 }
 
@@ -105,45 +103,39 @@ printApplicationHeader ()
 void
 printSettings ()
 {
-    if (prms.quiet)
-        return;
     // Settings output
-    printf ("\nSettings:\n");
-    printf ("\t3D sample size: \t\t%d x %d x %d\n",
+    output (O_BOTH, "\nSettings:\n");
+    output (O_BOTH, "\t3D sample size: \t\t%d x %d x %d\n",
             prms.length_x, prms.length_y, prms.length_z);
-    printf ("\tDOS exponent: \t\t\tp = %1.1f\n", prms.exponent);
-    printf ("\tLocalization length of sites: \ta = %2.4f\n", prms.loclength);
-    printf ("\tTemperature: \t\t\tT = %2.4f\n", prms.temperature);
-    printf ("\tField strength: \t\tF = %2.4f\n", prms.field);
-    printf ("\tCut-off radius: \t\tr = %2.4f\n", prms.cutoff_radius);
-    printf ("\tNumber of sites: \t\tN = %d\n\n", prms.nsites);
+    output (O_BOTH, "\tDOS exponent: \t\t\tp = %1.1f\n", prms.exponent);
+    output (O_BOTH, "\tLocalization length of sites: \ta = %2.4f\n", prms.loclength);
+    output (O_BOTH, "\tTemperature: \t\t\tT = %2.4f\n", prms.temperature);
+    output (O_BOTH, "\tField strength: \t\tF = %2.4f\n", prms.field);
+    output (O_BOTH, "\tCut-off radius: \t\tr = %2.4f\n", prms.cutoff_radius);
+    output (O_BOTH, "\tNumber of sites: \t\tN = %d\n\n", prms.nsites);
 
-    if (prms.parallel)
-        printf ("\tParallelization: \t\tRunning on %d cores\n", prms.nthreads);
-    else
-        printf ("\tParallelization: \t\tOff\n");
+    output (O_PARALLEL, "\tParallelization: \t\tRunning on %d cores\n", prms.nthreads);
+    output (O_SERIAL, "\tParallelization: \t\tOff\n");
 
-
-    printf ("\tMode: \t\t\t\t%s\n",
+    output (O_BOTH, "\tMode: \t\t\t\t%s\n",
             prms.balance_eq ? "Balance equations" : "Monte carlo simulation");
 
     if (prms.balance_eq)
     {
-        printf ("\tMax. nr. of outer iterations: \t%d\n", prms.be_outer_it);
-        printf ("\tMax. nr. of inner iterations: \t%d\n", prms.be_it);
-        printf ("\tRel. convergence tolerance: \t%e\n", prms.be_rel_tol);
-        printf ("\tAbs. convergence tolerance: \t%e\n", prms.be_abs_tol);
+        output (O_BOTH, "\tMax. nr. of outer iterations: \t%d\n", prms.be_outer_it);
+        output (O_BOTH, "\tMax. nr. of inner iterations: \t%d\n", prms.be_it);
+        output (O_BOTH, "\tRel. convergence tolerance: \t%e\n", prms.be_rel_tol);
+        output (O_BOTH, "\tAbs. convergence tolerance: \t%e\n", prms.be_abs_tol);
     }
     else
     {
-        printf ("\tNumber of carriers: \t\tn = %d\n", prms.ncarriers);
-        printf ("\tHops of relaxation: \t\tR = %lu\n", prms.relaxation);
-        printf ("\tHops of simulation: \t\tI = %lu\n", prms.simulation);
+        output (O_BOTH, "\tNumber of carriers: \t\tn = %d\n", prms.ncarriers);
+        output (O_BOTH, "\tHops of relaxation: \t\tR = %lu\n", prms.relaxation);
+        output (O_BOTH, "\tHops of simulation: \t\tI = %lu\n", prms.simulation);
 
     }
 
-    if (!serialOutput () && !prms.quiet)
-        printf ("\n");
+    output (O_PARALLEL, "\n");
 }
 
 /*
@@ -152,36 +144,33 @@ printSettings ()
 void
 printResults (Results * results, Results * error)
 {
-    if (prms.quiet)
-        return;
-
     // Results output
-    printf ("\nResults:\n");
-    printf ("\tMobility in field-direction: \tu   = %e (+- %e)\n",
+    output (O_BOTH, "\nResults:\n");
+    output (O_BOTH, "\tMobility in field-direction: \tu   = %e (+- %e)\n",
             results->mobility, error->mobility);
-    printf ("\tAnalytically calculated mob.: \tu   = %e\n",
+    output (O_BOTH, "\tAnalytically calculated mob.: \tu   = %e\n",
             results->analytic_mobility);
-    printf ("\tAnalytic Fermi level: \t\tE_f = %e\n",
+    output (O_BOTH, "\tAnalytic Fermi level: \t\tE_f = %e\n",
             results->analytic_fermienergy);
-    printf ("\tAnalytic transport energy: \tE_t = %e\n",
+    output (O_BOTH, "\tAnalytic transport energy: \tE_t = %e\n",
             results->analytic_transportenergy);
 
 
     if (prms.balance_eq)
     {
-        printf ("\n");
+        output (O_BOTH, "\n");
         return;
     }
 
-    printf ("\tDiffusivity perp. to field:  \tD   = %e (+- %e)\n",
+    output (O_BOTH, "\tDiffusivity perp. to field:  \tD   = %e (+- %e)\n",
             results->diffusivity, error->diffusivity);
-    printf ("\tEinstein rel. perp. to field: \tu/D = %e (+- %e) e/o\n",
+    output (O_BOTH, "\tEinstein rel. perp. to field: \tu/D = %e (+- %e) e/o\n",
             results->einsteinrelation, error->einsteinrelation);
-    printf ("\tCurrent density (z-dir):  \tj   = %e (+- %e)\n",
+    output (O_BOTH, "\tCurrent density (z-dir):  \tj   = %e (+- %e)\n",
             results->currentDensity, error->currentDensity);
-    printf ("\tEquilibration Energy: \t\tE_i = %e\n",
+    output (O_BOTH, "\tEquilibration Energy: \t\tE_i = %e\n",
             results->equilibrationEnergy);
-    printf ("\tSimulated time: \t\tt   = %e\n\n", results->totalSimulationTime);
+    output (O_BOTH, "\tSimulated time: \t\tt   = %e\n\n", results->simulationTime);
 
 }
 
@@ -213,6 +202,6 @@ printEstimatedMemory ()
     // some offset that shouldn't scale with the system...
     mem += 100 * 1024 * 1024;
 
-    printf ("Estimated memory usage: %5.2f MB\n", mem / (1024 * 1024));
+    output (O_BOTH, "Estimated memory usage: %5.2f MB\n", mem / (1024 * 1024));
     return;
 }

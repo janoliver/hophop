@@ -7,12 +7,10 @@ BE_run (Results * total, RunParams * runprms, int *iRun)
     Site *sites = NULL;
 
     // some output
-    if (!serialOutput () && !prms.quiet)
-        printf ("Starting %d. Iteration (total %d): Thread ID %d\n", *iRun,
-                prms.number_runs, omp_get_thread_num ());
-    if (serialOutput ())
-        printf ("\nRunning %d. iteration (total %d)\n", *iRun,
-                prms.number_runs);
+    output (O_PARALLEL, "Starting %d. Iteration (total %d): Thread ID %d\n", *iRun,
+            prms.number_runs, omp_get_thread_num ());
+    output (O_SERIAL, "\nRunning %d. iteration (total %d)\n", *iRun,
+            prms.number_runs);
 
     // create the sites, cells, carriers, hopping rates
     sites = MC_createSites (runprms);
@@ -55,11 +53,8 @@ BE_run (Results * total, RunParams * runprms, int *iRun)
 void
 BE_solve (Site * sites, Results * res, int *iRun)
 {
-    if (serialOutput ())
-    {
-        printf ("\tSolving balance equations...");
-        fflush (stdout);
-    }
+    output (O_SERIAL, "\tSolving balance equations...");
+    fflush (stdout);
 
     // measure the cpu time
     struct timeval start, end, result;
@@ -154,11 +149,9 @@ BE_solve (Site * sites, Results * res, int *iRun)
     double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
 
     // output
-    if (serialOutput ())
-        printf ("\tDone! %f s duration\n", elapsed);
-    if (!serialOutput () && !prms.quiet)
-        printf ("Finished %d. Iteration (total %d): %f s duration\n",
-                *iRun, prms.number_runs, elapsed);
+    output (O_SERIAL, "\tDone! %f s duration\n", elapsed);
+    output (O_PARALLEL, "Finished %d. Iteration (total %d): %f s duration\n",
+            *iRun, prms.number_runs, elapsed);
 
     // calculate mobility
     double sum = 0;

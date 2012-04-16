@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include <sys/time.h>
 
@@ -25,6 +26,13 @@
 #include "config.h"
 
 #include "cmdline.h"
+
+// the output modes
+#define O_PARALLEL 1
+#define O_SERIAL   2
+#define O_BOTH     3
+#define O_FORCE    0
+
 
 typedef struct params
 {
@@ -124,7 +132,6 @@ typedef struct results
     double diffusivity;
     double einsteinrelation;
     double simulationTime;
-    double totalSimulationTime;
     double currentDensity;
     double equilibrationEnergy;
     size_t nHops;
@@ -140,13 +147,14 @@ typedef struct results
 
 typedef struct vector
 {
-    float x, y, z;
+    float x, y, z, length;
 } Vector;
 
 typedef struct site_list_element
 {
     struct site_list_element *next;
     struct site *s;
+    bool nearest_neighbor;
     double rate;
     Vector dist;
     int nTransitions;
@@ -176,6 +184,7 @@ void average_results (Results * res, Results * total, Results * error);
 void init_results (Results * res);
 void add_results_to_results (Results * res, Results * to_add);
 void divide_results_by_scalar (Results * res, double scalar);
+int output(int mode, const char *fmt, ...);
 
 // output.c
 void writeSites (Site * sites, int iRun);
@@ -188,13 +197,12 @@ void writeSummary (Results * res, Results * error);
 // params
 bool strArgGiven (char *arg);
 void generateParams (Params * prms, int argc, char **argv);
-bool serialOutput ();
 
 //mc
 void MC_simulation (Site * sites, Carrier * carriers, Results * res,
                     RunParams * runprms, int *iRun, int iReRun);
 Site *MC_createSites (RunParams * runprms);
-Carrier *MC_distributeCarriers (Carrier * carriers, Site * sites, RunParams * runprms);
+Carrier *MC_distributeCarriers (Carrier * carriers, Site * sites, RunParams * runprms, Results * res);
 Carrier *MC_createCarriers (Site * sites);
 void MC_createHoppingRates (Site * sites);
 void MC_removeSoftPairs (Site * sites);

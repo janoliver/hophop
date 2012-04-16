@@ -43,8 +43,7 @@ writeSitesConfig (Site * sites, int iRun)
     fclose (file);
 
     // some output
-    if (serialOutput ())
-        printf ("\tWrote site configuration to \t\t%s\n", fileName);
+    output (O_SERIAL, "\tWrote site configuration to \t\t%s\n", fileName);
 }
 
 /*
@@ -79,8 +78,7 @@ writeSites (Site * sites, int iRun)
     fclose (file);
 
     // some output
-    if (serialOutput ())
-        printf ("\tWrote site result information to \t%s\n", fileName);
+    output (O_SERIAL, "\tWrote site result information to \t%s\n", fileName);
 }
 
 
@@ -120,8 +118,7 @@ writeTransitions (Site * sites, int iRun)
     fclose (file);
 
     // some output
-    if (serialOutput ())
-        printf ("\tWrote transitions information to \t%s\n", fileName);
+    output (O_SERIAL, "\tWrote transitions information to \t%s\n", fileName);
 }
 
 
@@ -142,8 +139,7 @@ writeConfig (int iRun)
     cmdline_parser_file_save (fileName, prms.cmdlineargs);
 
     // some output
-    if (serialOutput ())
-        printf ("\tWrote configuration file to \t\t%s\n", fileName);
+    output (O_SERIAL, "\tWrote configuration file to \t\t%s\n", fileName);
 }
 
 /*
@@ -206,8 +202,7 @@ writeResults (Results * res, int iRun)
     fclose (file);
 
     // some output
-    if (serialOutput ())
-        printf ("\n\tWrote results to \t\t\t%s\n", fileName);
+    output (O_SERIAL, "\n\tWrote results to \t\t\t%s\n", fileName);
 }
 
 /*
@@ -222,7 +217,7 @@ checkOutputFolder (int iRun)
     sprintf (realfolder, "mkdir -p %s/%d", prms.output_folder, iRun);
     int ret = system (realfolder);
     if (ret)
-        printf ("could not create output realization folder!\n");
+        output (O_FORCE, "could not create output realization folder!\n");
 
 }
 
@@ -254,24 +249,38 @@ writeSummary (Results * res, Results * error)
         fprintf (file, "#DOS exponent     ");
         fprintf (file, "System size       ");
         fprintf (file, "Number carriers   ");
-        fprintf (file, "relaxation hops   ");
-        fprintf (file, "simulation hops   ");
+
         fprintf (file, "Localization len. ");
         fprintf (file, "Temperature       ");
         fprintf (file, "Electric field    ");
+
         fprintf (file, "Simul. time       ");
+        fprintf (file, "Error Simul. time ");
+
         fprintf (file, "Mobility          ");
         fprintf (file, "Error mobility    ");
+
         fprintf (file, "Diffusivity x/y   ");
         fprintf (file, "Error diffus. x/y ");
+
         fprintf (file, "Einstein relation ");
         fprintf (file, "Error ER          ");
+
         fprintf (file, "Current density   ");
         fprintf (file, "Erro curr. dens.  ");
+
         fprintf (file, "Equilibration en. ");
         fprintf (file, "Error Eq. en.     ");
+
         fprintf (file, "Average energy    ");
         fprintf (file, "Error avg. en.    ");
+
+        fprintf (file, "number of runs    ");
+        fprintf (file, "number of reruns  ");
+        
+        fprintf (file, "relaxation hops   ");
+        fprintf (file, "simulation hops   ");
+        
         fprintf (file, "random seed       ");
         fprintf (file, "Mode              ");
         fprintf (file, "Comment           ");
@@ -282,25 +291,38 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%-+18e", prms.exponent);
     fprintf (file, "%-18d", prms.length_x);
     fprintf (file, "%-18d", prms.ncarriers);
-    fprintf (file, "%-18d", prms.relaxation);
-    fprintf (file, "%-18d", prms.simulation);
+
     fprintf (file, "%-+18e", prms.loclength);
     fprintf (file, "%-+18e", prms.temperature);
     fprintf (file, "%-+18e", prms.field);
 
     fprintf (file, "%-+18e", res->simulationTime);
+    fprintf (file, "%-+18e", error->simulationTime);
+
     fprintf (file, "%-+18e", res->mobility);
     fprintf (file, "%-+18e", error->mobility);
+    
     fprintf (file, "%-+18e", res->diffusivity);
     fprintf (file, "%-+18e", error->diffusivity);
+
     fprintf (file, "%-+18e", res->einsteinrelation);
     fprintf (file, "%-+18e", error->einsteinrelation);
+
     fprintf (file, "%-+18e", res->currentDensity);
     fprintf (file, "%-+18e", error->currentDensity);
+
     fprintf (file, "%-+18e", res->equilibrationEnergy);
     fprintf (file, "%-+18e", error->equilibrationEnergy);
+
     fprintf (file, "%-+18e", res->avgenergy);
     fprintf (file, "%-+18e", error->avgenergy);
+    
+    fprintf (file, "%-18d", prms.number_runs);
+    fprintf (file, "%-18d", prms.number_reruns);    
+    
+    fprintf (file, "%-18d", prms.relaxation);
+    fprintf (file, "%-18d", prms.simulation);
+    
     fprintf (file, "%-18d", prms.rseed);
     fprintf (file, "%-18s", prms.balance_eq ? "Balance eq." : "MC Simulation");
     if (strArgGiven (prms.comment))
@@ -310,6 +332,5 @@ writeSummary (Results * res, Results * error)
     fclose (file);
 
     // some output
-    if (serialOutput ())
-        printf ("\nExtended summary file %s\n", fileName);
+    output (O_SERIAL, "\nExtended summary file %s\n", fileName);
 }

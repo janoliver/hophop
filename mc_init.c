@@ -70,7 +70,6 @@ MC_createSites (RunParams * runprms)
                 s[i].nNeighbors = 0;
                 s[i].rateSum = 0.0;
                 s[i].updatedAt = 0.0;
-
             }
 
     return s;
@@ -111,20 +110,29 @@ MC_createCarriers (Site * sites)
  * source of electrons or anything else.
  */
 Carrier *
-MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
+MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms, Results * res)
 {
-    int i;
+    size_t i, siteIndex;
     Carrier tmp;
 
-    // shuffle the sites array
-    gsl_ran_shuffle (runprms->r, sites, prms.nsites, sizeof(Site));
-
+    // select prms.ncarriers random sites for the carriers
+    Site * sample = malloc(prms.ncarriers * sizeof(Site));
+    gsl_ran_choose (runprms->r, sample, prms.ncarriers, sites, prms.nsites, sizeof(Site));
+    
+    // clear all the sites and set the correct index
+    for(i = 0; i < prms.nsites; ++i)
+    {
+        sites[i].carrier = NULL;
+        sites[i].tempOccTime = 0;
+        sites[i].index = i;
+    }
+    
     // distribute carriers 
     for (i = 0; i < prms.ncarriers; ++i)
     {
-        c[i].site = &sites[i];
-        c[i].occTime =
-            (float) gsl_ran_exponential (runprms->r, 1.0) / sites[i].rateSum;
+        c[i].site = &sites[sample[i].index];
+        c[i].occTime = res->simulationTime +
+            (float) gsl_ran_exponential (runprms->r, 1.0) / c[i].site->rateSum;
 
         // now insert the carrier into the heap
         while (i > 0 && c[i].occTime < c[i / 2].occTime)
@@ -136,7 +144,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
         }
 
         c[i].site->carrier = &c[i];
-        c[i].site->tempOccTime = 0.0001;
+        c[i].site->tempOccTime = 0.000001;
     }
 
 }
@@ -209,14 +217,10 @@ MC_createHoppingRates (Site * sites)
             if (k < prms.nsites)
                 setNeighbors (&sites[k], cells);
 
-        if (serialOutput ())
-        {
-            printf ("\r\tInitializing...: \t\t%2d%%", (int) l);
+            output (O_SERIAL, "\r\tInitializing...: \t\t%2d%%", (int) l);
             fflush (stdout);
-        }
     }
-    if (serialOutput ())
-        printf (" Done.\n");
+    output (O_SERIAL, " Done.\n");
 
     // free cells
     for (l = 0; l < prms.nx * prms.ny * prms.nz; ++l)
@@ -268,8 +272,7 @@ MC_removeSoftPairs (Site * sites)
     if (nSoftPairs > 0)
     {
         // some output
-        if (serialOutput ())
-            printf ("\tRemoving Softpairs...:");
+        output (O_SERIAL, "\tRemoving Softpairs...:");
 
         temp = newSoftpair;
         softpair = newSoftpair;
@@ -362,8 +365,7 @@ MC_removeSoftPairs (Site * sites)
             }
         }
         // some output
-        if (serialOutput ())
-            printf ("\t\tDone. %d Softpairs found.\n", counter);
+        output (O_SERIAL, "\t\tDone. %d Softpairs found.\n", counter);
 
         // recursive call if there are still softpairs
         if (counter > 0)
@@ -379,11 +381,11 @@ void
 setNeighbors (Site * s, Cell * cells)
 {
     ssize_t i, k, l;
+    size_t nnindex;
+    double smallest_distance = 0, temp;
     Cell *c;
     SLE *siteList, *neighbors;
     Vector d;
-
-    float rc2 = pow (prms.cutoff_radius, 2.0);
 
     neighbors = NULL;
 
@@ -425,10 +427,15 @@ setNeighbors (Site * s, Cell * cells)
                         d = distance (s, siteList->s);
 
                         if (s->index != siteList->s->index &&
-                            pow (d.x, 2.0) + pow (d.y, 2.0) + pow (d.z,
-                                                                   2.0) < rc2)
+                            d.length < prms.cutoff_radius)
                         {
-
+                            // find out if this is the nearest neighbor
+                            if(!smallest_distance || d.length < smallest_distance )
+                            {
+                                nnindex = siteList->s->index;
+                                smallest_distance = d.length;
+                            }
+                                
                             neighbors = (SLE *) malloc (sizeof (SLE));
                             neighbors->s = siteList->s;
                             neighbors->rate =
@@ -436,7 +443,7 @@ setNeighbors (Site * s, Cell * cells)
                             neighbors->dist = d;
                             neighbors->nTransitions = 0;
                             s->rateSum += neighbors->rate;
-
+                            neighbors->nearest_neighbor = false;
                             s->nNeighbors++;
                             neighbors->next = s->neighbors;
                             s->neighbors = neighbors;
@@ -446,6 +453,17 @@ setNeighbors (Site * s, Cell * cells)
                 }
             }
 
+
+    // set the nearest neighbor
+    neighbors = s->neighbors;
+    while (neighbors)
+    {
+        if (neighbors->s->index == nnindex)
+            neighbors->nearest_neighbor = true;
+
+        neighbors = neighbors->next;
+    }
+        
     free (used);
 
     // sort the neighbors according to the rate to save computation
@@ -517,6 +535,8 @@ distance (Site * i, Site * j)
         vec.z -= prms.length_z;
     if (vec.z < -lz)
         vec.z += prms.length_z;
+
+    vec.length = sqrt(pow (vec.x, 2.0) + pow (vec.y, 2.0) + pow (vec.z,                                                            2.0));
 
     return vec;
 }

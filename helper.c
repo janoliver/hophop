@@ -21,8 +21,6 @@ average_results (Results * res, Results * total, Results * error)
             pow (res->diffusivity - total[iRun].diffusivity, 2);
         error->simulationTime +=
             pow (res->simulationTime - total[iRun].simulationTime, 2);
-        error->totalSimulationTime +=
-            pow (res->totalSimulationTime - total[iRun].totalSimulationTime, 2);
         error->equilibrationEnergy +=
             pow (res->equilibrationEnergy - total[iRun].equilibrationEnergy, 2);
         error->avgenergy += pow (res->avgenergy - total[iRun].avgenergy, 2);
@@ -37,13 +35,13 @@ average_results (Results * res, Results * total, Results * error)
         error->analytic_transportenergy +=
             pow (res->analytic_transportenergy -
                  total[iRun].analytic_transportenergy, 2);
+
     }
 
     error->mobility = sqrt (error->mobility / prms.number_runs);
     error->diffusivity = sqrt (error->diffusivity / prms.number_runs);
     error->currentDensity = sqrt (error->currentDensity / prms.number_runs);
     error->simulationTime = sqrt (error->simulationTime / prms.number_runs);
-    error->totalSimulationTime = sqrt (error->totalSimulationTime / prms.number_runs);
     error->equilibrationEnergy =
         sqrt (error->equilibrationEnergy / prms.number_runs);
     error->avgenergy = sqrt (error->avgenergy / prms.number_runs);
@@ -65,7 +63,6 @@ init_results (Results * res)
     res->diffusivity = 0.0;
     res->currentDensity = 0.0;
     res->simulationTime = 0.0;
-    res->totalSimulationTime = 0.0;
     res->equilibrationEnergy = 0.0;
     res->avgenergy = 0.0;
     res->einsteinrelation = 0.0;
@@ -82,7 +79,6 @@ add_results_to_results (Results * res, Results * to_add)
     res->diffusivity += to_add->diffusivity;
     res->currentDensity += to_add->currentDensity;
     res->simulationTime += to_add->simulationTime;
-    res->totalSimulationTime += to_add->totalSimulationTime;
     res->equilibrationEnergy += to_add->equilibrationEnergy;
     res->avgenergy += to_add->avgenergy;
     res->einsteinrelation += to_add->einsteinrelation;
@@ -101,7 +97,6 @@ divide_results_by_scalar (Results * res, double scalar)
     res->diffusivity /= scalar;
     res->currentDensity /= scalar;
     res->simulationTime /= scalar;
-    res->totalSimulationTime /= scalar;
     res->equilibrationEnergy /= scalar;
     res->avgenergy /= scalar;
     res->einsteinrelation /= scalar;
@@ -110,4 +105,20 @@ divide_results_by_scalar (Results * res, double scalar)
     res->analytic_fermienergy /= scalar;
     res->analytic_transportenergy /= scalar;
 
+}
+
+int
+output(int mode, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+
+    if(prms.quiet && mode != O_FORCE)
+        return 0;
+
+    if((mode == O_FORCE || mode == O_BOTH) ||
+       (mode == O_PARALLEL && prms.parallel && prms.number_runs > 1) ||
+       (mode == O_SERIAL &&(!prms.parallel || prms.number_runs == 1)))
+        return vprintf(fmt, args);
+    
 }
