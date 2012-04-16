@@ -277,10 +277,10 @@ writeSummary (Results * res, Results * error)
 
         fprintf (file, "number of runs    ");
         fprintf (file, "number of reruns  ");
-        
+
         fprintf (file, "relaxation hops   ");
         fprintf (file, "simulation hops   ");
-        
+
         fprintf (file, "random seed       ");
         fprintf (file, "Mode              ");
         fprintf (file, "Comment           ");
@@ -301,7 +301,7 @@ writeSummary (Results * res, Results * error)
 
     fprintf (file, "%-+18e", res->mobility);
     fprintf (file, "%-+18e", error->mobility);
-    
+
     fprintf (file, "%-+18e", res->diffusivity);
     fprintf (file, "%-+18e", error->diffusivity);
 
@@ -316,13 +316,13 @@ writeSummary (Results * res, Results * error)
 
     fprintf (file, "%-+18e", res->avgenergy);
     fprintf (file, "%-+18e", error->avgenergy);
-    
+
     fprintf (file, "%-18d", prms.number_runs);
-    fprintf (file, "%-18d", prms.number_reruns);    
-    
+    fprintf (file, "%-18d", prms.number_reruns);
+
     fprintf (file, "%-18d", prms.relaxation);
     fprintf (file, "%-18d", prms.simulation);
-    
+
     fprintf (file, "%-18d", prms.rseed);
     fprintf (file, "%-18s", prms.balance_eq ? "Balance eq." : "MC Simulation");
     if (strArgGiven (prms.comment))

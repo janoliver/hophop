@@ -7,8 +7,8 @@ BE_run (Results * total, RunParams * runprms, int *iRun)
     Site *sites = NULL;
 
     // some output
-    output (O_PARALLEL, "Starting %d. Iteration (total %d): Thread ID %d\n", *iRun,
-            prms.number_runs, omp_get_thread_num ());
+    output (O_PARALLEL, "Starting %d. Iteration (total %d): Thread ID %d\n",
+            *iRun, prms.number_runs, omp_get_thread_num ());
     output (O_SERIAL, "\nRunning %d. iteration (total %d)\n", *iRun,
             prms.number_runs);
 

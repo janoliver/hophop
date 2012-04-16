@@ -108,13 +108,15 @@ printSettings ()
     output (O_BOTH, "\t3D sample size: \t\t%d x %d x %d\n",
             prms.length_x, prms.length_y, prms.length_z);
     output (O_BOTH, "\tDOS exponent: \t\t\tp = %1.1f\n", prms.exponent);
-    output (O_BOTH, "\tLocalization length of sites: \ta = %2.4f\n", prms.loclength);
+    output (O_BOTH, "\tLocalization length of sites: \ta = %2.4f\n",
+            prms.loclength);
     output (O_BOTH, "\tTemperature: \t\t\tT = %2.4f\n", prms.temperature);
     output (O_BOTH, "\tField strength: \t\tF = %2.4f\n", prms.field);
     output (O_BOTH, "\tCut-off radius: \t\tr = %2.4f\n", prms.cutoff_radius);
     output (O_BOTH, "\tNumber of sites: \t\tN = %d\n\n", prms.nsites);
 
-    output (O_PARALLEL, "\tParallelization: \t\tRunning on %d cores\n", prms.nthreads);
+    output (O_PARALLEL, "\tParallelization: \t\tRunning on %d cores\n",
+            prms.nthreads);
     output (O_SERIAL, "\tParallelization: \t\tOff\n");
 
     output (O_BOTH, "\tMode: \t\t\t\t%s\n",
@@ -122,10 +124,13 @@ printSettings ()
 
     if (prms.balance_eq)
     {
-        output (O_BOTH, "\tMax. nr. of outer iterations: \t%d\n", prms.be_outer_it);
+        output (O_BOTH, "\tMax. nr. of outer iterations: \t%d\n",
+                prms.be_outer_it);
         output (O_BOTH, "\tMax. nr. of inner iterations: \t%d\n", prms.be_it);
-        output (O_BOTH, "\tRel. convergence tolerance: \t%e\n", prms.be_rel_tol);
-        output (O_BOTH, "\tAbs. convergence tolerance: \t%e\n", prms.be_abs_tol);
+        output (O_BOTH, "\tRel. convergence tolerance: \t%e\n",
+                prms.be_rel_tol);
+        output (O_BOTH, "\tAbs. convergence tolerance: \t%e\n",
+                prms.be_abs_tol);
     }
     else
     {
@@ -170,7 +175,8 @@ printResults (Results * results, Results * error)
             results->currentDensity, error->currentDensity);
     output (O_BOTH, "\tEquilibration Energy: \t\tE_i = %e\n",
             results->equilibrationEnergy);
-    output (O_BOTH, "\tSimulated time: \t\tt   = %e\n\n", results->simulationTime);
+    output (O_BOTH, "\tSimulated time: \t\tt   = %e\n\n",
+            results->simulationTime);
 
 }
 

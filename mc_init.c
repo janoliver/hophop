@@ -110,23 +110,25 @@ MC_createCarriers (Site * sites)
  * source of electrons or anything else.
  */
 Carrier *
-MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms, Results * res)
+MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms,
+                       Results * res)
 {
     size_t i, siteIndex;
     Carrier tmp;
 
     // select prms.ncarriers random sites for the carriers
-    Site * sample = malloc(prms.ncarriers * sizeof(Site));
-    gsl_ran_choose (runprms->r, sample, prms.ncarriers, sites, prms.nsites, sizeof(Site));
-    
+    Site *sample = malloc (prms.ncarriers * sizeof (Site));
+    gsl_ran_choose (runprms->r, sample, prms.ncarriers, sites, prms.nsites,
+                    sizeof (Site));
+
     // clear all the sites and set the correct index
-    for(i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < prms.nsites; ++i)
     {
         sites[i].carrier = NULL;
         sites[i].tempOccTime = 0;
         sites[i].index = i;
     }
-    
+
     // distribute carriers 
     for (i = 0; i < prms.ncarriers; ++i)
     {
@@ -217,8 +219,8 @@ MC_createHoppingRates (Site * sites)
             if (k < prms.nsites)
                 setNeighbors (&sites[k], cells);
 
-            output (O_SERIAL, "\r\tInitializing...: \t\t%2d%%", (int) l);
-            fflush (stdout);
+        output (O_SERIAL, "\r\tInitializing...: \t\t%2d%%", (int) l);
+        fflush (stdout);
     }
     output (O_SERIAL, " Done.\n");
 
@@ -430,12 +432,13 @@ setNeighbors (Site * s, Cell * cells)
                             d.length < prms.cutoff_radius)
                         {
                             // find out if this is the nearest neighbor
-                            if(!smallest_distance || d.length < smallest_distance )
+                            if (!smallest_distance
+                                || d.length < smallest_distance)
                             {
                                 nnindex = siteList->s->index;
                                 smallest_distance = d.length;
                             }
-                                
+
                             neighbors = (SLE *) malloc (sizeof (SLE));
                             neighbors->s = siteList->s;
                             neighbors->rate =
@@ -463,7 +466,7 @@ setNeighbors (Site * s, Cell * cells)
 
         neighbors = neighbors->next;
     }
-        
+
     free (used);
 
     // sort the neighbors according to the rate to save computation
@@ -536,7 +539,7 @@ distance (Site * i, Site * j)
     if (vec.z < -lz)
         vec.z += prms.length_z;
 
-    vec.length = sqrt(pow (vec.x, 2.0) + pow (vec.y, 2.0) + pow (vec.z,                                                            2.0));
+    vec.length = sqrt (pow (vec.x, 2.0) + pow (vec.y, 2.0) + pow (vec.z, 2.0));
 
     return vec;
 }

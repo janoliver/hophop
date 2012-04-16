@@ -170,12 +170,12 @@ generateParams (Params * prms, int argc, char **argv)
     if (args.nruns_arg < 1)
         args.nruns_arg = 1;
     prms->number_runs = args.nruns_arg;
-    
+
     // number of reruns (starting pos of the electron)
     if (args.nreruns_arg < 1)
         args.nreruns_arg = 1;
     prms->number_reruns = args.nreruns_arg;
-    
+
     // threads
     prms->nthreads = (GSL_MIN (omp_get_max_threads (), prms->number_runs));
 

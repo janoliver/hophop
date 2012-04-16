@@ -3,7 +3,7 @@
 #include "hop.h"
 
 void hoppingStep (Site * sites, Carrier * carriers, Results * res,
-                  bool stat,  RunParams * runprms);
+                  bool stat, RunParams * runprms);
 void hop (Carrier * c, SLE * dest, Vector * dist,
           Results * res, Carrier * carriers, bool stat);
 void updateCarrier (Carrier * carriers, RunParams * runprms);
@@ -23,14 +23,15 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
 
     // we need the current simulation time.
     double simTimeOld = res->simulationTime;
-    
+
     // relaxation, no time or hop counting
     for (j = 0; j <= 100; j++)
     {
         while (res->nHops < prms.relaxation / 100 * j)
             hoppingStep (sites, carriers, res, false, runprms);
 
-        output (O_SERIAL, "\r\tRelaxing...   (run %d of %d):\t%2d%%", iReRun, prms.number_reruns, (int)j);
+        output (O_SERIAL, "\r\tRelaxing...   (run %d of %d):\t%2d%%", iReRun,
+                prms.number_reruns, (int) j);
         fflush (stdout);
     }
     output (O_SERIAL, " Done.\n");
@@ -39,17 +40,18 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
     // we need to renormalize the carrier occupation time and simulation time, since
     // we might have multiple runs due to -x, while simulationTime is counted totally
     res->nHops = 0;
-    
+
     for (j = 0; j < prms.ncarriers; ++j)
         carriers[j].occTime -= (res->simulationTime - simTimeOld);
     res->simulationTime = simTimeOld;
-    
+
     for (j = 0; j <= 100; j++)
     {
         while (res->nHops <= prms.simulation / 100 * j)
             hoppingStep (sites, carriers, res, true, runprms);
 
-        output (O_SERIAL, "\r\tSimulating... (run %d of %d):\t%2d%%", iReRun, prms.number_reruns, (int)j);
+        output (O_SERIAL, "\r\tSimulating... (run %d of %d):\t%2d%%", iReRun,
+                prms.number_reruns, (int) j);
         fflush (stdout);
     }
     output (O_SERIAL, " Done.\n");
@@ -58,8 +60,8 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
     for (j = 0; j < prms.nsites; ++j)
         if (sites[j].tempOccTime > 0)
             sites[j].totalOccTime += res->simulationTime - sites[j].tempOccTime;
-    
-    
+
+
 }
 
 /*
@@ -76,10 +78,10 @@ hoppingStep (Site * sites, Carrier * carriers,
     Carrier *c = NULL;
     SLE *dest = NULL;
     double randomHopProb, probSum;
-    
+
     // heap
     c = &carriers[0];
-    
+
     // determine the next destination site
     randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
     probSum = 0.0;
@@ -90,7 +92,7 @@ hoppingStep (Site * sites, Carrier * carriers,
         probSum += neighbor->rate;
         neighbor = neighbor->next;
     }
-        
+
     res->simulationTime = c->occTime;
 
     if (dest->s->carrier == NULL)
@@ -219,4 +221,3 @@ updateCarrier (Carrier * c, RunParams * runprms)
         i = smallest;
     }
 }
-

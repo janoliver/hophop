@@ -108,17 +108,17 @@ divide_results_by_scalar (Results * res, double scalar)
 }
 
 int
-output(int mode, const char *fmt, ...)
+output (int mode, const char *fmt, ...)
 {
     va_list args;
-    va_start(args, fmt);
+    va_start (args, fmt);
 
-    if(prms.quiet && mode != O_FORCE)
+    if (prms.quiet && mode != O_FORCE)
         return 0;
 
-    if((mode == O_FORCE || mode == O_BOTH) ||
-       (mode == O_PARALLEL && prms.parallel && prms.number_runs > 1) ||
-       (mode == O_SERIAL &&(!prms.parallel || prms.number_runs == 1)))
-        return vprintf(fmt, args);
-    
+    if ((mode == O_FORCE || mode == O_BOTH) ||
+        (mode == O_PARALLEL && prms.parallel && prms.number_runs > 1) ||
+        (mode == O_SERIAL && (!prms.parallel || prms.number_runs == 1)))
+        return vprintf (fmt, args);
+
 }
