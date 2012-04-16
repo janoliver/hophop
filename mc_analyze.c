@@ -28,7 +28,7 @@ calcMobility (Carrier * carriers, Results * results)
     for (i = 0; i < prms.ncarriers; ++i)
         ez += carriers[i].dz;
 
-    return ez / (prms.ncarriers * prms.field * results->simulationTime);
+    return ez / (prms.ncarriers * prms.field * results->totalSimulationTime);
 }
 
 /*
@@ -44,7 +44,7 @@ calcEquilibrationEnergy (Site * sites, Results * results)
     for (i = 0; i < prms.nsites; ++i)
         sum += sites[i].totalOccTime * sites[i].energy;
 
-    return sum / (prms.ncarriers * results->simulationTime);
+    return sum / (prms.ncarriers * results->totalSimulationTime);
 }
 
 /*
@@ -81,7 +81,7 @@ calcDiffusivity (Carrier * carriers, Results * results)
 
     // sez = pow(ez / prms.ncarriers, 2.0);
     //ds = (ez2 - sez) / (2 * results->simulationTime);
-    dp = (ex2 + ey2) / (4 * results->simulationTime);
+    dp = (ex2 + ey2) / (4 * results->totalSimulationTime);
     return dp;
 }
 
@@ -123,7 +123,7 @@ calcCurrentDensity (Carrier * carriers, Results * results)
     double ez = 0;
     for (i = 0; i < prms.ncarriers; ++i)
         ez += carriers[i].dz;
-    return ez / (results->simulationTime * prms.nsites);
+    return ez / (results->totalSimulationTime * prms.nsites);
 }
 
 /*

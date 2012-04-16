@@ -77,30 +77,52 @@ MC_createSites (RunParams * runprms)
 }
 
 /*
- * Distributes the electrons over random sites. Since all site energies
- * and positions were created randomly, simply the first nCarriers sites
- * can be set to occupied.m This can be modified to have a localized
- * source of electrons or anything else.
+ * allocate carrier array and initialize the values
  */
 Carrier *
-MC_distributeCarriers (Site * sites, RunParams * runprms)
+MC_createCarriers (Site * sites)
 {
-    int i, k;
+    int i;
     Carrier *c;
     Carrier tmp;
 
+    // allocate carrier memory
     c = (Carrier *) malloc (sizeof (Carrier) * prms.ncarriers);
 
-    for (k = 0; k < prms.ncarriers; ++k)
+    // distribute carriers 
+    for (i = 0; i < prms.ncarriers; ++i)
     {
-        i = k;
-        c[i].site = &sites[i];
         c[i].index = i;
         c[i].dx = 0.0;
         c[i].dy = 0.0;
         c[i].dz = 0.0;
         c[i].nFailedAttempts = 0;
         c[i].nHops = 0;
+    }
+
+    return c;
+}
+
+
+/*
+ * Distributes the electrons over random sites. Since all site energies
+ * and positions were created randomly, simply the first nCarriers sites
+ * can be set to occupied.m This can be modified to have a localized
+ * source of electrons or anything else.
+ */
+Carrier *
+MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
+{
+    int i;
+    Carrier tmp;
+
+    // shuffle the sites array
+    gsl_ran_shuffle (runprms->r, sites, prms.nsites, sizeof(Site));
+
+    // distribute carriers 
+    for (i = 0; i < prms.ncarriers; ++i)
+    {
+        c[i].site = &sites[i];
         c[i].occTime =
             (float) gsl_ran_exponential (runprms->r, 1.0) / sites[i].rateSum;
 
@@ -117,7 +139,6 @@ MC_distributeCarriers (Site * sites, RunParams * runprms)
         c[i].site->tempOccTime = 0.0001;
     }
 
-    return c;
 }
 
 /*

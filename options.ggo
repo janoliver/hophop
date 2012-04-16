@@ -34,9 +34,9 @@ option "softpairthreshold" - "The min hopping rate ratio to define a softpair" f
 
 section "Monte carlo simulation" sectiondesc="The following options matter only, when the system is simulated using a monte carlo simulation (which is the default)"
 
-option "ar" - "Use Walker's random number generation and the accept/reject technique for finding the next transition. This is efficient for high concentrations around n=N/2" flag off
 option "simulation" I "The number of hops during which statistics are collected." long default="1000000000" optional
-option "relaxation" R "The number of hops to relax." long default="100000000" optional  
+option "relaxation" R "The number of hops to relax." long default="100000000" optionaloption "nreruns" x "How many times should the electron be placed at some random starting position?" int default="1" optional
+  
 
 section "Balance equations" sectiondesc="These options only matter, when the solution is found by solving the balance equations. (setting the --be flag)"
 
@@ -45,6 +45,7 @@ option "be_it" - "Max inner iterations after which the calculation is stopped. "
 option "be_oit" - "Max outer iterations or restarts of the algorithm." long default="1" optional
 option "tol_abs" - "absolute tolerance for finding the solution" float default="1e-8" optional
 option "tol_rel" - "relative tolerance for finding the solution" float default="1e-8" optional
+
 
 section "Analytic calculations" sectiondesc="These options control the analytic calculation of several properties of the system, like the transport energy or the mobility."
 

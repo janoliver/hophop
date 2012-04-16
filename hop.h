@@ -39,13 +39,13 @@ typedef struct params
     float field;
     float temperature;
     bool gaussian;
-    bool accept_reject;
     bool lattice;
     long relaxation;
     long simulation;
     bool removesoftpairs;
     float softpairthreshold;
     int number_runs;
+    int number_reruns;
     bool parallel;
     bool quiet;
     char *output_folder;
@@ -124,6 +124,7 @@ typedef struct results
     double diffusivity;
     double einsteinrelation;
     double simulationTime;
+    double totalSimulationTime;
     double currentDensity;
     double equilibrationEnergy;
     size_t nHops;
@@ -191,9 +192,10 @@ bool serialOutput ();
 
 //mc
 void MC_simulation (Site * sites, Carrier * carriers, Results * res,
-                    RunParams * runprms, int *iRun);
+                    RunParams * runprms, int *iRun, int iReRun);
 Site *MC_createSites (RunParams * runprms);
-Carrier *MC_distributeCarriers (Site * sites, RunParams * runprms);
+Carrier *MC_distributeCarriers (Carrier * carriers, Site * sites, RunParams * runprms);
+Carrier *MC_createCarriers (Site * sites);
 void MC_createHoppingRates (Site * sites);
 void MC_removeSoftPairs (Site * sites);
 void MC_calculateResults (Site * sites, Carrier * carriers, Results * res);

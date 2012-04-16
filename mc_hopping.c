@@ -3,11 +3,10 @@
 #include "hop.h"
 
 void hoppingStep (Site * sites, Carrier * carriers, Results * res,
-                  bool stat, ALT * tables, RunParams * runprms);
+                  bool stat,  RunParams * runprms);
 void hop (Carrier * c, SLE * dest, Vector * dist,
           Results * res, Carrier * carriers, bool stat);
 void updateCarrier (Carrier * carriers, RunParams * runprms);
-int getTransitionLookupTables (Site * sites, ALT * tables);
 
 /*
  * This function runs the iteration of the simulation.  It keeps track of
@@ -15,34 +14,24 @@ int getTransitionLookupTables (Site * sites, ALT * tables);
  */
 void
 MC_simulation (Site * sites, Carrier * carriers, Results * res,
-               RunParams * runprms, int *iRun)
+               RunParams * runprms, int *iRun, int iReRun)
 {
     size_t j;
-    struct timeval start, end, result;
-    struct timezone tz;
 
     // initialize some results
     res->simulationTime = 0.0;
     res->nHops = 0;
     res->nFailedAttempts = 0;
 
-    // if the accept/reject method is chosen, initialize tables
-    ALT alias_tables;
-    if (prms.accept_reject)
-    {
-        int n = getTransitionLookupTables (sites, &alias_tables);
-        alias_tables.tab = gsl_ran_discrete_preproc (n, alias_tables.weights);
-    }
-
     // relaxation, no time or hop counting
     for (j = 0; j <= 100; j++)
     {
         while (res->nHops < prms.relaxation / 100 * j)
-            hoppingStep (sites, carriers, res, false, &alias_tables, runprms);
+            hoppingStep (sites, carriers, res, false, runprms);
 
         if (serialOutput ())
         {
-            printf ("\r\tRelaxing...:  \t\t\t%2d%%", (int) j);
+            printf ("\r\tRelaxing...   (run %d of %d):\t%2d%%", iReRun, prms.number_reruns, (int)j);
             fflush (stdout);
         }
     }
@@ -50,49 +39,25 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
         printf (" Done.\n");
 
     // actual simulation, time and hop counting
+    res->simulationTime = 0.0;
+    res->nHops = 0;
+
     for (j = 0; j < prms.ncarriers; ++j)
         carriers[j].occTime -= res->simulationTime;
 
-    gettimeofday (&start, &tz);
-    res->simulationTime = 0.0;
-    res->nHops = 0;
     for (j = 0; j <= 100; j++)
     {
         while (res->nHops <= prms.simulation / 100 * j)
-            hoppingStep (sites, carriers, res, true, &alias_tables, runprms);
+            hoppingStep (sites, carriers, res, true, runprms);
 
         if (serialOutput ())
         {
-            printf ("\r\tSimulating...: \t\t\t%2d%%", (int) j);
+            printf ("\r\tSimulating... (run %d of %d):\t%2d%%", iReRun, prms.number_reruns, (int)j);
             fflush (stdout);
         }
     }
-    gettimeofday (&end, &tz);
-    timeval_subtract (&result, &start, &end);
-
-    // finish occupation time calculations
-    for (j = 0; j < prms.nsites; ++j)
-        if (sites[j].tempOccTime > 0)
-            sites[j].totalOccTime += res->simulationTime - sites[j].tempOccTime;
-
-    double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
-    if (!serialOutput () && !prms.quiet)
-        printf
-            ("Finished %d. Iteration (total %d): %d successful hops/sec (%ld failed)\n",
-             *iRun, prms.number_runs, (int) (res->nHops / elapsed),
-             res->nFailedAttempts);
     if (serialOutput ())
-        printf (" Done. %d successful hops/sec (%ld failed)\n",
-                (int) (res->nHops / elapsed), res->nFailedAttempts);
-
-    // free the memory for the alias method
-    if (prms.accept_reject)
-    {
-        free (alias_tables.dest);
-        free (alias_tables.orig);
-        free (alias_tables.weights);
-        gsl_ran_discrete_free (alias_tables.tab);
-    }
+        printf (" Done.\n");
 
 }
 
@@ -105,74 +70,45 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
  */
 void
 hoppingStep (Site * sites, Carrier * carriers,
-             Results * res, bool stat, ALT * tables, RunParams * runprms)
+             Results * res, bool stat, RunParams * runprms)
 {
     Carrier *c = NULL;
     SLE *dest = NULL;
-
-    if (prms.accept_reject)
+    double randomHopProb, probSum;
+    
+    // heap
+    c = &carriers[0];
+    
+    // determine the next destination site
+    randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
+    probSum = 0.0;
+    SLE *neighbor = c->site->neighbors;
+    while (neighbor && probSum <= randomHopProb)
     {
-        size_t nextTransitionIndex = gsl_ran_discrete (runprms->r, tables->tab);
-        //size_t nextTransitionIndex = 10;
-        res->simulationTime += tables->total;
+        dest = neighbor;
+        probSum += neighbor->rate;
+        neighbor = neighbor->next;
+    }
+        
+    if(stat)
+        res->simulationTime = c->occTime;
 
-        c = tables->orig[nextTransitionIndex]->carrier;
-        dest = tables->dest[nextTransitionIndex];
+    if (dest->s->carrier == NULL)
+    {
+        // do the hopping and write some statistics
+        res->nHops++;
 
-        // check if jump is accepted
-        if (c != NULL && dest->s->carrier == NULL)
-        {
-            // do the hopping and write some statistics
-            res->nHops++;
-
-            hop (c, dest, &dest->dist, res, carriers, stat);
-        }
-        else if (dest->s->carrier != NULL && c != NULL && stat)
+        hop (c, dest, &dest->dist, res, carriers, stat);
+    }
+    else
+    {
+        if (stat)
         {
             res->nFailedAttempts++;
             c->nFailedAttempts++;
         }
-        else if (stat)
-            res->nFailedAttempts++;
-
     }
-    else
-    {
-        double randomHopProb, probSum;
-
-        // heap
-        c = &carriers[0];
-
-        // determine the next destination site
-        randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
-        probSum = 0.0;
-        SLE *neighbor = c->site->neighbors;
-        while (neighbor && probSum <= randomHopProb)
-        {
-            dest = neighbor;
-            probSum += neighbor->rate;
-            neighbor = neighbor->next;
-        }
-
-        res->simulationTime = c->occTime;
-
-        if (dest->s->carrier == NULL)
-        {
-            // do the hopping and write some statistics
-            res->nHops++;
-
-            hop (c, dest, &dest->dist, res, carriers, stat);
-        }
-        else
-        {
-            if (stat)
-            {
-                res->nFailedAttempts++;
-                c->nFailedAttempts++;
-            }
-        }
-        updateCarrier (carriers, runprms);
-    }
+    updateCarrier (carriers, runprms);
 }
 
 /*
@@ -284,55 +220,3 @@ updateCarrier (Carrier * c, RunParams * runprms)
     }
 }
 
-
-/*
- * Generates the lookup table used for the accept/reject method
- * resp. Walker's random number generator.
- */
-int
-getTransitionLookupTables (Site * sites, ALT * tables)
-{
-    size_t k = 0, l = 0;
-    tables->weights = NULL;
-    tables->orig = NULL;
-    tables->dest = NULL;
-    SLE *neighbor;
-    tables->total = 0;
-
-    // find memory to be alloced
-    for (k = 0; k < prms.nsites; ++k)
-        l += sites[k].nNeighbors;
-
-    tables->weights = malloc (sizeof (double) * l);
-    tables->orig = malloc (sizeof (Site *) * l);
-    tables->dest = malloc (sizeof (SLE *) * l);
-
-    l = 0;
-    for (k = 0; k < prms.nsites; ++k)
-    {
-        printf ("\r\tBuilding Tables...:  \t\t%2d%%",
-                (int) (100 * k / prms.nsites));
-        fflush (stdout);
-
-        if (sites[k].nNeighbors <= 0)
-            continue;
-
-        neighbor = sites[k].neighbors;
-        while (neighbor)
-        {
-            tables->weights[l] = neighbor->rate;
-            tables->orig[l] = &sites[k];
-            tables->dest[l] = neighbor;
-
-            tables->total += neighbor->rate;
-
-            ++l;
-            neighbor = neighbor->next;
-
-        }
-    }
-    tables->total = 1. / tables->total;
-
-    printf (" Done.\n");
-    return l;
-}

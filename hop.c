@@ -139,8 +139,7 @@ printSettings ()
         printf ("\tNumber of carriers: \t\tn = %d\n", prms.ncarriers);
         printf ("\tHops of relaxation: \t\tR = %lu\n", prms.relaxation);
         printf ("\tHops of simulation: \t\tI = %lu\n", prms.simulation);
-        printf ("\tTechnique: \t\t\t%s\n",
-                prms.accept_reject ? "Accept/Reject" : "Standard");
+
     }
 
     if (!serialOutput () && !prms.quiet)
@@ -182,7 +181,7 @@ printResults (Results * results, Results * error)
             results->currentDensity, error->currentDensity);
     printf ("\tEquilibration Energy: \t\tE_i = %e\n",
             results->equilibrationEnergy);
-    printf ("\tSimulated time: \t\tt   = %e\n\n", results->simulationTime);
+    printf ("\tSimulated time: \t\tt   = %e\n\n", results->totalSimulationTime);
 
 }
 
