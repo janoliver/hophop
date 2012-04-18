@@ -177,8 +177,15 @@ generateParams (Params * prms, int argc, char **argv)
     prms->number_reruns = args.nreruns_arg;
 
     // threads
-    prms->nthreads = (GSL_MIN (omp_get_max_threads (), prms->number_runs));
+    if(args.nthreads_arg == 0 || args.nthreads_arg > omp_get_max_threads ())
+        prms->nthreads = (GSL_MIN (omp_get_max_threads (), prms->number_runs));
+    else
+        prms->nthreads = (GSL_MIN (args.nthreads_arg, prms->number_runs));
 
+    // if prms.nthreads == 1 for any reason, disable parallel computing
+    if(prms->nthreads == 1)
+        prms->parallel = false;
+    
     // analytics
     if (args.percolation_threshold_arg <= 0)
     {

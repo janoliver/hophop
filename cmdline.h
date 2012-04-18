@@ -54,6 +54,9 @@ struct gengetopt_args_info
   const char *nruns_help; /**< @brief The number of runs to average over. help description.  */
   int parallel_flag;	/**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. (default=off).  */
   const char *parallel_help; /**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. help description.  */
+  int nthreads_arg;	/**< @brief The number of threads to use during parallel computing. 0 means all there are. (default='0').  */
+  char * nthreads_orig;	/**< @brief The number of threads to use during parallel computing. 0 means all there are. original value given at command line.  */
+  const char *nthreads_help; /**< @brief The number of threads to use during parallel computing. 0 means all there are. help description.  */
   int length_arg;	/**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!.  */
   char * length_orig;	/**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! original value given at command line.  */
   const char *length_help; /**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! help description.  */
@@ -144,6 +147,7 @@ struct gengetopt_args_info
   unsigned int rseed_given ;	/**< @brief Whether rseed was given.  */
   unsigned int nruns_given ;	/**< @brief Whether nruns was given.  */
   unsigned int parallel_given ;	/**< @brief Whether parallel was given.  */
+  unsigned int nthreads_given ;	/**< @brief Whether nthreads was given.  */
   unsigned int length_given ;	/**< @brief Whether length was given.  */
   unsigned int X_given ;	/**< @brief Whether X was given.  */
   unsigned int Y_given ;	/**< @brief Whether Y was given.  */

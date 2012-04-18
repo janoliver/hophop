@@ -27,7 +27,7 @@
 
 const char *gengetopt_args_info_purpose = "This software simulates hopping in disordered semiconductors with hopping on \nlocalized states. It uses Monte-Carlo simulation techniques. See the README \nfile to learn more.";
 
-const char *gengetopt_args_info_usage = "Usage: HOP [-h|--help] [-V|--version] [-q|--quiet] \n         [-fSTRING|--conf_file=STRING] [-m|--memreq] [--rseed=LONG] \n         [-iINT|--nruns=INT] [-P|--parallel] [-lINT|--length=INT] \n         [-XINT|--X=INT] [-YINT|--Y=INT] [-ZINT|--Z=INT] \n         [-nINT|--ncarriers=INT] [-NINT|--nsites=INT] \n         [-pFLOAT|--exponent=FLOAT] [-aFLOAT|--llength=FLOAT] [--rc=FLOAT] \n         [-FFLOAT|--field=FLOAT] [-TFLOAT|--temperature=FLOAT] [--gaussian] \n         [--lattice] [--removesoftpairs] [--softpairthreshold=FLOAT] \n         [-ILONG|--simulation=LONG] [-RLONG|--relaxation=LONG] \n         [-xINT|--nreruns=INT] [--be] [--be_it=LONG] [--be_oit=LONG] \n         [--tol_abs=FLOAT] [--tol_rel=FLOAT] [--an] \n         [-BFLOAT|--percolation_threshold=FLOAT] \n         [-oSTRING|--outputfolder=STRING] [--transitions] \n         [-ySTRING|--summary=STRING] [-cSTRING|--comment=STRING]";
+const char *gengetopt_args_info_usage = "Usage: HOP [-h|--help] [-V|--version] [-q|--quiet] \n         [-fSTRING|--conf_file=STRING] [-m|--memreq] [--rseed=LONG] \n         [-iINT|--nruns=INT] [-P|--parallel] [-tINT|--nthreads=INT] \n         [-lINT|--length=INT] [-XINT|--X=INT] [-YINT|--Y=INT] [-ZINT|--Z=INT] \n         [-nINT|--ncarriers=INT] [-NINT|--nsites=INT] \n         [-pFLOAT|--exponent=FLOAT] [-aFLOAT|--llength=FLOAT] [--rc=FLOAT] \n         [-FFLOAT|--field=FLOAT] [-TFLOAT|--temperature=FLOAT] [--gaussian] \n         [--lattice] [--removesoftpairs] [--softpairthreshold=FLOAT] \n         [-ILONG|--simulation=LONG] [-RLONG|--relaxation=LONG] \n         [-xINT|--nreruns=INT] [--be] [--be_it=LONG] [--be_oit=LONG] \n         [--tol_abs=FLOAT] [--tol_rel=FLOAT] [--an] \n         [-BFLOAT|--percolation_threshold=FLOAT] \n         [-oSTRING|--outputfolder=STRING] [--transitions] \n         [-ySTRING|--summary=STRING] [-cSTRING|--comment=STRING]";
 
 const char *gengetopt_args_info_description = "";
 
@@ -40,6 +40,7 @@ const char *gengetopt_args_info_help[] = {
   "      --rseed=LONG              Set the random seed manually.",
   "  -i, --nruns=INT               The number of runs to average over.  \n                                  (default=`1')",
   "  -P, --parallel                If the runs given with the --nruns option \n                                  should be executed using mutliple cores and \n                                  parallelization. This suppresses any progress \n                                  output of the runs but will be very fast on \n                                  multicore systems.  (default=off)",
+  "  -t, --nthreads=INT            The number of threads to use during parallel \n                                  computing. 0 means all there are.  \n                                  (default=`0')",
   "\nSystem information:",
   "  Parameters to describe the physical situation we are dealing with.",
   "  -l, --length=INT              This parameter specifies the length of the \n                                  (cubic) sample. If it parameter is set, the \n                                  options X,Y,Z are ignored!",
@@ -137,6 +138,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->rseed_given = 0 ;
   args_info->nruns_given = 0 ;
   args_info->parallel_given = 0 ;
+  args_info->nthreads_given = 0 ;
   args_info->length_given = 0 ;
   args_info->X_given = 0 ;
   args_info->Y_given = 0 ;
@@ -180,6 +182,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->nruns_arg = 1;
   args_info->nruns_orig = NULL;
   args_info->parallel_flag = 0;
+  args_info->nthreads_arg = 0;
+  args_info->nthreads_orig = NULL;
   args_info->length_orig = NULL;
   args_info->X_arg = 50;
   args_info->X_orig = NULL;
@@ -247,35 +251,36 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->rseed_help = gengetopt_args_info_help[5] ;
   args_info->nruns_help = gengetopt_args_info_help[6] ;
   args_info->parallel_help = gengetopt_args_info_help[7] ;
-  args_info->length_help = gengetopt_args_info_help[10] ;
-  args_info->X_help = gengetopt_args_info_help[11] ;
-  args_info->Y_help = gengetopt_args_info_help[12] ;
-  args_info->Z_help = gengetopt_args_info_help[13] ;
-  args_info->ncarriers_help = gengetopt_args_info_help[14] ;
-  args_info->nsites_help = gengetopt_args_info_help[15] ;
-  args_info->exponent_help = gengetopt_args_info_help[16] ;
-  args_info->llength_help = gengetopt_args_info_help[17] ;
-  args_info->rc_help = gengetopt_args_info_help[18] ;
-  args_info->field_help = gengetopt_args_info_help[19] ;
-  args_info->temperature_help = gengetopt_args_info_help[20] ;
-  args_info->gaussian_help = gengetopt_args_info_help[21] ;
-  args_info->lattice_help = gengetopt_args_info_help[22] ;
-  args_info->removesoftpairs_help = gengetopt_args_info_help[23] ;
-  args_info->softpairthreshold_help = gengetopt_args_info_help[24] ;
-  args_info->simulation_help = gengetopt_args_info_help[27] ;
-  args_info->relaxation_help = gengetopt_args_info_help[28] ;
-  args_info->nreruns_help = gengetopt_args_info_help[29] ;
-  args_info->be_help = gengetopt_args_info_help[32] ;
-  args_info->be_it_help = gengetopt_args_info_help[33] ;
-  args_info->be_oit_help = gengetopt_args_info_help[34] ;
-  args_info->tol_abs_help = gengetopt_args_info_help[35] ;
-  args_info->tol_rel_help = gengetopt_args_info_help[36] ;
-  args_info->an_help = gengetopt_args_info_help[39] ;
-  args_info->percolation_threshold_help = gengetopt_args_info_help[40] ;
-  args_info->outputfolder_help = gengetopt_args_info_help[42] ;
-  args_info->transitions_help = gengetopt_args_info_help[43] ;
-  args_info->summary_help = gengetopt_args_info_help[44] ;
-  args_info->comment_help = gengetopt_args_info_help[45] ;
+  args_info->nthreads_help = gengetopt_args_info_help[8] ;
+  args_info->length_help = gengetopt_args_info_help[11] ;
+  args_info->X_help = gengetopt_args_info_help[12] ;
+  args_info->Y_help = gengetopt_args_info_help[13] ;
+  args_info->Z_help = gengetopt_args_info_help[14] ;
+  args_info->ncarriers_help = gengetopt_args_info_help[15] ;
+  args_info->nsites_help = gengetopt_args_info_help[16] ;
+  args_info->exponent_help = gengetopt_args_info_help[17] ;
+  args_info->llength_help = gengetopt_args_info_help[18] ;
+  args_info->rc_help = gengetopt_args_info_help[19] ;
+  args_info->field_help = gengetopt_args_info_help[20] ;
+  args_info->temperature_help = gengetopt_args_info_help[21] ;
+  args_info->gaussian_help = gengetopt_args_info_help[22] ;
+  args_info->lattice_help = gengetopt_args_info_help[23] ;
+  args_info->removesoftpairs_help = gengetopt_args_info_help[24] ;
+  args_info->softpairthreshold_help = gengetopt_args_info_help[25] ;
+  args_info->simulation_help = gengetopt_args_info_help[28] ;
+  args_info->relaxation_help = gengetopt_args_info_help[29] ;
+  args_info->nreruns_help = gengetopt_args_info_help[30] ;
+  args_info->be_help = gengetopt_args_info_help[33] ;
+  args_info->be_it_help = gengetopt_args_info_help[34] ;
+  args_info->be_oit_help = gengetopt_args_info_help[35] ;
+  args_info->tol_abs_help = gengetopt_args_info_help[36] ;
+  args_info->tol_rel_help = gengetopt_args_info_help[37] ;
+  args_info->an_help = gengetopt_args_info_help[40] ;
+  args_info->percolation_threshold_help = gengetopt_args_info_help[41] ;
+  args_info->outputfolder_help = gengetopt_args_info_help[43] ;
+  args_info->transitions_help = gengetopt_args_info_help[44] ;
+  args_info->summary_help = gengetopt_args_info_help[45] ;
+  args_info->comment_help = gengetopt_args_info_help[46] ;
   
 }
 
@@ -360,6 +365,7 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->conf_file_orig));
   free_string_field (&(args_info->rseed_orig));
   free_string_field (&(args_info->nruns_orig));
+  free_string_field (&(args_info->nthreads_orig));
   free_string_field (&(args_info->length_orig));
   free_string_field (&(args_info->X_orig));
   free_string_field (&(args_info->Y_orig));
@@ -432,6 +438,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "nruns", args_info->nruns_orig, 0);
   if (args_info->parallel_given)
     write_into_file(outfile, "parallel", 0, 0 );
+  if (args_info->nthreads_given)
+    write_into_file(outfile, "nthreads", args_info->nthreads_orig, 0);
   if (args_info->length_given)
     write_into_file(outfile, "length", args_info->length_orig, 0);
   if (args_info->X_given)
@@ -760,6 +768,7 @@ cmdline_parser_internal (
         { "rseed",	1, NULL, 0 },
         { "nruns",	1, NULL, 'i' },
         { "parallel",	0, NULL, 'P' },
+        { "nthreads",	1, NULL, 't' },
         { "length",	1, NULL, 'l' },
         { "X",	1, NULL, 'X' },
         { "Y",	1, NULL, 'Y' },
@@ -792,7 +801,7 @@ cmdline_parser_internal (
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVqf:mi:Pl:X:Y:Z:n:N:p:a:F:T:I:R:x:B:o:y:c:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVqf:mi:Pt:l:X:Y:Z:n:N:p:a:F:T:I:R:x:B:o:y:c:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -858,6 +867,18 @@ cmdline_parser_internal (
           if (update_arg((void *)&(args_info->parallel_flag), 0, &(args_info->parallel_given),
               &(local_args_info.parallel_given), optarg, 0, 0, ARG_FLAG,
               check_ambiguity, override, 1, 0, "parallel", 'P',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 't':	/* The number of threads to use during parallel computing. 0 means all there are..  */
+        
+        
+          if (update_arg( (void *)&(args_info->nthreads_arg), 
+               &(args_info->nthreads_orig), &(args_info->nthreads_given),
+              &(local_args_info.nthreads_given), optarg, 0, "0", ARG_INT,
+              check_ambiguity, override, 0, 0,
+              "nthreads", 't',
               additional_error))
             goto failure;
         

@@ -13,6 +13,8 @@ option "memreq" m "Estimates the used memory for the specified parameter set. Pr
 option "rseed" - "Set the random seed manually." long optional
 option "nruns" i "The number of runs to average over." int default="1" optional
 option "parallel" P "If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems." flag off
+option "nthreads" t "The number of threads to use during parallel computing. 0 means all there are." int default="0" optional
+
 
 section "System information" sectiondesc="Parameters to describe the physical situation we are dealing with."
 
@@ -31,6 +33,7 @@ option "gaussian" - "Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2)
 option "lattice" - "Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc" flag off
 option "removesoftpairs" - "Remove softpairs." flag off
 option "softpairthreshold" - "The min hopping rate ratio to define a softpair" float default="0.95" optional  
+
 
 section "Monte carlo simulation" sectiondesc="The following options matter only, when the system is simulated using a monte carlo simulation (which is the default)"
 
@@ -51,6 +54,7 @@ section "Analytic calculations" sectiondesc="These options control the analytic 
 
 option "an" - "Also try to calculate stuff analytically" flag off
 option "percolation_threshold" B "The percolation threshold." float default="2.7" optional
+
 
 section "Output"
 
