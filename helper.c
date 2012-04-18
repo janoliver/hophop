@@ -66,6 +66,8 @@ init_results (Results * res)
     res->equilibrationEnergy = 0.0;
     res->avgenergy = 0.0;
     res->einsteinrelation = 0.0;
+    
+    res->nFailedAttempts = 0;
 
     res->analytic_mobility = 0.0;
     res->analytic_fermienergy = 0.0;

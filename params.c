@@ -200,17 +200,3 @@ strArgGiven (char *arg)
 {
     return (arg != NULL);
 }
-
-/*
- * Check if quiet is not set and we don't
- * use parallel computing atm.
- */
-bool
-serialOutput ()
-{
-    if (prms.quiet)
-        return false;
-    if (prms.parallel && prms.number_runs > 1)
-        return false;
-    return true;
-}

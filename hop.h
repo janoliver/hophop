@@ -99,7 +99,9 @@ struct site;
 
 typedef struct carrier
 {
-    double dx, dy, dz;
+    double dx, dy, dz,
+        dx2, dy2, dz2,
+        ddx, ddy, ddz;
     struct site *site;
     int index;
     double occTime;

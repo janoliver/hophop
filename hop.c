@@ -118,7 +118,7 @@ printSettings ()
     output (O_PARALLEL, "\tParallelization: \t\tRunning on %d cores\n",
             prms.nthreads);
     output (O_SERIAL, "\tParallelization: \t\tOff\n");
-
+    output (O_BOTH, "\tRealizations for Averaging: \ti = %d\n", prms.number_runs);
     output (O_BOTH, "\tMode: \t\t\t\t%s\n",
             prms.balance_eq ? "Balance equations" : "Monte carlo simulation");
 
@@ -134,6 +134,7 @@ printSettings ()
     }
     else
     {
+        output( O_BOTH, "\tNumber of reruns:\t\tx = %d\n", prms.number_reruns);
         output (O_BOTH, "\tNumber of carriers: \t\tn = %d\n", prms.ncarriers);
         output (O_BOTH, "\tHops of relaxation: \t\tR = %lu\n", prms.relaxation);
         output (O_BOTH, "\tHops of simulation: \t\tI = %lu\n", prms.simulation);

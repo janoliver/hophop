@@ -18,9 +18,6 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
 {
     size_t j;
 
-    // initialize some results
-    res->nHops = 0;
-
     // we need the current simulation time.
     double simTimeOld = res->simulationTime;
 
@@ -61,6 +58,12 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
         if (sites[j].tempOccTime > 0)
             sites[j].totalOccTime += res->simulationTime - sites[j].tempOccTime;
 
+    for (j = 0; j < prms.ncarriers; ++j)
+    {
+        carriers[j].dx2 += pow(carriers[j].ddx, 2.0) / (res->simulationTime - simTimeOld);
+        carriers[j].dy2 += pow(carriers[j].ddy, 2.0) / (res->simulationTime - simTimeOld);
+        carriers[j].dz2 += pow(carriers[j].ddz, 2.0) / (res->simulationTime - simTimeOld);
+    }
 
 }
 
@@ -138,6 +141,10 @@ hop (Carrier * c, SLE * dest, Vector * dist,
         c->dx += dist->x;
         c->dy += dist->y;
         c->dz += dist->z;
+
+        c->ddx += dist->x;
+        c->ddy += dist->y;
+        c->ddz += dist->z;
     }
 
     // update carrier

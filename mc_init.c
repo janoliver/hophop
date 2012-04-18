@@ -95,6 +95,9 @@ MC_createCarriers (Site * sites)
         c[i].dx = 0.0;
         c[i].dy = 0.0;
         c[i].dz = 0.0;
+        c[i].dx2 = 0.0;
+        c[i].dy2 = 0.0;
+        c[i].dz2 = 0.0;
         c[i].nFailedAttempts = 0;
         c[i].nHops = 0;
     }
@@ -144,7 +147,9 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms,
             c[i / 2] = tmp;
             i /= 2;
         }
-
+        c[i].ddx = 0.0;
+        c[i].ddy = 0.0;
+        c[i].ddz = 0.0;
         c[i].site->carrier = &c[i];
         c[i].site->tempOccTime = 0.000001;
     }

@@ -67,9 +67,9 @@ calcDiffusivity (Carrier * carriers, Results * results)
         ex += carriers[i].dx;
         ey += carriers[i].dy;
         ez += carriers[i].dz;
-        ex2 += pow (carriers[i].dx, 2.0);
-        ey2 += pow (carriers[i].dy, 2.0);
-        ez2 += pow (carriers[i].dz, 2.0);
+        ex2 += carriers[i].dx2;
+        ey2 += carriers[i].dy2;
+        ez2 += carriers[i].dz2;
     }
     ex2 = ex2 / prms.ncarriers;
     ey2 = ey2 / prms.ncarriers;
@@ -80,7 +80,7 @@ calcDiffusivity (Carrier * carriers, Results * results)
 
     // sez = pow(ez / prms.ncarriers, 2.0);
     //ds = (ez2 - sez) / (2 * results->simulationTime);
-    dp = (ex2 + ey2) / (4 * results->simulationTime);
+    dp = (ex2 + ey2) / (4);
     return dp;
 }
 
@@ -100,15 +100,15 @@ calcEinsteinRelation (Carrier * carriers, Results * results)
 
     for (i = 0; i < prms.ncarriers; ++i)
     {
-        ex2 += pow (carriers[i].dx, 2.0);
-        ey2 += pow (carriers[i].dy, 2.0);
+        ex2 += carriers[i].dx2;
+        ey2 += carriers[i].dy2;
         ez += carriers[i].dz;
     }
     ex2 /= prms.ncarriers;
     ey2 /= prms.ncarriers;
     ez /= prms.ncarriers;
 
-    return (4. * ez) / (prms.field * (ex2 + ey2));
+    return (4. * ez) / (prms.field * (ex2 + ey2) * results->simulationTime);
 
 }
 
