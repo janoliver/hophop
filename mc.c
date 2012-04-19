@@ -77,13 +77,7 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
     for (i = 0; i < prms.nsites; ++i)
     {
         // free neighbor memory
-        neighbor = sites[i].neighbors;
-        while (neighbor)
-        {
-            tmp = neighbor->next;
-            free (neighbor);
-            neighbor = tmp;
-        }
+        free(sites[i].neighbors);
     }
     free (sites);
     free (carriers);

@@ -122,10 +122,8 @@ typedef struct site
     struct site_list_element *neighbors;
     int nNeighbors;
     double rateSum;
-    //double occTime;
-    double totalOccTime;
-    double tempOccTime;
-    double updatedAt;
+    float totalOccTime;
+    float tempOccTime;
 } Site;
 
 typedef struct results
@@ -149,14 +147,12 @@ typedef struct results
 
 typedef struct vector
 {
-    float x, y, z, length;
+    float x, y, z;
 } Vector;
 
 typedef struct site_list_element
 {
-    struct site_list_element *next;
     struct site *s;
-    bool nearest_neighbor;
     double rate;
     Vector dist;
     int nTransitions;

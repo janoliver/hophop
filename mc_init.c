@@ -16,7 +16,7 @@ Cell *getCell3D (Cell * cells, ssize_t x, ssize_t y, ssize_t z);
 void setNeighbors (Site * s, Cell * cells);
 double calcHoppingRate (Site i, Site j);
 Vector distance (Site * i, Site * j);
-SLE *sortNeighbors (SLE * list);
+int compare_neighbors (const void * a, const void * b);
 
 /*
  * creates n sites randomly distributed within a box of the size X*Y*Z
@@ -69,7 +69,6 @@ MC_createSites (RunParams * runprms)
                 s[i].neighbors = NULL;
                 s[i].nNeighbors = 0;
                 s[i].rateSum = 0.0;
-                s[i].updatedAt = 0.0;
             }
 
     return s;
@@ -387,23 +386,23 @@ MC_removeSoftPairs (Site * sites)
 void
 setNeighbors (Site * s, Cell * cells)
 {
-    ssize_t i, k, l;
-    size_t nnindex;
-    double smallest_distance = 0, temp;
+    int i, k, l;
     Cell *c;
-    SLE *siteList, *neighbors;
+    SLE *siteList, *neighbor;
     Vector d;
 
-    neighbors = NULL;
-
-    // make sure, cells are only used once
-    int *used = malloc (27 * sizeof (int));
-    int counter = 0, m, cont = 0;
-
-    for (m = 0; m < 27; ++m)
-        used[m] = -1;
-
+    // we use this struct to create a temporary linked list
+    // of the found neighbors.
+    struct linked_neighbors {
+        Site * s;
+        Vector dist;
+        struct linked_neighbors * next;
+    };
+    typedef struct linked_neighbor ln;
+    ln curr, head = NULL, tmp;
+    
     // now, find all the neighbors
+    // iterate over all neighboring cells
     for (i = -1; i <= 1; i++)
         for (k = -1; k <= 1; k++)
             for (l = -1; l <= 1; l++)
@@ -412,71 +411,62 @@ setNeighbors (Site * s, Cell * cells)
                 c = getCell3D (cells, i + floor (s->x / prms.cutoff_radius),
                                floor (k + s->y / prms.cutoff_radius),
                                floor (l + s->z / prms.cutoff_radius));
+                siteList = c->siteList;
 
-                cont = 0;
-                for (m = 0; m < 27; ++m)
-                    if (used[m] == c->index)
-                    {
-                        cont = 1;
-                        break;
-                    }
-
-                if (!cont)
+                while (siteList)
                 {
-                    siteList = c->siteList;
-                    used[counter++] = c->index;
-
-                    while (siteList)
+                    // if this is not the same Site as s and
+                    // is within the cutoff radius, attach it 
+                    // to the neighbor list and count one up.
+                    d = distance (s, siteList->s);
+                    length = sqrt (pow (d.x, 2.) + pow (d.y, 2.) + pow (d.z, 2.));
+                        
+                    if (s->index != siteList->s->index &&
+                        length < prms.cutoff_radius)
                     {
-                        // if this is not the same Site as s and
-                        // is within the cutoff radius, attach it 
-                        // to the neighbor list and count one up.
-                        d = distance (s, siteList->s);
+                        curr = (ln *) malloc(sizeof(ln));
 
-                        if (s->index != siteList->s->index &&
-                            d.length < prms.cutoff_radius)
-                        {
-                            // find out if this is the nearest neighbor
-                            if (!smallest_distance
-                                || d.length < smallest_distance)
-                            {
-                                nnindex = siteList->s->index;
-                                smallest_distance = d.length;
-                            }
+                        s->nNeighbors++;
+                        
+                        curr.dist = d;
+                        curr->s = siteList->s;
+                        curr->next = head;
+                        head = curr;
 
-                            neighbors = (SLE *) malloc (sizeof (SLE));
-                            neighbors->s = siteList->s;
-                            neighbors->rate =
-                                calcHoppingRate (*s, *siteList->s);
-                            neighbors->dist = d;
-                            neighbors->nTransitions = 0;
-                            s->rateSum += neighbors->rate;
-                            neighbors->nearest_neighbor = false;
-                            s->nNeighbors++;
-                            neighbors->next = s->neighbors;
-                            s->neighbors = neighbors;
-                        }
-                        siteList = siteList->next;
                     }
+                    siteList = siteList->next;
                 }
             }
 
-
-    // set the nearest neighbor
-    neighbors = s->neighbors;
-    while (neighbors)
+    // now make the neighbor array
+    curr = head;
+    s->neighbors = (SLE*) malloc(sizeof(SLE) * s->nNeighbors);
+    i = 0;
+    while(curr)
     {
-        if (neighbors->s->index == nnindex)
-            neighbors->nearest_neighbor = true;
+        s->neighbors[i].s = curr->s;
+        s->neighbors[i].rate =
+            calcHoppingRate (*s, *curr->s);
+        s->neighbors[i]->dist = curr.dist;
+        s->neighbors[i]->nTransitions = 0;
+        s->rateSum += s->neighbors[i].rate;
 
-        neighbors = neighbors->next;
+        curr = curr->next;
+        ++i;
     }
 
-    free (used);
+    // free the temporary list
+    curr = head;
+    while(curr)
+    {
+        tmp = curr->next;
+        free(curr);
+        curr = tmp;
+    }
 
     // sort the neighbors according to the rate to save computation
     // time while simulating
-    s->neighbors = sortNeighbors (s->neighbors);
+    qsort (s->neighbors, s->nNeighbors, sizeof(SLE), compare_neighbors);
 }
 
 /*
@@ -531,20 +521,18 @@ distance (Site * i, Site * j)
 
     if (vec.x > lx)
         vec.x -= prms.length_x;
-    if (vec.x < -lx)
+    else if (vec.x < -lx)
         vec.x += prms.length_x;
 
     if (vec.y > ly)
         vec.y -= prms.length_y;
-    if (vec.y < -ly)
+    else if (vec.y < -ly)
         vec.y += prms.length_y;
 
     if (vec.z > lz)
         vec.z -= prms.length_z;
-    if (vec.z < -lz)
+    else if (vec.z < -lz)
         vec.z += prms.length_z;
-
-    vec.length = sqrt (pow (vec.x, 2.0) + pow (vec.y, 2.0) + pow (vec.z, 2.0));
 
     return vec;
 }
@@ -576,64 +564,10 @@ getCell3D (Cell * cells, ssize_t x, ssize_t y, ssize_t z)
 }
 
 /*
- * This function sorts the neighbors according to their rates. This speeds
- * up the process of choosing the next hopping destination a lot. The
- * sorting is done using a binary search tree. 
+ * Compare two neighbors by their rates
  */
-SLE *
-sortNeighbors (SLE * list)
+int compare_neighbors (const void * a, const void * b)
 {
-    if (!list || !list->next)
-        return list;
-
-    SLE *right = list, *temp = list, *last = list,
-        *result = 0, *next = 0, *tail = 0;
-
-    while (temp && temp->next)
-    {
-        last = right;
-        right = right->next;
-        temp = temp->next->next;
-    }
-
-    // Break the list in two.
-    last->next = 0;
-
-    // Recurse on the two smaller lists:
-    list = sortNeighbors (list);
-    right = sortNeighbors (right);
-
-    // Merge:
-    while (list || right)
-    {
-        // Take from empty lists, or compare:
-        if (!right)
-        {
-            next = list;
-            list = list->next;
-        }
-        else if (!list)
-        {
-            next = right;
-            right = right->next;
-        }
-        else if (list->rate > right->rate)
-        {
-            next = list;
-            list = list->next;
-        }
-        else
-        {
-            next = right;
-            right = right->next;
-        }
-
-        if (!result)
-            result = next;
-        else
-            tail->next = next;
-
-        tail = next;
-    }
-    return result;
+    double diff = ( (SLE*)b->rate - (SLE*)a->rate );
+    return diff < 0 ? -1 : (diff > 0) ? 1 : 0;
 }
