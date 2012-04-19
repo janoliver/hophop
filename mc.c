@@ -24,9 +24,9 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
     if (prms.removesoftpairs)
         MC_removeSoftPairs (sites);
     carriers = MC_createCarriers (sites);
-    
+
     gettimeofday (&start, &tz);
-    
+
     // simulate
     for (i = 0; i < prms.number_reruns; ++i)
     {
