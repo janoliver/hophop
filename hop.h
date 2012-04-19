@@ -120,10 +120,8 @@ typedef struct site
     struct site_list_element *neighbors;
     int nNeighbors;
     double rateSum;
-    //double occTime;
-    double totalOccTime;
-    double tempOccTime;
-    double updatedAt;
+    float totalOccTime;
+    float tempOccTime;
 } Site;
 
 typedef struct results
@@ -147,35 +145,16 @@ typedef struct results
 
 typedef struct vector
 {
-    float x, y, z, length;
+    float x, y, z;
 } Vector;
 
 typedef struct site_list_element
 {
-    struct site_list_element *next;
-    struct site *s;
-    bool nearest_neighbor;
+    Site *s;
     double rate;
     Vector dist;
     int nTransitions;
 } SLE;
-
-typedef struct alias_lookup_tables
-{
-    double *weights;
-    double total;
-    Site **orig;
-    SLE **dest;
-    gsl_ran_discrete_t *tab;
-} ALT;
-
-struct softpair;
-typedef struct softpair
-{
-    Site *i;
-    Site *j;
-    struct softpair *next;
-} Softpair;
 
 extern Params prms;
 
@@ -202,8 +181,8 @@ void generateParams (Params * prms, int argc, char **argv);
 void MC_simulation (Site * sites, Carrier * carriers, Results * res,
                     RunParams * runprms, int *iRun, int iReRun);
 Site *MC_createSites (RunParams * runprms);
-Carrier *MC_distributeCarriers (Carrier * carriers, Site * sites,
-                                RunParams * runprms, Results * res);
+void MC_distributeCarriers (Carrier * carriers, Site * sites,
+                            RunParams * runprms, Results * res);
 Carrier *MC_createCarriers (Site * sites);
 void MC_createHoppingRates (Site * sites);
 void MC_removeSoftPairs (Site * sites);

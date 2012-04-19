@@ -123,4 +123,5 @@ output (int mode, const char *fmt, ...)
         (mode == O_SERIAL && (!prms.parallel || prms.number_runs == 1)))
         return vprintf (fmt, args);
 
+    return 0;
 }

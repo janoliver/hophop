@@ -1,9 +1,9 @@
 # version
-SET(PACKAGE_VERSION "1.4")
+SET(PACKAGE_VERSION "1.5")
 SET(PACKAGE_NAME "HOP")
 
 # optional CFLAGS
-SET(CMAKE_C_FLAGS "-O3 -ffast-math -fopenmp")
+SET(CMAKE_C_FLAGS "-O3 -Wall -ffast-math -fopenmp")
 
 # gengetopt
 SET(gengetopt "gengetopt")
