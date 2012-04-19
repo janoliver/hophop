@@ -60,9 +60,12 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
 
     for (j = 0; j < prms.ncarriers; ++j)
     {
-        carriers[j].dx2 += pow(carriers[j].ddx, 2.0) / (res->simulationTime - simTimeOld);
-        carriers[j].dy2 += pow(carriers[j].ddy, 2.0) / (res->simulationTime - simTimeOld);
-        carriers[j].dz2 += pow(carriers[j].ddz, 2.0) / (res->simulationTime - simTimeOld);
+        carriers[j].dx2 +=
+            pow (carriers[j].ddx, 2.0) / (res->simulationTime - simTimeOld);
+        carriers[j].dy2 +=
+            pow (carriers[j].ddy, 2.0) / (res->simulationTime - simTimeOld);
+        carriers[j].dz2 +=
+            pow (carriers[j].ddz, 2.0) / (res->simulationTime - simTimeOld);
     }
 
 }
