@@ -103,7 +103,7 @@ writeTransitions (Site * sites, int iRun)
     // write transitions information
     for (i = 0; i < prms.nsites; ++i)
     {
-        for(j = 0; j < sites[i].nNeighbors; ++j)
+        for (j = 0; j < sites[i].nNeighbors; ++j)
         {
             neighbor = &(sites[i].neighbors[j]);
             if (neighbor->nTransitions > 0)

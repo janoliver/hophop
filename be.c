@@ -36,7 +36,7 @@ BE_run (Results * total, RunParams * runprms, int *iRun)
     for (i = 0; i < prms.nsites; ++i)
     {
         // free neighbor memory
-        free(sites[i].neighbors);
+        free (sites[i].neighbors);
     }
     free (sites);
 
@@ -63,7 +63,7 @@ BE_solve (Site * sites, Results * res, int *iRun)
     // find out the number of entries
     nnz = 2 * prms.nsites - 1;
     for (i = 1; i < prms.nsites; ++i)
-        nnz+= sites[i].nNeighbors;
+        nnz += sites[i].nNeighbors;
 
     //allocate memory
     ia = malloc (sizeof (int) * (prms.nsites + 1));
@@ -94,14 +94,14 @@ BE_solve (Site * sites, Results * res, int *iRun)
         counter++;
 
         // now the neighbors
-        for(k = 0; i < sites[k].nNeighbors; ++k)
+        for (k = 0; i < sites[k].nNeighbors; ++k)
         {
             neighbor = &(sites[k].neighbors[k]);
-            
+
             // this is an ugly, ugly hack because we need compressed
             // row storage, which is exactly the wrong order compared
             // to how our matrix has to be built. 
-            for(j = 0; j < neighbor->s->nNeighbors; ++j)
+            for (j = 0; j < neighbor->s->nNeighbors; ++j)
             {
                 neighbor2 = &(neighbor->s->neighbors[j]);
 
@@ -143,9 +143,11 @@ BE_solve (Site * sites, Results * res, int *iRun)
     // calculate mobility
     double sum = 0;
     for (i = 0; i < prms.nsites; ++i)
-        for(j = 0; j < sites[i].nNeighbors; ++j)
-            sum += x[i] * sites[i].neighbors[j].rate * (sites[i].neighbors[j].dist.z);
-     
+        for (j = 0; j < sites[i].nNeighbors; ++j)
+            sum +=
+                x[i] * sites[i].neighbors[j].rate *
+                (sites[i].neighbors[j].dist.z);
+
     res->mobility = sum / prms.field;
 
     // free

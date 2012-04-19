@@ -60,9 +60,12 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
 
     for (j = 0; j < prms.ncarriers; ++j)
     {
-        carriers[j].dx2 += pow(carriers[j].ddx, 2.0) / (res->simulationTime - simTimeOld);
-        carriers[j].dy2 += pow(carriers[j].ddy, 2.0) / (res->simulationTime - simTimeOld);
-        carriers[j].dz2 += pow(carriers[j].ddz, 2.0) / (res->simulationTime - simTimeOld);
+        carriers[j].dx2 +=
+            pow (carriers[j].ddx, 2.0) / (res->simulationTime - simTimeOld);
+        carriers[j].dy2 +=
+            pow (carriers[j].ddy, 2.0) / (res->simulationTime - simTimeOld);
+        carriers[j].dz2 +=
+            pow (carriers[j].ddz, 2.0) / (res->simulationTime - simTimeOld);
     }
 
 }
@@ -82,14 +85,14 @@ hoppingStep (Site * sites, Carrier * carriers,
     SLE *dest = NULL;
     double randomHopProb, probSum;
     int i;
-    
+
     // heap
     c = &carriers[0];
 
     // determine the next destination site
     randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
     probSum = 0.0;
-    for(i = 0; i < c->site->nNeighbors; ++i)
+    for (i = 0; i < c->site->nNeighbors && probSum <= randomHopProb; ++i)
     {
         dest = &(c->site->neighbors[i]);
         probSum += dest->rate;
