@@ -182,7 +182,7 @@ void MC_simulation (Site * sites, Carrier * carriers, Results * res,
                     RunParams * runprms, int *iRun, int iReRun);
 Site *MC_createSites (RunParams * runprms);
 void MC_distributeCarriers (Carrier * carriers, Site * sites,
-                                RunParams * runprms, Results * res);
+                            RunParams * runprms, Results * res);
 Carrier *MC_createCarriers (Site * sites);
 void MC_createHoppingRates (Site * sites);
 void MC_removeSoftPairs (Site * sites);

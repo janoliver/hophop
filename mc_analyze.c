@@ -90,7 +90,7 @@ calcDiffusivity (Carrier * carriers, Results * results)
 double
 calcEinsteinRelation (Carrier * carriers, Results * results)
 {
-    double  ex2, ey2, ez;
+    double ex2, ey2, ez;
     int i;
     ez = 0.0;
     ex2 = 0.0;

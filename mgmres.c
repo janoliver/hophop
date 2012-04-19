@@ -435,7 +435,7 @@ diagonal_pointer_cr (int n, int nz_num, int ia[], int ja[], int ua[])
     int j;
     int j1;
     int j2;
-    int k;
+    //int k;
 
     for (i = 0; i < n; i++)
     {
@@ -505,7 +505,7 @@ dmatrix (int nrl, int nrh, int ncl, int nch)
         printf ("\n");
         printf ("DMATRIX - Fatal error!\n");
         printf ("  Failure allocating pointers to rows.\n");
-        printf ("  Tried to allocate %lu bytes\n",
+        printf ("  Tried to allocate %d bytes\n",
                 (size_t) ((nrow + 1) * sizeof (double *)));
         exit (1);
     }
@@ -521,7 +521,7 @@ dmatrix (int nrl, int nrh, int ncl, int nch)
         printf ("\n");
         printf ("DMATRIX - Fatal error!\n");
         printf ("  Failure allocating rows.\n");
-        printf ("  Tried to allocate %lu bytes\n",
+        printf ("  Tried to allocate %d bytes\n",
                 (size_t) ((nrow * ncol + 1) * sizeof (double)));
         exit (1);
     }
@@ -695,7 +695,7 @@ ilu_cr (int n, int nz_num, int ia[], int ja[], double a[], int ua[], double l[])
         {
             printf ("\n");
             printf ("ILU_CR - Fatal error!\n");
-            printf ("  Zero pivot on step I = \n", i);
+            printf ("  Zero pivot on step I = \n");
             printf ("  L[%d] = 0.0\n", j);
             exit (1);
         }
@@ -913,11 +913,11 @@ mgmres_st (int n, int nz_num, int ia[], int ja[], double a[],
     int itr_used;
     int j;
     int k;
-    int k_copy;
+    int k_copy = 0;
     double mu;
     double *r;
     double rho;
-    double rho_tol;
+    double rho_tol = 0;
     double *s;
     double **v;
     int verbose = 0;
@@ -1281,12 +1281,12 @@ pmgmres_ilu_cr (int n, int nz_num, int ia[], int ja[], double a[],
     int itr_used;
     int j;
     int k;
-    int k_copy;
+    int k_copy = 0;
     double *l;
     double mu;
     double *r;
     double rho;
-    double rho_tol;
+    double rho_tol = 0;
     double *s;
     int *ua;
     double **v;
@@ -1746,13 +1746,13 @@ timestamp (void)
 
     static char time_buffer[TIME_SIZE];
     const struct tm *tm;
-    size_t len;
+    //size_t len;
     time_t now;
 
     now = time (NULL);
     tm = localtime (&now);
 
-    len = strftime (time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm);
+    strftime (time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm);
 
     printf ("%s\n", time_buffer);
 
