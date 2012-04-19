@@ -73,7 +73,6 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
     }
 
     // free resources
-    SLE *neighbor, *tmp;
     for (i = 0; i < prms.nsites; ++i)
     {
         // free neighbor memory

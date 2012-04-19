@@ -31,13 +31,9 @@ BE_run (Results * total, RunParams * runprms, int *iRun)
     }
 
     // free resources
-    SLE *neighbor, *tmp;
     int i;
     for (i = 0; i < prms.nsites; ++i)
-    {
-        // free neighbor memory
         free (sites[i].neighbors);
-    }
     free (sites);
 
     return;

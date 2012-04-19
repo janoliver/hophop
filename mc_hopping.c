@@ -92,7 +92,7 @@ hoppingStep (Site * sites, Carrier * carriers,
     // determine the next destination site
     randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
     probSum = 0.0;
-    for (i = 0; i < c->site->nNeighbors && probSum <= randomHopProb; ++i)
+    for (i = 0; ((i < c->site->nNeighbors) && (probSum <= randomHopProb)); ++i)
     {
         dest = &(c->site->neighbors[i]);
         probSum += dest->rate;

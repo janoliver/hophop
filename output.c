@@ -320,10 +320,10 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%-18d", prms.number_runs);
     fprintf (file, "%-18d", prms.number_reruns);
 
-    fprintf (file, "%-18d", prms.relaxation);
-    fprintf (file, "%-18d", prms.simulation);
+    fprintf (file, "%-18lu", prms.relaxation);
+    fprintf (file, "%-18lu", prms.simulation);
 
-    fprintf (file, "%-18d", prms.rseed);
+    fprintf (file, "%-18lu", prms.rseed);
     fprintf (file, "%-18s", prms.balance_eq ? "Balance eq." : "MC Simulation");
     if (strArgGiven (prms.comment))
         fprintf (file, "%s", prms.comment);

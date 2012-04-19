@@ -101,7 +101,6 @@ MC_createCarriers (Site * sites)
 {
     int i;
     Carrier *c;
-    Carrier tmp;
 
     // allocate carrier memory
     c = (Carrier *) malloc (sizeof (Carrier) * prms.ncarriers);
@@ -130,11 +129,11 @@ MC_createCarriers (Site * sites)
  * can be set to occupied.m This can be modified to have a localized
  * source of electrons or anything else.
  */
-Carrier *
+void
 MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms,
                        Results * res)
 {
-    size_t i, siteIndex;
+    size_t i;
     Carrier tmp;
 
     // select prms.ncarriers random sites for the carriers
@@ -171,7 +170,6 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms,
         c[i].site->carrier = &c[i];
         c[i].site->tempOccTime = 0.000001;
     }
-
 }
 
 /*
@@ -402,7 +400,7 @@ setNeighbors (Site * s, Cell * cells)
 {
     int i, k, l;
     Cell *c;
-    ln *siteList, *neighbor;
+    ln *siteList;
     Vector d;
     double length;
 

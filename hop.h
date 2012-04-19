@@ -150,20 +150,11 @@ typedef struct vector
 
 typedef struct site_list_element
 {
-    struct site *s;
+    Site *s;
     double rate;
     Vector dist;
     int nTransitions;
 } SLE;
-
-typedef struct alias_lookup_tables
-{
-    double *weights;
-    double total;
-    Site **orig;
-    SLE **dest;
-    gsl_ran_discrete_t *tab;
-} ALT;
 
 extern Params prms;
 
@@ -190,7 +181,7 @@ void generateParams (Params * prms, int argc, char **argv);
 void MC_simulation (Site * sites, Carrier * carriers, Results * res,
                     RunParams * runprms, int *iRun, int iReRun);
 Site *MC_createSites (RunParams * runprms);
-Carrier *MC_distributeCarriers (Carrier * carriers, Site * sites,
+void MC_distributeCarriers (Carrier * carriers, Site * sites,
                                 RunParams * runprms, Results * res);
 Carrier *MC_createCarriers (Site * sites);
 void MC_createHoppingRates (Site * sites);
