@@ -38,9 +38,9 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
     // finish statistics
     for (j = 0; j < prms.ncarriers; ++j)
     {
-        carriers[j].dx2 /= prms.number_reruns;
-        carriers[j].dy2 /= prms.number_reruns;
-        carriers[j].dz2 /= prms.number_reruns;
+        carriers[j].dx2 /= (prms.number_reruns * total[*iRun - 1].simulationTime);
+        carriers[j].dy2 /= (prms.number_reruns * total[*iRun - 1].simulationTime);
+        carriers[j].dz2 /= (prms.number_reruns * total[*iRun - 1].simulationTime);
     }
 
     // some more output
