@@ -92,8 +92,9 @@ writeTransitions (Site * sites, int iRun)
     checkOutputFolder (iRun);
 
     FILE *file;
-    int i;
+    int i, j;
     char fileName[128] = "";
+    SLE *neighbor;
 
     sprintf (fileName, "%s/%d/transitions.dat", prms.output_folder, iRun);
 
@@ -102,16 +103,15 @@ writeTransitions (Site * sites, int iRun)
     // write transitions information
     for (i = 0; i < prms.nsites; ++i)
     {
-        SLE *neighbor = sites[i].neighbors;
-        while (neighbor)
+        for(j = 0; j < sites[i].nNeighbors; ++j)
         {
+            neighbor = &(sites[i].neighbors[j]);
             if (neighbor->nTransitions > 0)
             {
                 fprintf (file, "%d %d %8.5f %8.5f %8d\n",
                          sites[i].index, neighbor->s->index, sites[i].energy,
                          neighbor->s->energy, neighbor->nTransitions);
             }
-            neighbor = neighbor->next;
         }
 
     }

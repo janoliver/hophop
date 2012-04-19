@@ -36,13 +36,7 @@ BE_run (Results * total, RunParams * runprms, int *iRun)
     for (i = 0; i < prms.nsites; ++i)
     {
         // free neighbor memory
-        neighbor = sites[i].neighbors;
-        while (neighbor)
-        {
-            tmp = neighbor->next;
-            free (neighbor);
-            neighbor = tmp;
-        }
+        free(sites[i].neighbors);
     }
     free (sites);
 
@@ -62,21 +56,14 @@ BE_solve (Site * sites, Results * res, int *iRun)
     gettimeofday (&start, &tz);
 
     // create the matrix in sparse triplet form
-    int i, *ia, *ja, nnz;
+    int i, *ia, *ja, nnz, j, k;
     double *a, *rhs, *x;
     SLE *neighbor, *neighbor2;
 
     // find out the number of entries
     nnz = 2 * prms.nsites - 1;
     for (i = 1; i < prms.nsites; ++i)
-    {
-        neighbor = sites[i].neighbors;
-        while (neighbor)
-        {
-            nnz++;
-            neighbor = neighbor->next;
-        }
-    }
+        nnz+= sites[i].nNeighbors;
 
     //allocate memory
     ia = malloc (sizeof (int) * (prms.nsites + 1));
@@ -107,25 +94,25 @@ BE_solve (Site * sites, Results * res, int *iRun)
         counter++;
 
         // now the neighbors
-        neighbor = sites[i].neighbors;
-        while (neighbor)
+        for(k = 0; i < sites[k].nNeighbors; ++k)
         {
+            neighbor = &(sites[k].neighbors[k]);
+            
             // this is an ugly, ugly hack because we need compressed
             // row storage, which is exactly the wrong order compared
             // to how our matrix has to be built. 
-            neighbor2 = neighbor->s->neighbors;
-            while (neighbor2)
+            for(j = 0; j < neighbor->s->nNeighbors; ++j)
             {
+                neighbor2 = &(neighbor->s->neighbors[j]);
+
                 if (neighbor2->s->index == i)
                 {
                     a[counter] = neighbor2->rate;
                     break;
                 }
-                neighbor2 = neighbor2->next;
             }
             ja[counter] = neighbor->s->index;
             counter++;
-            neighbor = neighbor->next;
         }
     }
     ia[prms.nsites] = counter;
@@ -156,14 +143,9 @@ BE_solve (Site * sites, Results * res, int *iRun)
     // calculate mobility
     double sum = 0;
     for (i = 0; i < prms.nsites; ++i)
-    {
-        neighbor = sites[i].neighbors;
-        while (neighbor)
-        {
-            sum += x[i] * neighbor->rate * (neighbor->dist.z);
-            neighbor = neighbor->next;
-        }
-    }
+        for(j = 0; j < sites[i].nNeighbors; ++j)
+            sum += x[i] * sites[i].neighbors[j].rate * (sites[i].neighbors[j].dist.z);
+     
     res->mobility = sum / prms.field;
 
     // free

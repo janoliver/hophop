@@ -2,14 +2,32 @@
 
 #include "hop.h"
 
+// we use this struct to create a temporary linked list
+// of the found neighbors.
+typedef struct linked_neighbors {
+    Site * s;
+    Vector dist;
+    struct linked_neighbors * next;
+} ln;
+
 // this struct is used to categorize sites
 // in space for easier finding of the neighbors
 typedef struct cell
 {
     int counter;
     int index;
-    SLE *siteList;
+    ln *siteList;
 } Cell;
+
+// we use this struct to store softpairs
+typedef struct softpair
+{
+    Site *i;
+    Site *j;
+    struct softpair *next;
+} Softpair;
+
+
 
 Cell *createCells (Site * sites);
 Cell *getCell3D (Cell * cells, ssize_t x, ssize_t y, ssize_t z);
@@ -168,7 +186,7 @@ createCells (Site * sites)
 {
     size_t i, tx, ty, tz, nCells;
     Cell *c, *temp;
-    SLE *head;
+    ln *head;
 
     nCells = prms.nx * prms.ny * prms.nz;
 
@@ -194,7 +212,7 @@ createCells (Site * sites)
         temp->counter++;
 
         head = temp->siteList;
-        temp->siteList = (SLE *) malloc (sizeof (SLE));
+        temp->siteList = (ln *) malloc (sizeof (ln));
         temp->siteList->s = &sites[i];
         temp->siteList->next = head;
     }
@@ -212,7 +230,7 @@ void
 MC_createHoppingRates (Site * sites)
 {
     size_t k, l;
-    SLE *sList, *tmp;
+    ln *sList, *tmp;
     Cell *cells = (Cell *) createCells (sites);
 
     for (l = 0; l < 100; ++l)
@@ -251,7 +269,7 @@ void
 MC_removeSoftPairs (Site * sites)
 {
     Softpair *softpair, *temp, *newSoftpair = NULL, *sp = NULL;
-    int j, nSoftPairs = 0;
+    int j, i, nSoftPairs = 0;
     bool ignore;
     SLE *ntemp = NULL, *neighbor = NULL;
     float rateb, rateab, ratebx = 0.0, rateSum;
@@ -259,19 +277,17 @@ MC_removeSoftPairs (Site * sites)
     // find softpairs
     for (j = 0; j < prms.nsites; ++j)
     {
-        neighbor = sites[j].neighbors;
-        while (neighbor)
+        for(i = 0; i < sites[j].nNeighbors; ++i)
         {
-            if (neighbor->rate / sites[j].rateSum > prms.softpairthreshold)
+            if (sites[j].neighbors[i].rate / sites[j].rateSum > prms.softpairthreshold)
             {
                 newSoftpair = (Softpair *) malloc (sizeof (Softpair));
                 newSoftpair->i = &sites[j];
-                newSoftpair->j = neighbor->s;
+                newSoftpair->j = sites[j].neighbors[i].s;
                 newSoftpair->next = sp;
                 sp = newSoftpair;
                 nSoftPairs++;
             }
-            neighbor = neighbor->next;
         }
     }
 
@@ -304,34 +320,33 @@ MC_removeSoftPairs (Site * sites)
                 rateab = 0;
 
                 // find the partner and elimintate the transition
-                neighbor = softpair->i->neighbors;
-                while (neighbor)
+                for(i = 0; i < softpair->i->nNeighbors; ++i)
                 {
-                    if (softpair->j->index == neighbor->s->index)
+                    if (softpair->j->index == softpair->i->neighbors[i].s->index)
                     {
+                        neighbor = &(softpair->i->neighbors[i]);
+                        
                         rateab = neighbor->rate;
                         rateb = neighbor->s->rateSum;
                         neighbor->rate = 0.0;
                         break;
                     }
-                    neighbor = neighbor->next;
                 }
 
                 // update transition rates of all other neighbors
                 rateSum = 0.0;
-                neighbor = softpair->i->neighbors;
-                while (neighbor)
+                for(i = 0; i < softpair->i->nNeighbors; ++i)
                 {
+                    neighbor = &(softpair->i->neighbors[i]);
+                    
                     // find the partner
                     if (softpair->j->index != neighbor->s->index)
                     {
                         ratebx = 0.0;
-                        ntemp = softpair->j->neighbors;
-                        while (ntemp)
+                        for(j = 0; j < softpair->j->nNeighbors; ++j)
                         {
-                            if (ntemp->s->index == neighbor->s->index)
+                            if (softpair->j->neighbors[j].s->index == neighbor->s->index)
                                 ratebx = ntemp->rate;
-                            ntemp = ntemp->next;
                         }
                         if (ratebx > 0)
                         {
@@ -341,7 +356,6 @@ MC_removeSoftPairs (Site * sites)
                         }
                         rateSum += neighbor->rate;
                     }
-                    neighbor = neighbor->next;
                 }
                 softpair->i->rateSum = rateSum;
             }
@@ -361,15 +375,10 @@ MC_removeSoftPairs (Site * sites)
         // all removed ?
         int counter = 0;
         for (j = 0; j < prms.nsites; ++j)
-        {
-            neighbor = sites[j].neighbors;
-            while (neighbor)
-            {
-                if (neighbor->rate / sites[j].rateSum > prms.softpairthreshold)
+            for(i = 0; i < sites[j].nNeighbors; ++i)
+                if (sites[j].neighbors[i].rate / sites[j].rateSum > prms.softpairthreshold)
                     counter++;
-                neighbor = neighbor->next;
-            }
-        }
+         
         // some output
         output (O_SERIAL, "\t\tDone. %d Softpairs found.\n", counter);
 
@@ -388,18 +397,11 @@ setNeighbors (Site * s, Cell * cells)
 {
     int i, k, l;
     Cell *c;
-    SLE *siteList, *neighbor;
+    ln *siteList, *neighbor;
     Vector d;
+    double length;
 
-    // we use this struct to create a temporary linked list
-    // of the found neighbors.
-    struct linked_neighbors {
-        Site * s;
-        Vector dist;
-        struct linked_neighbors * next;
-    };
-    typedef struct linked_neighbor ln;
-    ln curr, head = NULL, tmp;
+    ln * curr, * head = NULL, * tmp;
     
     // now, find all the neighbors
     // iterate over all neighboring cells
@@ -428,7 +430,7 @@ setNeighbors (Site * s, Cell * cells)
 
                         s->nNeighbors++;
                         
-                        curr.dist = d;
+                        curr->dist = d;
                         curr->s = siteList->s;
                         curr->next = head;
                         head = curr;
@@ -447,8 +449,8 @@ setNeighbors (Site * s, Cell * cells)
         s->neighbors[i].s = curr->s;
         s->neighbors[i].rate =
             calcHoppingRate (*s, *curr->s);
-        s->neighbors[i]->dist = curr.dist;
-        s->neighbors[i]->nTransitions = 0;
+        s->neighbors[i].dist = curr->dist;
+        s->neighbors[i].nTransitions = 0;
         s->rateSum += s->neighbors[i].rate;
 
         curr = curr->next;
@@ -568,6 +570,6 @@ getCell3D (Cell * cells, ssize_t x, ssize_t y, ssize_t z)
  */
 int compare_neighbors (const void * a, const void * b)
 {
-    double diff = ( (SLE*)b->rate - (SLE*)a->rate );
+    double diff = ( ((SLE*)b)->rate - ((SLE*)a)->rate );
     return diff < 0 ? -1 : (diff > 0) ? 1 : 0;
 }

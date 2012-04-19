@@ -81,19 +81,18 @@ hoppingStep (Site * sites, Carrier * carriers,
     Carrier *c = NULL;
     SLE *dest = NULL;
     double randomHopProb, probSum;
-
+    int i;
+    
     // heap
     c = &carriers[0];
 
     // determine the next destination site
     randomHopProb = (float) gsl_rng_uniform (runprms->r) * c->site->rateSum;
     probSum = 0.0;
-    SLE *neighbor = c->site->neighbors;
-    while (neighbor && probSum <= randomHopProb)
+    for(i = 0; i < c->site->nNeighbors; ++i)
     {
-        dest = neighbor;
-        probSum += neighbor->rate;
-        neighbor = neighbor->next;
+        dest = &(c->site->neighbors[i]);
+        probSum += dest->rate;
     }
 
     res->simulationTime = c->occTime;

@@ -167,14 +167,6 @@ typedef struct alias_lookup_tables
     gsl_ran_discrete_t *tab;
 } ALT;
 
-struct softpair;
-typedef struct softpair
-{
-    Site *i;
-    Site *j;
-    struct softpair *next;
-} Softpair;
-
 extern Params prms;
 
 // helpers
