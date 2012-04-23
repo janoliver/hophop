@@ -53,34 +53,19 @@ calcEquilibrationEnergy (Site * sites, Results * results)
 double
 calcDiffusivity (Carrier * carriers, Results * results)
 {
-    double ex, ey, ez, ex2, ey2, ez2, /*ds, */ dp /*, sez */ ;
+    double ex2, ey2, dp;
     int i;
-    ex = 0.0;
-    ey = 0.0;
-    ez = 0.0;
     ex2 = 0.0;
     ey2 = 0.0;
-    ez2 = 0.0;
 
     for (i = 0; i < prms.ncarriers; ++i)
     {
-        ex += carriers[i].dx;
-        ey += carriers[i].dy;
-        ez += carriers[i].dz;
         ex2 += carriers[i].dx2;
         ey2 += carriers[i].dy2;
-        ez2 += carriers[i].dz2;
     }
-    ex2 = ex2 / prms.ncarriers;
-    ey2 = ey2 / prms.ncarriers;
-    ez2 = ez2 / prms.ncarriers;
-    ex = ex / prms.ncarriers;
-    ey = ey / prms.ncarriers;
-    ez = ez / prms.ncarriers;
-
-    // sez = pow(ez / prms.ncarriers, 2.0);
-    //ds = (ez2 - sez) / (2 * results->simulationTime);
-    dp = (ex2 + ey2) / (4);
+    ex2 = ex2 / (prms.ncarriers * prms.number_reruns);
+    ey2 = ey2 / (prms.ncarriers * prms.number_reruns);
+    dp = (ex2 + ey2) / (4 * results->simulationTime);
     return dp;
 }
 
@@ -102,11 +87,11 @@ calcEinsteinRelation (Carrier * carriers, Results * results)
         ey2 += carriers[i].dy2;
         ez += carriers[i].dz;
     }
-    ex2 /= prms.ncarriers;
-    ey2 /= prms.ncarriers;
-    ez /= prms.ncarriers;
+    ex2 /= (prms.ncarriers * prms.number_reruns);
+    ey2 /= (prms.ncarriers * prms.number_reruns);
+    ez /= (prms.ncarriers * prms.number_reruns);
 
-    return (4. * ez) / (prms.field * (ex2 + ey2) * results->simulationTime);
+    return (4. * ez) / (prms.field * (ex2 + ey2));
 
 }
 
