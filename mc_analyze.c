@@ -87,11 +87,8 @@ calcEinsteinRelation (Carrier * carriers, Results * results)
         ey2 += carriers[i].dy2;
         ez += carriers[i].dz;
     }
-    ex2 /= (prms.ncarriers * prms.number_reruns);
-    ey2 /= (prms.ncarriers * prms.number_reruns);
-    ez /= (prms.ncarriers);
 
-    return (4. * ez) / (prms.field * (ex2 + ey2));
+    return (4. * ez * prms.number_reruns) / (prms.field * (ex2 + ey2));
 
 }
 
