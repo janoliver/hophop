@@ -89,7 +89,7 @@ calcEinsteinRelation (Carrier * carriers, Results * results)
     }
     ex2 /= (prms.ncarriers * prms.number_reruns);
     ey2 /= (prms.ncarriers * prms.number_reruns);
-    ez /= (prms.ncarriers * prms.number_reruns);
+    ez /= (prms.ncarriers);
 
     return (4. * ez) / (prms.field * (ex2 + ey2));
 
