@@ -72,13 +72,13 @@ generateParams (Params * prms, int argc, char **argv)
 
     // cutout stuff
     prms->cut_dos = false;
-    if(args.cutoutenergy_given)
+    if (args.cutoutenergy_given)
     {
         prms->cut_out_energy = args.cutoutenergy_arg;
         prms->cut_out_width = args.cutoutwidth_arg;
         prms->cut_dos = true;
     }
-    
+
     // check cutoff radius
     if (0 > args.rc_arg ||
         args.rc_arg > GSL_MIN (GSL_MIN (prms->length_y, prms->length_x),
