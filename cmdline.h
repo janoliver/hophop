@@ -8,16 +8,19 @@
 #ifndef CMDLINE_H
 #define CMDLINE_H
 
-/* If we use autoconf.  */
+/*
+ * If we use autoconf.  
+ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include <stdio.h> /* for FILE */
+#include <stdio.h>              /* for FILE */
 
 #ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+extern "C"
+{
+#endif                          /* __cplusplus */
 
 #ifndef CMDLINE_PARSER_PACKAGE
 /** @brief the program name (used for printing errors) */
@@ -35,175 +38,282 @@ extern "C" {
 #endif
 
 /** @brief Where the command line options are stored */
-struct gengetopt_args_info
-{
-  const char *help_help; /**< @brief Print help and exit help description.  */
-  const char *version_help; /**< @brief Print version and exit help description.  */
-  int quiet_flag;	/**< @brief Don't say anything. (default=off).  */
-  const char *quiet_help; /**< @brief Don't say anything. help description.  */
-  char * conf_file_arg;	/**< @brief Location of a configuration file for the simulation..  */
-  char * conf_file_orig;	/**< @brief Location of a configuration file for the simulation. original value given at command line.  */
-  const char *conf_file_help; /**< @brief Location of a configuration file for the simulation. help description.  */
-  int memreq_flag;	/**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately (default=off).  */
-  const char *memreq_help; /**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately help description.  */
-  long rseed_arg;	/**< @brief Set the random seed manually..  */
-  char * rseed_orig;	/**< @brief Set the random seed manually. original value given at command line.  */
-  const char *rseed_help; /**< @brief Set the random seed manually. help description.  */
-  int nruns_arg;	/**< @brief The number of runs to average over. (default='1').  */
-  char * nruns_orig;	/**< @brief The number of runs to average over. original value given at command line.  */
-  const char *nruns_help; /**< @brief The number of runs to average over. help description.  */
-  int parallel_flag;	/**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. (default=off).  */
-  const char *parallel_help; /**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. help description.  */
-  int nthreads_arg;	/**< @brief The number of threads to use during parallel computing. 0 means all there are. (default='0').  */
-  char * nthreads_orig;	/**< @brief The number of threads to use during parallel computing. 0 means all there are. original value given at command line.  */
-  const char *nthreads_help; /**< @brief The number of threads to use during parallel computing. 0 means all there are. help description.  */
-  int length_arg;	/**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!.  */
-  char * length_orig;	/**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! original value given at command line.  */
-  const char *length_help; /**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! help description.  */
-  int X_arg;	/**< @brief The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. (default='50').  */
-  char * X_orig;	/**< @brief The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. original value given at command line.  */
-  const char *X_help; /**< @brief The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. help description.  */
-  int Y_arg;	/**< @brief The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. (default='50').  */
-  char * Y_orig;	/**< @brief The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. original value given at command line.  */
-  const char *Y_help; /**< @brief The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. help description.  */
-  int Z_arg;	/**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. (default='50').  */
-  char * Z_orig;	/**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. original value given at command line.  */
-  const char *Z_help; /**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. help description.  */
-  int ncarriers_arg;	/**< @brief The number of charge carriers in the system. (default='10').  */
-  char * ncarriers_orig;	/**< @brief The number of charge carriers in the system. original value given at command line.  */
-  const char *ncarriers_help; /**< @brief The number of charge carriers in the system. help description.  */
-  int nsites_arg;	/**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. (default='125000').  */
-  char * nsites_orig;	/**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. original value given at command line.  */
-  const char *nsites_help; /**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. help description.  */
-  float exponent_arg;	/**< @brief The exponent of the DOS g(x) = exp(-(x)^p) (default='2.0').  */
-  char * exponent_orig;	/**< @brief The exponent of the DOS g(x) = exp(-(x)^p) original value given at command line.  */
-  const char *exponent_help; /**< @brief The exponent of the DOS g(x) = exp(-(x)^p) help description.  */
-  float llength_arg;	/**< @brief Localization length of the sites, assumed equal for all of them. (default='0.215').  */
-  char * llength_orig;	/**< @brief Localization length of the sites, assumed equal for all of them. original value given at command line.  */
-  const char *llength_help; /**< @brief Localization length of the sites, assumed equal for all of them. help description.  */
-  float rc_arg;	/**< @brief Determines up to which distance sites should be neighbors. (default='3').  */
-  char * rc_orig;	/**< @brief Determines up to which distance sites should be neighbors. original value given at command line.  */
-  const char *rc_help; /**< @brief Determines up to which distance sites should be neighbors. help description.  */
-  float field_arg;	/**< @brief The electric field strength in z-direction. (default='0.3').  */
-  char * field_orig;	/**< @brief The electric field strength in z-direction. original value given at command line.  */
-  const char *field_help; /**< @brief The electric field strength in z-direction. help description.  */
-  float temperature_arg;	/**< @brief The temperature of the simulation. (default='0.3').  */
-  char * temperature_orig;	/**< @brief The temperature of the simulation. original value given at command line.  */
-  const char *temperature_help; /**< @brief The temperature of the simulation. help description.  */
-  int gaussian_flag;	/**< @brief Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2) (default=off).  */
-  const char *gaussian_help; /**< @brief Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2) help description.  */
-  int lattice_flag;	/**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc (default=off).  */
-  const char *lattice_help; /**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc help description.  */
-  int removesoftpairs_flag;	/**< @brief Remove softpairs. (default=off).  */
-  const char *removesoftpairs_help; /**< @brief Remove softpairs. help description.  */
-  float softpairthreshold_arg;	/**< @brief The min hopping rate ratio to define a softpair (default='0.95').  */
-  char * softpairthreshold_orig;	/**< @brief The min hopping rate ratio to define a softpair original value given at command line.  */
-  const char *softpairthreshold_help; /**< @brief The min hopping rate ratio to define a softpair help description.  */
-  float cutoutenergy_arg;	/**< @brief States around this energy will be cut out of the DOS (default='0').  */
-  char * cutoutenergy_orig;	/**< @brief States around this energy will be cut out of the DOS original value given at command line.  */
-  const char *cutoutenergy_help; /**< @brief States around this energy will be cut out of the DOS help description.  */
-  float cutoutwidth_arg;	/**< @brief The (half) width of energies who are cutted. (default='0.5').  */
-  char * cutoutwidth_orig;	/**< @brief The (half) width of energies who are cutted. original value given at command line.  */
-  const char *cutoutwidth_help; /**< @brief The (half) width of energies who are cutted. help description.  */
-  long simulation_arg;	/**< @brief The number of hops during which statistics are collected. (default='1000000000').  */
-  char * simulation_orig;	/**< @brief The number of hops during which statistics are collected. original value given at command line.  */
-  const char *simulation_help; /**< @brief The number of hops during which statistics are collected. help description.  */
-  long relaxation_arg;	/**< @brief The number of hops to relax. (default='100000000').  */
-  char * relaxation_orig;	/**< @brief The number of hops to relax. original value given at command line.  */
-  const char *relaxation_help; /**< @brief The number of hops to relax. help description.  */
-  int nreruns_arg;	/**< @brief How many times should the electron be placed at some random starting position? (default='1').  */
-  char * nreruns_orig;	/**< @brief How many times should the electron be placed at some random starting position? original value given at command line.  */
-  const char *nreruns_help; /**< @brief How many times should the electron be placed at some random starting position? help description.  */
-  int be_flag;	/**< @brief Solve balance equations (default=off).  */
-  const char *be_help; /**< @brief Solve balance equations help description.  */
-  long be_it_arg;	/**< @brief Max inner iterations after which the calculation is stopped.  (default='1000').  */
-  char * be_it_orig;	/**< @brief Max inner iterations after which the calculation is stopped.  original value given at command line.  */
-  const char *be_it_help; /**< @brief Max inner iterations after which the calculation is stopped.  help description.  */
-  long be_oit_arg;	/**< @brief Max outer iterations or restarts of the algorithm. (default='1').  */
-  char * be_oit_orig;	/**< @brief Max outer iterations or restarts of the algorithm. original value given at command line.  */
-  const char *be_oit_help; /**< @brief Max outer iterations or restarts of the algorithm. help description.  */
-  float tol_abs_arg;	/**< @brief absolute tolerance for finding the solution (default='1e-8').  */
-  char * tol_abs_orig;	/**< @brief absolute tolerance for finding the solution original value given at command line.  */
-  const char *tol_abs_help; /**< @brief absolute tolerance for finding the solution help description.  */
-  float tol_rel_arg;	/**< @brief relative tolerance for finding the solution (default='1e-8').  */
-  char * tol_rel_orig;	/**< @brief relative tolerance for finding the solution original value given at command line.  */
-  const char *tol_rel_help; /**< @brief relative tolerance for finding the solution help description.  */
-  int an_flag;	/**< @brief Also try to calculate stuff analytically (default=off).  */
-  const char *an_help; /**< @brief Also try to calculate stuff analytically help description.  */
-  float percolation_threshold_arg;	/**< @brief The percolation threshold. (default='2.7').  */
-  char * percolation_threshold_orig;	/**< @brief The percolation threshold. original value given at command line.  */
-  const char *percolation_threshold_help; /**< @brief The percolation threshold. help description.  */
-  char * outputfolder_arg;	/**< @brief The name of the output folder if one wants output files..  */
-  char * outputfolder_orig;	/**< @brief The name of the output folder if one wants output files. original value given at command line.  */
-  const char *outputfolder_help; /**< @brief The name of the output folder if one wants output files. help description.  */
-  int transitions_flag;	/**< @brief Save all transitions to a file. (Can be big, scales with -l^3!) Only valid when --outputfolder is given (default=off).  */
-  const char *transitions_help; /**< @brief Save all transitions to a file. (Can be big, scales with -l^3!) Only valid when --outputfolder is given help description.  */
-  char * summary_arg;	/**< @brief The name of the summary file to which one summary result line is then written..  */
-  char * summary_orig;	/**< @brief The name of the summary file to which one summary result line is then written. original value given at command line.  */
-  const char *summary_help; /**< @brief The name of the summary file to which one summary result line is then written. help description.  */
-  char * comment_arg;	/**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data..  */
-  char * comment_orig;	/**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data. original value given at command line.  */
-  const char *comment_help; /**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data. help description.  */
-  
-  unsigned int help_given ;	/**< @brief Whether help was given.  */
-  unsigned int version_given ;	/**< @brief Whether version was given.  */
-  unsigned int quiet_given ;	/**< @brief Whether quiet was given.  */
-  unsigned int conf_file_given ;	/**< @brief Whether conf_file was given.  */
-  unsigned int memreq_given ;	/**< @brief Whether memreq was given.  */
-  unsigned int rseed_given ;	/**< @brief Whether rseed was given.  */
-  unsigned int nruns_given ;	/**< @brief Whether nruns was given.  */
-  unsigned int parallel_given ;	/**< @brief Whether parallel was given.  */
-  unsigned int nthreads_given ;	/**< @brief Whether nthreads was given.  */
-  unsigned int length_given ;	/**< @brief Whether length was given.  */
-  unsigned int X_given ;	/**< @brief Whether X was given.  */
-  unsigned int Y_given ;	/**< @brief Whether Y was given.  */
-  unsigned int Z_given ;	/**< @brief Whether Z was given.  */
-  unsigned int ncarriers_given ;	/**< @brief Whether ncarriers was given.  */
-  unsigned int nsites_given ;	/**< @brief Whether nsites was given.  */
-  unsigned int exponent_given ;	/**< @brief Whether exponent was given.  */
-  unsigned int llength_given ;	/**< @brief Whether llength was given.  */
-  unsigned int rc_given ;	/**< @brief Whether rc was given.  */
-  unsigned int field_given ;	/**< @brief Whether field was given.  */
-  unsigned int temperature_given ;	/**< @brief Whether temperature was given.  */
-  unsigned int gaussian_given ;	/**< @brief Whether gaussian was given.  */
-  unsigned int lattice_given ;	/**< @brief Whether lattice was given.  */
-  unsigned int removesoftpairs_given ;	/**< @brief Whether removesoftpairs was given.  */
-  unsigned int softpairthreshold_given ;	/**< @brief Whether softpairthreshold was given.  */
-  unsigned int cutoutenergy_given ;	/**< @brief Whether cutoutenergy was given.  */
-  unsigned int cutoutwidth_given ;	/**< @brief Whether cutoutwidth was given.  */
-  unsigned int simulation_given ;	/**< @brief Whether simulation was given.  */
-  unsigned int relaxation_given ;	/**< @brief Whether relaxation was given.  */
-  unsigned int nreruns_given ;	/**< @brief Whether nreruns was given.  */
-  unsigned int be_given ;	/**< @brief Whether be was given.  */
-  unsigned int be_it_given ;	/**< @brief Whether be_it was given.  */
-  unsigned int be_oit_given ;	/**< @brief Whether be_oit was given.  */
-  unsigned int tol_abs_given ;	/**< @brief Whether tol_abs was given.  */
-  unsigned int tol_rel_given ;	/**< @brief Whether tol_rel was given.  */
-  unsigned int an_given ;	/**< @brief Whether an was given.  */
-  unsigned int percolation_threshold_given ;	/**< @brief Whether percolation_threshold was given.  */
-  unsigned int outputfolder_given ;	/**< @brief Whether outputfolder was given.  */
-  unsigned int transitions_given ;	/**< @brief Whether transitions was given.  */
-  unsigned int summary_given ;	/**< @brief Whether summary was given.  */
-  unsigned int comment_given ;	/**< @brief Whether comment was given.  */
+    struct gengetopt_args_info
+    {
+        const char *help_help;
+                         /**< @brief Print help and exit help description.  */
+        const char *version_help;
+                            /**< @brief Print version and exit help description.  */
+        int quiet_flag; /**< @brief Don't say anything. (default=off).  */
+        const char *quiet_help;
+                          /**< @brief Don't say anything. help description.  */
+        char *conf_file_arg;
+                        /**< @brief Location of a configuration file for the simulation..  */
+        char *conf_file_orig;   /**< @brief Location of a configuration file for the simulation. original value given at command line.  */
+        const char *conf_file_help;
+                              /**< @brief Location of a configuration file for the simulation. help description.  */
+        int memreq_flag;/**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately (default=off).  */
+        const char *memreq_help;
+                           /**< @brief Estimates the used memory for the specified parameter set. Print's the information and exits immediately help description.  */
+        long rseed_arg; /**< @brief Set the random seed manually..  */
+        char *rseed_orig;
+                        /**< @brief Set the random seed manually. original value given at command line.  */
+        const char *rseed_help;
+                          /**< @brief Set the random seed manually. help description.  */
+        int nruns_arg;  /**< @brief The number of runs to average over. (default='1').  */
+        char *nruns_orig;
+                        /**< @brief The number of runs to average over. original value given at command line.  */
+        const char *nruns_help;
+                          /**< @brief The number of runs to average over. help description.  */
+        int parallel_flag;
+                        /**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. (default=off).  */
+        const char *parallel_help;
+                             /**< @brief If the runs given with the --nruns option should be executed using mutliple cores and parallelization. This suppresses any progress output of the runs but will be very fast on multicore systems. help description.  */
+        int nthreads_arg;
+                        /**< @brief The number of threads to use during parallel computing. 0 means all there are. (default='0').  */
+        char *nthreads_orig;
+                        /**< @brief The number of threads to use during parallel computing. 0 means all there are. original value given at command line.  */
+        const char *nthreads_help;
+                             /**< @brief The number of threads to use during parallel computing. 0 means all there are. help description.  */
+        int length_arg; /**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!.  */
+        char *length_orig;
+                        /**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! original value given at command line.  */
+        const char *length_help;
+                           /**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! help description.  */
+        int X_arg;
+                /**< @brief The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. (default='50').  */
+        char *X_orig;   /**< @brief The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. original value given at command line.  */
+        const char *X_help;
+                      /**< @brief The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. help description.  */
+        int Y_arg;
+                /**< @brief The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. (default='50').  */
+        char *Y_orig;   /**< @brief The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. original value given at command line.  */
+        const char *Y_help;
+                      /**< @brief The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. help description.  */
+        int Z_arg;
+                /**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. (default='50').  */
+        char *Z_orig;   /**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. original value given at command line.  */
+        const char *Z_help;
+                      /**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. help description.  */
+        int ncarriers_arg;
+                        /**< @brief The number of charge carriers in the system. (default='10').  */
+        char *ncarriers_orig;   /**< @brief The number of charge carriers in the system. original value given at command line.  */
+        const char *ncarriers_help;
+                              /**< @brief The number of charge carriers in the system. help description.  */
+        int nsites_arg; /**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. (default='125000').  */
+        char *nsites_orig;
+                        /**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. original value given at command line.  */
+        const char *nsites_help;
+                           /**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. help description.  */
+        float exponent_arg;
+                        /**< @brief The exponent of the DOS g(x) = exp(-(x)^p) (default='2.0').  */
+        char *exponent_orig;
+                        /**< @brief The exponent of the DOS g(x) = exp(-(x)^p) original value given at command line.  */
+        const char *exponent_help;
+                             /**< @brief The exponent of the DOS g(x) = exp(-(x)^p) help description.  */
+        float llength_arg;
+                        /**< @brief Localization length of the sites, assumed equal for all of them. (default='0.215').  */
+        char *llength_orig;
+                        /**< @brief Localization length of the sites, assumed equal for all of them. original value given at command line.  */
+        const char *llength_help;
+                            /**< @brief Localization length of the sites, assumed equal for all of them. help description.  */
+        float rc_arg;
+                /**< @brief Determines up to which distance sites should be neighbors. (default='3').  */
+        char *rc_orig;  /**< @brief Determines up to which distance sites should be neighbors. original value given at command line.  */
+        const char *rc_help;
+                       /**< @brief Determines up to which distance sites should be neighbors. help description.  */
+        float field_arg;/**< @brief The electric field strength in z-direction. (default='0.3').  */
+        char *field_orig;
+                        /**< @brief The electric field strength in z-direction. original value given at command line.  */
+        const char *field_help;
+                          /**< @brief The electric field strength in z-direction. help description.  */
+        float temperature_arg;  /**< @brief The temperature of the simulation. (default='0.3').  */
+        char *temperature_orig; /**< @brief The temperature of the simulation. original value given at command line.  */
+        const char *temperature_help;
+                                /**< @brief The temperature of the simulation. help description.  */
+        int gaussian_flag;
+                        /**< @brief Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2) (default=off).  */
+        const char *gaussian_help;
+                             /**< @brief Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2) help description.  */
+        int lattice_flag;
+                        /**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc (default=off).  */
+        const char *lattice_help;
+                            /**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc help description.  */
+        int removesoftpairs_flag;
+                                /**< @brief Remove softpairs. (default=off).  */
+        const char *removesoftpairs_help;
+                                    /**< @brief Remove softpairs. help description.  */
+        float softpairthreshold_arg;
+                                /**< @brief The min hopping rate ratio to define a softpair (default='0.95').  */
+        char *softpairthreshold_orig;   /**< @brief The min hopping rate ratio to define a softpair original value given at command line.  */
+        const char *softpairthreshold_help;
+                                      /**< @brief The min hopping rate ratio to define a softpair help description.  */
+        float cutoutenergy_arg; /**< @brief States around this energy will be cut out of the DOS (default='0').  */
+        char *cutoutenergy_orig;/**< @brief States around this energy will be cut out of the DOS original value given at command line.  */
+        const char *cutoutenergy_help;
+                                 /**< @brief States around this energy will be cut out of the DOS help description.  */
+        float cutoutwidth_arg;  /**< @brief The (half) width of energies who are cutted. (default='0.5').  */
+        char *cutoutwidth_orig; /**< @brief The (half) width of energies who are cutted. original value given at command line.  */
+        const char *cutoutwidth_help;
+                                /**< @brief The (half) width of energies who are cutted. help description.  */
+        long simulation_arg;
+                        /**< @brief The number of hops during which statistics are collected. (default='1000000000').  */
+        char *simulation_orig;  /**< @brief The number of hops during which statistics are collected. original value given at command line.  */
+        const char *simulation_help;
+                               /**< @brief The number of hops during which statistics are collected. help description.  */
+        long relaxation_arg;
+                        /**< @brief The number of hops to relax. (default='100000000').  */
+        char *relaxation_orig;  /**< @brief The number of hops to relax. original value given at command line.  */
+        const char *relaxation_help;
+                               /**< @brief The number of hops to relax. help description.  */
+        int nreruns_arg;/**< @brief How many times should the electron be placed at some random starting position? (default='1').  */
+        char *nreruns_orig;
+                        /**< @brief How many times should the electron be placed at some random starting position? original value given at command line.  */
+        const char *nreruns_help;
+                            /**< @brief How many times should the electron be placed at some random starting position? help description.  */
+        int be_flag;
+                /**< @brief Solve balance equations (default=off).  */
+        const char *be_help;
+                       /**< @brief Solve balance equations help description.  */
+        long be_it_arg; /**< @brief Max inner iterations after which the calculation is stopped.  (default='1000').  */
+        char *be_it_orig;
+                        /**< @brief Max inner iterations after which the calculation is stopped.  original value given at command line.  */
+        const char *be_it_help;
+                          /**< @brief Max inner iterations after which the calculation is stopped.  help description.  */
+        long be_oit_arg;/**< @brief Max outer iterations or restarts of the algorithm. (default='1').  */
+        char *be_oit_orig;
+                        /**< @brief Max outer iterations or restarts of the algorithm. original value given at command line.  */
+        const char *be_oit_help;
+                           /**< @brief Max outer iterations or restarts of the algorithm. help description.  */
+        float tol_abs_arg;
+                        /**< @brief absolute tolerance for finding the solution (default='1e-8').  */
+        char *tol_abs_orig;
+                        /**< @brief absolute tolerance for finding the solution original value given at command line.  */
+        const char *tol_abs_help;
+                            /**< @brief absolute tolerance for finding the solution help description.  */
+        float tol_rel_arg;
+                        /**< @brief relative tolerance for finding the solution (default='1e-8').  */
+        char *tol_rel_orig;
+                        /**< @brief relative tolerance for finding the solution original value given at command line.  */
+        const char *tol_rel_help;
+                            /**< @brief relative tolerance for finding the solution help description.  */
+        int an_flag;
+                /**< @brief Also try to calculate stuff analytically (default=off).  */
+        const char *an_help;
+                       /**< @brief Also try to calculate stuff analytically help description.  */
+        float percolation_threshold_arg;/**< @brief The percolation threshold. (default='2.7').  */
+        char *percolation_threshold_orig;
+                                        /**< @brief The percolation threshold. original value given at command line.  */
+        const char *percolation_threshold_help;
+                                          /**< @brief The percolation threshold. help description.  */
+        char *outputfolder_arg; /**< @brief The name of the output folder if one wants output files..  */
+        char *outputfolder_orig;/**< @brief The name of the output folder if one wants output files. original value given at command line.  */
+        const char *outputfolder_help;
+                                 /**< @brief The name of the output folder if one wants output files. help description.  */
+        int transitions_flag;
+                        /**< @brief Save all transitions to a file. (Can be big, scales with -l^3!) Only valid when --outputfolder is given (default=off).  */
+        const char *transitions_help;
+                                /**< @brief Save all transitions to a file. (Can be big, scales with -l^3!) Only valid when --outputfolder is given help description.  */
+        char *summary_arg;
+                        /**< @brief The name of the summary file to which one summary result line is then written..  */
+        char *summary_orig;
+                        /**< @brief The name of the summary file to which one summary result line is then written. original value given at command line.  */
+        const char *summary_help;
+                            /**< @brief The name of the summary file to which one summary result line is then written. help description.  */
+        char *comment_arg;
+                        /**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data..  */
+        char *comment_orig;
+                        /**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data. original value given at command line.  */
+        const char *comment_help;
+                            /**< @brief Specify a string that is appended to the line in the summary file for better overview over the simulated data. help description.  */
 
-} ;
+        unsigned int help_given;/**< @brief Whether help was given.  */
+        unsigned int version_given;
+                                /**< @brief Whether version was given.  */
+        unsigned int quiet_given;
+                                /**< @brief Whether quiet was given.  */
+        unsigned int conf_file_given;   /**< @brief Whether conf_file was given.  */
+        unsigned int memreq_given;
+                                /**< @brief Whether memreq was given.  */
+        unsigned int rseed_given;
+                                /**< @brief Whether rseed was given.  */
+        unsigned int nruns_given;
+                                /**< @brief Whether nruns was given.  */
+        unsigned int parallel_given;
+                                /**< @brief Whether parallel was given.  */
+        unsigned int nthreads_given;
+                                /**< @brief Whether nthreads was given.  */
+        unsigned int length_given;
+                                /**< @brief Whether length was given.  */
+        unsigned int X_given;   /**< @brief Whether X was given.  */
+        unsigned int Y_given;   /**< @brief Whether Y was given.  */
+        unsigned int Z_given;   /**< @brief Whether Z was given.  */
+        unsigned int ncarriers_given;   /**< @brief Whether ncarriers was given.  */
+        unsigned int nsites_given;
+                                /**< @brief Whether nsites was given.  */
+        unsigned int exponent_given;
+                                /**< @brief Whether exponent was given.  */
+        unsigned int llength_given;
+                                /**< @brief Whether llength was given.  */
+        unsigned int rc_given;  /**< @brief Whether rc was given.  */
+        unsigned int field_given;
+                                /**< @brief Whether field was given.  */
+        unsigned int temperature_given; /**< @brief Whether temperature was given.  */
+        unsigned int gaussian_given;
+                                /**< @brief Whether gaussian was given.  */
+        unsigned int lattice_given;
+                                /**< @brief Whether lattice was given.  */
+        unsigned int removesoftpairs_given;
+                                        /**< @brief Whether removesoftpairs was given.  */
+        unsigned int softpairthreshold_given;   /**< @brief Whether softpairthreshold was given.  */
+        unsigned int cutoutenergy_given;/**< @brief Whether cutoutenergy was given.  */
+        unsigned int cutoutwidth_given; /**< @brief Whether cutoutwidth was given.  */
+        unsigned int simulation_given;  /**< @brief Whether simulation was given.  */
+        unsigned int relaxation_given;  /**< @brief Whether relaxation was given.  */
+        unsigned int nreruns_given;
+                                /**< @brief Whether nreruns was given.  */
+        unsigned int be_given;  /**< @brief Whether be was given.  */
+        unsigned int be_it_given;
+                                /**< @brief Whether be_it was given.  */
+        unsigned int be_oit_given;
+                                /**< @brief Whether be_oit was given.  */
+        unsigned int tol_abs_given;
+                                /**< @brief Whether tol_abs was given.  */
+        unsigned int tol_rel_given;
+                                /**< @brief Whether tol_rel was given.  */
+        unsigned int an_given;  /**< @brief Whether an was given.  */
+        unsigned int percolation_threshold_given;
+                                                /**< @brief Whether percolation_threshold was given.  */
+        unsigned int outputfolder_given;/**< @brief Whether outputfolder was given.  */
+        unsigned int transitions_given; /**< @brief Whether transitions was given.  */
+        unsigned int summary_given;
+                                /**< @brief Whether summary was given.  */
+        unsigned int comment_given;
+                                /**< @brief Whether comment was given.  */
+
+    };
 
 /** @brief The additional parameters to pass to parser functions */
-struct cmdline_parser_params
-{
-  int override; /**< @brief whether to override possibly already present options (default 0) */
-  int initialize; /**< @brief whether to initialize the option structure gengetopt_args_info (default 1) */
-  int check_required; /**< @brief whether to check that all required options were provided (default 1) */
-  int check_ambiguity; /**< @brief whether to check for options already specified in the option structure gengetopt_args_info (default 0) */
-  int print_errors; /**< @brief whether getopt_long should print an error message for a bad option (default 1) */
-} ;
+    struct cmdline_parser_params
+    {
+        int override;
+                /**< @brief whether to override possibly already present options (default 0) */
+        int initialize;
+                  /**< @brief whether to initialize the option structure gengetopt_args_info (default 1) */
+        int check_required;
+                      /**< @brief whether to check that all required options were provided (default 1) */
+        int check_ambiguity;
+                       /**< @brief whether to check for options already specified in the option structure gengetopt_args_info (default 0) */
+        int print_errors;
+                    /**< @brief whether getopt_long should print an error message for a bad option (default 1) */
+    };
 
 /** @brief the purpose string of the program */
-extern const char *gengetopt_args_info_purpose;
+    extern const char *gengetopt_args_info_purpose;
 /** @brief the usage string of the program */
-extern const char *gengetopt_args_info_usage;
+    extern const char *gengetopt_args_info_usage;
 /** @brief all the lines making the help output */
-extern const char *gengetopt_args_info_help[];
+    extern const char *gengetopt_args_info_help[];
 
 /**
  * The command line parser
@@ -212,8 +322,8 @@ extern const char *gengetopt_args_info_help[];
  * @param args_info the structure where option information will be stored
  * @return 0 if everything went fine, NON 0 if an error took place
  */
-int cmdline_parser (int argc, char **argv,
-  struct gengetopt_args_info *args_info);
+    int cmdline_parser (int argc, char **argv,
+                        struct gengetopt_args_info *args_info);
 
 /**
  * The command line parser (version with additional parameters - deprecated)
@@ -226,9 +336,9 @@ int cmdline_parser (int argc, char **argv,
  * @return 0 if everything went fine, NON 0 if an error took place
  * @deprecated use cmdline_parser_ext() instead
  */
-int cmdline_parser2 (int argc, char **argv,
-  struct gengetopt_args_info *args_info,
-  int override, int initialize, int check_required);
+    int cmdline_parser2 (int argc, char **argv,
+                         struct gengetopt_args_info *args_info,
+                         int override, int initialize, int check_required);
 
 /**
  * The command line parser (version with additional parameters)
@@ -238,9 +348,9 @@ int cmdline_parser2 (int argc, char **argv,
  * @param params additional parameters for the parser
  * @return 0 if everything went fine, NON 0 if an error took place
  */
-int cmdline_parser_ext (int argc, char **argv,
-  struct gengetopt_args_info *args_info,
-  struct cmdline_parser_params *params);
+    int cmdline_parser_ext (int argc, char **argv,
+                            struct gengetopt_args_info *args_info,
+                            struct cmdline_parser_params *params);
 
 /**
  * Save the contents of the option struct into an already open FILE stream.
@@ -248,8 +358,8 @@ int cmdline_parser_ext (int argc, char **argv,
  * @param args_info the option struct to dump
  * @return 0 if everything went fine, NON 0 if an error took place
  */
-int cmdline_parser_dump(FILE *outfile,
-  struct gengetopt_args_info *args_info);
+    int cmdline_parser_dump (FILE * outfile,
+                             struct gengetopt_args_info *args_info);
 
 /**
  * Save the contents of the option struct into a (text) file.
@@ -258,44 +368,44 @@ int cmdline_parser_dump(FILE *outfile,
  * @param args_info the option struct to save
  * @return 0 if everything went fine, NON 0 if an error took place
  */
-int cmdline_parser_file_save(const char *filename,
-  struct gengetopt_args_info *args_info);
+    int cmdline_parser_file_save (const char *filename,
+                                  struct gengetopt_args_info *args_info);
 
 /**
  * Print the help
  */
-void cmdline_parser_print_help(void);
+    void cmdline_parser_print_help (void);
 /**
  * Print the version
  */
-void cmdline_parser_print_version(void);
+    void cmdline_parser_print_version (void);
 
 /**
  * Initializes all the fields a cmdline_parser_params structure 
  * to their default values
  * @param params the structure to initialize
  */
-void cmdline_parser_params_init(struct cmdline_parser_params *params);
+    void cmdline_parser_params_init (struct cmdline_parser_params *params);
 
 /**
  * Allocates dynamically a cmdline_parser_params structure and initializes
  * all its fields to their default values
  * @return the created and initialized cmdline_parser_params structure
  */
-struct cmdline_parser_params *cmdline_parser_params_create(void);
+    struct cmdline_parser_params *cmdline_parser_params_create (void);
 
 /**
  * Initializes the passed gengetopt_args_info structure's fields
  * (also set default values for options that have a default)
  * @param args_info the structure to initialize
  */
-void cmdline_parser_init (struct gengetopt_args_info *args_info);
+    void cmdline_parser_init (struct gengetopt_args_info *args_info);
 /**
  * Deallocates the string fields of the gengetopt_args_info structure
  * (but does not deallocate the structure itself)
  * @param args_info the structure to deallocate
  */
-void cmdline_parser_free (struct gengetopt_args_info *args_info);
+    void cmdline_parser_free (struct gengetopt_args_info *args_info);
 
 /**
  * The config file parser (deprecated version)
@@ -307,9 +417,10 @@ void cmdline_parser_free (struct gengetopt_args_info *args_info);
  * @return 0 if everything went fine, NON 0 if an error took place
  * @deprecated use cmdline_parser_config_file() instead
  */
-int cmdline_parser_configfile (const char *filename,
-  struct gengetopt_args_info *args_info,
-  int override, int initialize, int check_required);
+    int cmdline_parser_configfile (const char *filename,
+                                   struct gengetopt_args_info *args_info,
+                                   int override, int initialize,
+                                   int check_required);
 
 /**
  * The config file parser
@@ -318,9 +429,9 @@ int cmdline_parser_configfile (const char *filename,
  * @param params additional parameters for the parser
  * @return 0 if everything went fine, NON 0 if an error took place
  */
-int cmdline_parser_config_file (const char *filename,
-  struct gengetopt_args_info *args_info,
-  struct cmdline_parser_params *params);
+    int cmdline_parser_config_file (const char *filename,
+                                    struct gengetopt_args_info *args_info,
+                                    struct cmdline_parser_params *params);
 
 /**
  * Checks that all the required options were specified
@@ -329,11 +440,11 @@ int cmdline_parser_config_file (const char *filename,
  *   possible errors
  * @return
  */
-int cmdline_parser_required (struct gengetopt_args_info *args_info,
-  const char *prog_name);
+    int cmdline_parser_required (struct gengetopt_args_info *args_info,
+                                 const char *prog_name);
 
 
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
-#endif /* CMDLINE_H */
+#endif                          /* __cplusplus */
+#endif                          /* CMDLINE_H */

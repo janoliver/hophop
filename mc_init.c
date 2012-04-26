@@ -78,7 +78,7 @@ MC_createSites (RunParams * runprms)
                                                           prms.exponent);
                 else
                     s[i].energy = (float) gsl_ran_gaussian (runprms->r, 1.);
-                
+
                 s[i].carrier = NULL;
                 s[i].visited = 0;
                 s[i].visitedUpward = 0;
