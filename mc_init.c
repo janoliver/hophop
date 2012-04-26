@@ -49,6 +49,8 @@ MC_createSites (RunParams * runprms)
     size_t i, j, k, l;
     Site *s, *s2;
 
+    prms.nsites = prms.length_x * prms.length_y * prms.length_z;
+
     s = (Site *) malloc (prms.nsites * sizeof (Site));
 
     // lattice case. Map site index to x,y,z coordinates
