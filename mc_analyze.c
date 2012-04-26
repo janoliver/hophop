@@ -66,7 +66,7 @@ calcDiffusivity (Carrier * carriers, Results * results)
     ex2 /= (prms.ncarriers);
     ey2 /= (prms.ncarriers);
     return (ex2 + ey2) / (4);
-    
+
 }
 
 /*

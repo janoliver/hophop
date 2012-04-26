@@ -63,6 +63,11 @@ typedef struct params
     bool memreq;
     int nthreads;
 
+    // cutting out sites
+    float cut_out_energy;
+    float cut_out_width;
+    bool cut_dos;
+
     // balance eq.
     bool balance_eq;
     float be_abs_tol;

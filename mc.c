@@ -8,7 +8,7 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
     Site *sites = NULL;
     Carrier *carriers = NULL;
     int i;
-    size_t j;
+
     struct timeval start, end, result;
     struct timezone tz;
 

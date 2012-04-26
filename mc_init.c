@@ -47,7 +47,7 @@ Site *
 MC_createSites (RunParams * runprms)
 {
     size_t i, j, k, l;
-    Site *s;
+    Site *s, *s2;
 
     s = (Site *) malloc (prms.nsites * sizeof (Site));
 
@@ -90,7 +90,39 @@ MC_createSites (RunParams * runprms)
                 s[i].rateSum = 0.0;
             }
 
-    return s;
+    // filter sites in case of cut-out
+    if(prms.cut_dos)
+    {
+        j = prms.nsites;
+        k = 0;
+            
+        for(i = 0; i < prms.nsites; ++i)
+        {
+            if(s[i].energy < prms.cut_out_energy + prms.cut_out_width &&
+               s[i].energy > prms.cut_out_energy - prms.cut_out_width)
+            {
+                s[i].index = -1;
+                prms.nsites--;
+            }
+        }
+
+        s2 = (Site *) malloc (prms.nsites * sizeof (Site));
+        for(i = 0; i < j; ++i)
+            if(s[i].index >= 0)
+            {
+                s2[k] = s[i];
+                s2[k].index = k;
+                k++;
+            }
+            
+        free(s);
+        return s2;
+    }
+    else
+    {
+        return s;
+    }
+
 }
 
 /*
