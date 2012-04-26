@@ -113,14 +113,13 @@ printSettings ()
     output (O_BOTH, "\tTemperature: \t\t\tT = %2.4f\n", prms.temperature);
     output (O_BOTH, "\tField strength: \t\tF = %2.4f\n", prms.field);
     output (O_BOTH, "\tCut-off radius: \t\tr = %2.4f\n", prms.cutoff_radius);
-    output (O_BOTH, "\tNumber of sites: \t\tN = %d\n\n", prms.nsites);
 
     output (O_PARALLEL, "\tParallelization: \t\tRunning on %d cores\n",
             prms.nthreads);
     output (O_SERIAL, "\tParallelization: \t\tOff\n");
     output (O_BOTH, "\tRealizations for Averaging: \ti = %d\n",
             prms.number_runs);
-    output (O_BOTH, "\tMode: \t\t\t\t%s\n",
+    output (O_BOTH, "\tMode: \t\t\t\t%s\n\n",
             prms.balance_eq ? "Balance equations" : "Monte carlo simulation");
 
     if (prms.balance_eq)
