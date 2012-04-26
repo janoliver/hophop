@@ -90,9 +90,9 @@ BE_solve (Site * sites, Results * res, int *iRun)
         counter++;
 
         // now the neighbors
-        for (k = 0; i < sites[k].nNeighbors; ++k)
+        for (k = 0; k < sites[i].nNeighbors; ++k)
         {
-            neighbor = &(sites[k].neighbors[k]);
+            neighbor = &(sites[i].neighbors[k]);
 
             // this is an ugly, ugly hack because we need compressed
             // row storage, which is exactly the wrong order compared
