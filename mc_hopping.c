@@ -20,6 +20,7 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
 
     // we need the current simulation time.
     double simTimeOld = res->simulationTime;
+    res->nHops = 0;
 
     // relaxation, no time or hop counting
     for (j = 0; j <= 100; j++)
