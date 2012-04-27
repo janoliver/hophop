@@ -278,7 +278,7 @@ writeSummary (Results * res, Results * error)
 
         fprintf (file, "Cutout Energy     ");
         fprintf (file, "Cutout width      ");
-        
+
         fprintf (file, "number of runs    ");
         fprintf (file, "number of reruns  ");
 
