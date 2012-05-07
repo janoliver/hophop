@@ -16,29 +16,35 @@ option "parallel" P "If the runs given with the --nruns option should be execute
 option "nthreads" t "The number of threads to use during parallel computing. 0 means all there are." int default="0" optional
 
 
-section "System information" sectiondesc="Parameters to describe the physical situation we are dealing with."
+section "External physical parameters" sectiondesc="Some external physical quantities."
+ 
+option "field" F "The electric field strength in z-direction." float default="0.3" optional 
+option "temperature" T "The temperature of the simulation." float default="0.3" optional  
+
+
+section "System information" sectiondesc="Parameters describing the distribution of sites in the system"
 
 option "length" l "This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!" int optional    
 option "X" X "The x-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional
 option "Y" Y "The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional
 option "Z" Z "The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional 
-option "ncarriers" n "The number of charge carriers in the system." int default="10" optional
 option "nsites" N "The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length." int optional default="125000"
+option "rc" - "Determines up to which distance sites should be neighbors." float default="3" optional 
 option "exponent" p "The exponent of the DOS g(x) = exp(-(x)^p)" float optional default="2.0"
-option "llength" a "Localization length of the sites, assumed equal for all of them." float default="0.215" optional 
-option "rc" - "Determines up to which distance sites should be neighbors." float default="3" optional  
-option "field" F "The electric field strength in z-direction." float default="0.3" optional 
-option "temperature" T "The temperature of the simulation." float default="0.3" optional  
+option "llength" a "Localization length of the sites, assumed equal for all of them." float default="0.215" optional
 option "gaussian" - "Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2)" flag off
 option "lattice" - "Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc" flag off
 option "removesoftpairs" - "Remove softpairs." flag off
 option "softpairthreshold" - "The min hopping rate ratio to define a softpair" float default="0.95" optional  
 option "cutoutenergy" - "States around this energy will be cut out of the DOS" float default="0" optional 
 option "cutoutwidth" - "The (half) width of energies who are cutted." float default="0.5" optional 
+option "addtoenergy" - "States around this energy will be add or removed out of the DOS" float default="0" optional 
+option "addtonumber" - "This amount of sites will be added/removed (+/-)" int default="-1000" optional 
 
 
 section "Monte carlo simulation" sectiondesc="The following options matter only, when the system is simulated using a monte carlo simulation (which is the default)"
 
+option "ncarriers" n "The number of charge carriers in the system." int default="10" optional
 option "simulation" I "The number of hops during which statistics are collected." long default="1000000000" optional
 option "relaxation" R "The number of hops to relax." long default="100000000" optionaloption "nreruns" x "How many times should the electron be placed at some random starting position?" int default="1" optional
   

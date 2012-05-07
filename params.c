@@ -79,6 +79,15 @@ generateParams (Params * prms, int argc, char **argv)
         prms->cut_dos = true;
     }
 
+    // add/remove sites stuff
+    prms->addto_dos = false;
+    if (args.addtoenergy_given)
+    {
+        prms->add_to_energy = args.addtoenergy_arg;
+        prms->add_to_number = args.addtonumber_arg;
+        prms->addto_dos = true;
+    }
+
     // check cutoff radius
     if (0 > args.rc_arg ||
         args.rc_arg > GSL_MIN (GSL_MIN (prms->length_y, prms->length_x),

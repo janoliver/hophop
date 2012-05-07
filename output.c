@@ -278,7 +278,10 @@ writeSummary (Results * res, Results * error)
 
         fprintf (file, "Cutout Energy     ");
         fprintf (file, "Cutout width      ");
-
+        
+        fprintf (file, "Add to Energy     ");
+        fprintf (file, "Add to number     ");
+        
         fprintf (file, "number of runs    ");
         fprintf (file, "number of reruns  ");
 
@@ -324,7 +327,10 @@ writeSummary (Results * res, Results * error)
 
     fprintf (file, "%-+18e", prms.cut_dos ? prms.cut_out_energy : 0);
     fprintf (file, "%-+18e", prms.cut_dos ? prms.cut_out_width : 0);
-
+    
+    fprintf (file, "%-+18e", prms.addto_dos ? prms.add_to_energy : 0);
+    fprintf (file, "%-18d", prms.addto_dos ? prms.add_to_number : 0);
+    
     fprintf (file, "%-18d", prms.number_runs);
     fprintf (file, "%-18d", prms.number_reruns);
 
