@@ -67,7 +67,7 @@ al_calcMobility (Results * res)
     exponent = -2 * radius / prms.loclength + end - res->analytic_fermienergy;
 
     // mobility
-    res->analytic_mobility = exp (exponent - log (prefactor * radius * int2));
+    res->analytic_mobility = 0.5 * exp (exponent - log (prefactor * radius * int2));
 }
 
 /*
