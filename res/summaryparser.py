@@ -2,8 +2,9 @@
 
 import numpy as np
 import sqlite3 as sql
+from itertools import groupby
 
-class SummaryParser(Object):
+class SummaryParser(object):
     """
     A parser for the hop summary files. The following must be fulfilled:
       * The columns MUST be 18 bytes (chars) long
@@ -18,7 +19,7 @@ class SummaryParser(Object):
         >>> s = SummaryParser()
         >>> s.read('summaryfile.dat', cols=30)
         >>> print s.get_columns()
-        >>> print s.q('SELECT col1, col2 FROM data WHERE col3="val"')
+        >>> print s.q('SELECT col1, col2 FROM data WHERE col3="val"').get_groups()
         >>> s.close()
     """
     
@@ -26,6 +27,8 @@ class SummaryParser(Object):
         self.con = sql.connect(":memory:")
         self.raw = None
         self.cols = None
+        self.data = None
+        return self.
         
     def read(self, filename='summary.dat', cols=31):
         self.raw = np.genfromtxt('compare.dat', dtype=None, delimiter=18,
@@ -35,9 +38,20 @@ class SummaryParser(Object):
         self.cols = self.raw.dtype.names
 
         self._insert()
+        return self
 
     def q(self, query):
-        return np.array(self.con.execute(query).fetchall())
+        self.data = np.array(self.con.execute(query).fetchall())
+        return self
+
+    def get_data(self):
+        return self.data
+        
+    def get_groups(self, col=0):
+        groups = {}
+        for k, g in groupby(self.data.tolist(), lambda x: x[col]):
+            groups[k] = np.delete(np.array(list(g)), col, 1).T
+        return groups
 
     def get_columns(self):
         return self.cols
