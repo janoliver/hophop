@@ -248,6 +248,7 @@ writeSummary (Results * res, Results * error)
     {
         fprintf (file, "#DOS exponent     ");
         fprintf (file, "System size       ");
+        fprintf (file, "Number of sites   ");
         fprintf (file, "Number carriers   ");
 
         fprintf (file, "Localization len. ");
@@ -275,6 +276,12 @@ writeSummary (Results * res, Results * error)
         fprintf (file, "Average energy    ");
         fprintf (file, "Error avg. en.    ");
 
+        fprintf (file, "Cutout Energy     ");
+        fprintf (file, "Cutout width      ");
+
+        fprintf (file, "Add to Energy     ");
+        fprintf (file, "Add to number     ");
+
         fprintf (file, "number of runs    ");
         fprintf (file, "number of reruns  ");
 
@@ -290,6 +297,7 @@ writeSummary (Results * res, Results * error)
     // write site information
     fprintf (file, "%-+18e", prms.exponent);
     fprintf (file, "%-18d", prms.length_x);
+    fprintf (file, "%-18d", prms.nsites);
     fprintf (file, "%-18d", prms.ncarriers);
 
     fprintf (file, "%-+18e", prms.loclength);
@@ -316,6 +324,12 @@ writeSummary (Results * res, Results * error)
 
     fprintf (file, "%-+18e", res->avgenergy);
     fprintf (file, "%-+18e", error->avgenergy);
+
+    fprintf (file, "%-+18e", prms.cut_dos ? prms.cut_out_energy : 0);
+    fprintf (file, "%-+18e", prms.cut_dos ? prms.cut_out_width : 0);
+
+    fprintf (file, "%-+18e", prms.addto_dos ? prms.add_to_energy : 0);
+    fprintf (file, "%-18d", prms.addto_dos ? prms.add_to_number : 0);
 
     fprintf (file, "%-18d", prms.number_runs);
     fprintf (file, "%-18d", prms.number_reruns);

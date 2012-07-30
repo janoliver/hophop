@@ -57,6 +57,12 @@ struct gengetopt_args_info
   int nthreads_arg;	/**< @brief The number of threads to use during parallel computing. 0 means all there are. (default='0').  */
   char * nthreads_orig;	/**< @brief The number of threads to use during parallel computing. 0 means all there are. original value given at command line.  */
   const char *nthreads_help; /**< @brief The number of threads to use during parallel computing. 0 means all there are. help description.  */
+  float field_arg;	/**< @brief The electric field strength in z-direction. (default='0.3').  */
+  char * field_orig;	/**< @brief The electric field strength in z-direction. original value given at command line.  */
+  const char *field_help; /**< @brief The electric field strength in z-direction. help description.  */
+  float temperature_arg;	/**< @brief The temperature of the simulation. (default='0.3').  */
+  char * temperature_orig;	/**< @brief The temperature of the simulation. original value given at command line.  */
+  const char *temperature_help; /**< @brief The temperature of the simulation. help description.  */
   int length_arg;	/**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored!.  */
   char * length_orig;	/**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! original value given at command line.  */
   const char *length_help; /**< @brief This parameter specifies the length of the (cubic) sample. If it parameter is set, the options X,Y,Z are ignored! help description.  */
@@ -69,27 +75,18 @@ struct gengetopt_args_info
   int Z_arg;	/**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. (default='50').  */
   char * Z_orig;	/**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. original value given at command line.  */
   const char *Z_help; /**< @brief The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length. help description.  */
-  int ncarriers_arg;	/**< @brief The number of charge carriers in the system. (default='10').  */
-  char * ncarriers_orig;	/**< @brief The number of charge carriers in the system. original value given at command line.  */
-  const char *ncarriers_help; /**< @brief The number of charge carriers in the system. help description.  */
   int nsites_arg;	/**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. (default='125000').  */
   char * nsites_orig;	/**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. original value given at command line.  */
   const char *nsites_help; /**< @brief The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length. help description.  */
+  float rc_arg;	/**< @brief Determines up to which distance sites should be neighbors. (default='3').  */
+  char * rc_orig;	/**< @brief Determines up to which distance sites should be neighbors. original value given at command line.  */
+  const char *rc_help; /**< @brief Determines up to which distance sites should be neighbors. help description.  */
   float exponent_arg;	/**< @brief The exponent of the DOS g(x) = exp(-(x)^p) (default='2.0').  */
   char * exponent_orig;	/**< @brief The exponent of the DOS g(x) = exp(-(x)^p) original value given at command line.  */
   const char *exponent_help; /**< @brief The exponent of the DOS g(x) = exp(-(x)^p) help description.  */
   float llength_arg;	/**< @brief Localization length of the sites, assumed equal for all of them. (default='0.215').  */
   char * llength_orig;	/**< @brief Localization length of the sites, assumed equal for all of them. original value given at command line.  */
   const char *llength_help; /**< @brief Localization length of the sites, assumed equal for all of them. help description.  */
-  float rc_arg;	/**< @brief Determines up to which distance sites should be neighbors. (default='3').  */
-  char * rc_orig;	/**< @brief Determines up to which distance sites should be neighbors. original value given at command line.  */
-  const char *rc_help; /**< @brief Determines up to which distance sites should be neighbors. help description.  */
-  float field_arg;	/**< @brief The electric field strength in z-direction. (default='0.3').  */
-  char * field_orig;	/**< @brief The electric field strength in z-direction. original value given at command line.  */
-  const char *field_help; /**< @brief The electric field strength in z-direction. help description.  */
-  float temperature_arg;	/**< @brief The temperature of the simulation. (default='0.3').  */
-  char * temperature_orig;	/**< @brief The temperature of the simulation. original value given at command line.  */
-  const char *temperature_help; /**< @brief The temperature of the simulation. help description.  */
   int gaussian_flag;	/**< @brief Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2) (default=off).  */
   const char *gaussian_help; /**< @brief Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2) help description.  */
   int lattice_flag;	/**< @brief Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc (default=off).  */
@@ -105,6 +102,15 @@ struct gengetopt_args_info
   float cutoutwidth_arg;	/**< @brief The (half) width of energies who are cutted. (default='0.5').  */
   char * cutoutwidth_orig;	/**< @brief The (half) width of energies who are cutted. original value given at command line.  */
   const char *cutoutwidth_help; /**< @brief The (half) width of energies who are cutted. help description.  */
+  float addtoenergy_arg;	/**< @brief States around this energy will be add or removed out of the DOS (default='0').  */
+  char * addtoenergy_orig;	/**< @brief States around this energy will be add or removed out of the DOS original value given at command line.  */
+  const char *addtoenergy_help; /**< @brief States around this energy will be add or removed out of the DOS help description.  */
+  int addtonumber_arg;	/**< @brief This amount of sites will be added/removed (+/-) (default='-1000').  */
+  char * addtonumber_orig;	/**< @brief This amount of sites will be added/removed (+/-) original value given at command line.  */
+  const char *addtonumber_help; /**< @brief This amount of sites will be added/removed (+/-) help description.  */
+  int ncarriers_arg;	/**< @brief The number of charge carriers in the system. (default='10').  */
+  char * ncarriers_orig;	/**< @brief The number of charge carriers in the system. original value given at command line.  */
+  const char *ncarriers_help; /**< @brief The number of charge carriers in the system. help description.  */
   long simulation_arg;	/**< @brief The number of hops during which statistics are collected. (default='1000000000').  */
   char * simulation_orig;	/**< @brief The number of hops during which statistics are collected. original value given at command line.  */
   const char *simulation_help; /**< @brief The number of hops during which statistics are collected. help description.  */
@@ -154,23 +160,25 @@ struct gengetopt_args_info
   unsigned int nruns_given ;	/**< @brief Whether nruns was given.  */
   unsigned int parallel_given ;	/**< @brief Whether parallel was given.  */
   unsigned int nthreads_given ;	/**< @brief Whether nthreads was given.  */
+  unsigned int field_given ;	/**< @brief Whether field was given.  */
+  unsigned int temperature_given ;	/**< @brief Whether temperature was given.  */
   unsigned int length_given ;	/**< @brief Whether length was given.  */
   unsigned int X_given ;	/**< @brief Whether X was given.  */
   unsigned int Y_given ;	/**< @brief Whether Y was given.  */
   unsigned int Z_given ;	/**< @brief Whether Z was given.  */
-  unsigned int ncarriers_given ;	/**< @brief Whether ncarriers was given.  */
   unsigned int nsites_given ;	/**< @brief Whether nsites was given.  */
+  unsigned int rc_given ;	/**< @brief Whether rc was given.  */
   unsigned int exponent_given ;	/**< @brief Whether exponent was given.  */
   unsigned int llength_given ;	/**< @brief Whether llength was given.  */
-  unsigned int rc_given ;	/**< @brief Whether rc was given.  */
-  unsigned int field_given ;	/**< @brief Whether field was given.  */
-  unsigned int temperature_given ;	/**< @brief Whether temperature was given.  */
   unsigned int gaussian_given ;	/**< @brief Whether gaussian was given.  */
   unsigned int lattice_given ;	/**< @brief Whether lattice was given.  */
   unsigned int removesoftpairs_given ;	/**< @brief Whether removesoftpairs was given.  */
   unsigned int softpairthreshold_given ;	/**< @brief Whether softpairthreshold was given.  */
   unsigned int cutoutenergy_given ;	/**< @brief Whether cutoutenergy was given.  */
   unsigned int cutoutwidth_given ;	/**< @brief Whether cutoutwidth was given.  */
+  unsigned int addtoenergy_given ;	/**< @brief Whether addtoenergy was given.  */
+  unsigned int addtonumber_given ;	/**< @brief Whether addtonumber was given.  */
+  unsigned int ncarriers_given ;	/**< @brief Whether ncarriers was given.  */
   unsigned int simulation_given ;	/**< @brief Whether simulation was given.  */
   unsigned int relaxation_given ;	/**< @brief Whether relaxation was given.  */
   unsigned int nreruns_given ;	/**< @brief Whether nreruns was given.  */

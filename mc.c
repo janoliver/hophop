@@ -42,13 +42,13 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
     double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
 
     output (O_PARALLEL,
-            "Finished %d. Iteration (total %d): %d successful hops/sec (%ld failed)\n",
+            "Finished %d. Iteration (total %d): %lu successful hops/sec (%ld failed)\n",
             *iRun, prms.number_runs,
-            (int) (prms.number_reruns * (prms.relaxation + prms.simulation) /
-                   elapsed), total[*iRun - 1].nFailedAttempts);
-    output (O_SERIAL, " Done. %d successful hops/sec (%ld failed)\n",
-            (int) (prms.number_reruns * (prms.relaxation + prms.simulation) /
-                   elapsed), total[*iRun - 1].nFailedAttempts);
+            (size_t) (prms.number_reruns * (prms.relaxation + prms.simulation) /
+                      elapsed), total[*iRun - 1].nFailedAttempts);
+    output (O_SERIAL, " Done. %lu successful hops/sec (%ld failed)\n",
+            (size_t) (prms.number_reruns * (prms.relaxation + prms.simulation) /
+                      elapsed), total[*iRun - 1].nFailedAttempts);
 
     // calculate the results
     MC_calculateResults (sites, carriers, &(total[*iRun - 1]));
