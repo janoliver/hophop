@@ -28,10 +28,9 @@ class SummaryParser(object):
         self.raw = None
         self.cols = None
         self.data = None
-        return self.
         
     def read(self, filename='summary.dat', cols=31):
-        self.raw = np.genfromtxt('compare.dat', dtype=None, delimiter=18,
+        self.raw = np.genfromtxt(filename, dtype=None, delimiter=18,
                                  autostrip=True, names=True,
                                  usecols=range(cols),
                                  comments=None)
