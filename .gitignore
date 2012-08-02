@@ -6,3 +6,4 @@ cmake_install.cmake
 install_manifest.txt
 options.ggo
 config.h
+*.pyc
