@@ -101,7 +101,7 @@ MC_createSites (RunParams * runprms)
 
         for (i = 0; i < j; ++i)
         {
-            if (s[i].energy < prms.cut_out_energy + prms.cut_out_width &&
+            if (s[i].energy < prms.cut_out_energy &&
                 s[i].energy > prms.cut_out_energy - prms.cut_out_width)
             {
                 s[i].index = -1;

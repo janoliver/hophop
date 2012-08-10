@@ -36,8 +36,8 @@ option "gaussian" - "Use a Gaussian DOS with std. dev. 1. g(x) = exp(-1/2*(x)^2)
 option "lattice" - "Distribute sites on a lattice with distance unity. Control nearest neighbor hopping and so on with --rc" flag off
 option "removesoftpairs" - "Remove softpairs." flag off
 option "softpairthreshold" - "The min hopping rate ratio to define a softpair" float default="0.95" optional  
-option "cutoutenergy" - "States around this energy will be cut out of the DOS" float default="0" optional 
-option "cutoutwidth" - "The (half) width of energies who are cutted." float default="0.5" optional 
+option "cutoutenergy" - "States below this energy will be cut out of the DOS" float default="0" optional 
+option "cutoutwidth" - "The width of energies who are cutted." float default="0.5" optional 
 option "addtoenergy" - "States around this energy will be add or removed out of the DOS" float default="0" optional 
 option "addtonumber" - "This amount of sites will be added/removed (+/-)" int default="-1000" optional 
 
