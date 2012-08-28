@@ -83,11 +83,6 @@ typedef struct params
     time_t curtime;
     struct tm *loctime;
     const gsl_rng_type *T;
-    //gsl_rng *r;
-
-    // analytics
-    float percthresh;
-    bool analytic;
 
     struct gengetopt_args_info *cmdlineargs;
 
@@ -143,12 +138,6 @@ typedef struct results
     size_t nHops;
     size_t nFailedAttempts;
     double avgenergy;
-
-    // these values are calculated analytically
-    // in analytic.c
-    double analytic_mobility;
-    double analytic_transportenergy;
-    double analytic_fermienergy;
 } Results;
 
 typedef struct vector
@@ -209,9 +198,6 @@ double calcAverageEnergy (Carrier * carriers);
 // balance equations
 void BE_run (Results * total, RunParams * runprms, int *iRun);
 void BE_solve (Site * sites, Results * res, int *iRun);
-
-// analytic calculator
-void AL_run (Results * total, int *iRun);
 
 
 #endif /* HOP_H */

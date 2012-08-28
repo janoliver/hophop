@@ -27,15 +27,6 @@ average_results (Results * res, Results * total, Results * error)
         error->einsteinrelation += pow (res->einsteinrelation -
                                         total[iRun].einsteinrelation, 2);
 
-        error->analytic_mobility += pow (res->analytic_mobility -
-                                         total[iRun].analytic_mobility, 2);
-        error->analytic_fermienergy += pow (res->analytic_fermienergy -
-                                            total[iRun].analytic_fermienergy,
-                                            2);
-        error->analytic_transportenergy +=
-            pow (res->analytic_transportenergy -
-                 total[iRun].analytic_transportenergy, 2);
-
     }
 
     error->mobility = sqrt (error->mobility / prms.number_runs);
@@ -46,13 +37,6 @@ average_results (Results * res, Results * total, Results * error)
         sqrt (error->equilibrationEnergy / prms.number_runs);
     error->avgenergy = sqrt (error->avgenergy / prms.number_runs);
     error->einsteinrelation = sqrt (error->einsteinrelation / prms.number_runs);
-
-    error->analytic_mobility =
-        sqrt (error->analytic_mobility / prms.number_runs);
-    error->analytic_fermienergy =
-        sqrt (error->analytic_fermienergy / prms.number_runs);
-    error->analytic_transportenergy =
-        sqrt (error->analytic_transportenergy / prms.number_runs);
 
 }
 
@@ -68,10 +52,6 @@ init_results (Results * res)
     res->einsteinrelation = 0.0;
 
     res->nFailedAttempts = 0;
-
-    res->analytic_mobility = 0.0;
-    res->analytic_fermienergy = 0.0;
-    res->analytic_transportenergy = 0.0;
 }
 
 void
@@ -84,10 +64,6 @@ add_results_to_results (Results * res, Results * to_add)
     res->equilibrationEnergy += to_add->equilibrationEnergy;
     res->avgenergy += to_add->avgenergy;
     res->einsteinrelation += to_add->einsteinrelation;
-
-    res->analytic_mobility += to_add->analytic_mobility;
-    res->analytic_fermienergy += to_add->analytic_fermienergy;
-    res->analytic_transportenergy += to_add->analytic_transportenergy;
 
 }
 
@@ -102,10 +78,6 @@ divide_results_by_scalar (Results * res, double scalar)
     res->equilibrationEnergy /= scalar;
     res->avgenergy /= scalar;
     res->einsteinrelation /= scalar;
-
-    res->analytic_mobility /= scalar;
-    res->analytic_fermienergy /= scalar;
-    res->analytic_transportenergy /= scalar;
 
 }
 

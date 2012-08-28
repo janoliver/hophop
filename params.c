@@ -142,7 +142,6 @@ generateParams (Params * prms, int argc, char **argv)
     prms->output_transitions = (args.transitions_given) ? true : false;
     prms->memreq = (args.memreq_given) ? true : false;
     prms->balance_eq = (args.be_given) ? true : false;
-    prms->analytic = (args.an_given) ? true : false;
 
     // balance equation parameters
     if (args.be_it_arg == 0)
@@ -203,14 +202,6 @@ generateParams (Params * prms, int argc, char **argv)
     // if prms.nthreads == 1 for any reason, disable parallel computing
     if (prms->nthreads == 1)
         prms->parallel = false;
-
-    // analytics
-    if (args.percolation_threshold_arg <= 0)
-    {
-        output (O_FORCE, "This is not a valid percolation threshold.\n");
-        exit (1);
-    }
-    prms->percthresh = args.percolation_threshold_arg;
 
     // free memory
     free (params);

@@ -64,10 +64,6 @@ main (int argc, char **argv)
                 MC_run (total, &runprms, &iRun);
             }
 
-            // run analytic calculations as well ?
-            if (prms.analytic)
-                AL_run (total, &iRun);
-
             // free the RNG
             gsl_rng_free (runprms.r);
 
@@ -154,13 +150,6 @@ printResults (Results * results, Results * error)
     output (O_BOTH, "\nResults:\n");
     output (O_BOTH, "\tMobility in field-direction: \tu   = %e (+- %e)\n",
             results->mobility, error->mobility);
-    output (O_BOTH, "\tAnalytically calculated mob.: \tu   = %e\n",
-            results->analytic_mobility);
-    output (O_BOTH, "\tAnalytic Fermi level: \t\tE_f = %e\n",
-            results->analytic_fermienergy);
-    output (O_BOTH, "\tAnalytic transport energy: \tE_t = %e\n",
-            results->analytic_transportenergy);
-
 
     if (prms.balance_eq)
     {

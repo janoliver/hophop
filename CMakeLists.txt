@@ -43,7 +43,6 @@ ADD_EXECUTABLE(hop
                    output.c 
                    params.c
                    be.c
-                   analytic.c
                    helper.c
                    cmdline.c cmdline.h
                    mgmres.c mgmres.h

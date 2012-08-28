@@ -59,8 +59,8 @@ const char *gengetopt_args_info_help[] = {
   "      --lattice                 Distribute sites on a lattice with distance \n                                  unity. Control nearest neighbor hopping and \n                                  so on with --rc  (default=off)",
   "      --removesoftpairs         Remove softpairs.  (default=off)",
   "      --softpairthreshold=FLOAT The min hopping rate ratio to define a softpair \n                                   (default=`0.95')",
-  "      --cutoutenergy=FLOAT      States around this energy will be cut out of \n                                  the DOS  (default=`0')",
-  "      --cutoutwidth=FLOAT       The (half) width of energies who are cutted.  \n                                  (default=`0.5')",
+  "      --cutoutenergy=FLOAT      States below this energy will be cut out of the \n                                  DOS  (default=`0')",
+  "      --cutoutwidth=FLOAT       The width of energies who are cutted.  \n                                  (default=`0.5')",
   "      --addtoenergy=FLOAT       States around this energy will be add or \n                                  removed out of the DOS  (default=`0')",
   "      --addtonumber=INT         This amount of sites will be added/removed \n                                  (+/-)  (default=`-1000')",
   "\nMonte carlo simulation:",
@@ -1205,7 +1205,7 @@ cmdline_parser_internal (
               goto failure;
           
           }
-          /* States around this energy will be cut out of the DOS.  */
+          /* States below this energy will be cut out of the DOS.  */
           else if (strcmp (long_options[option_index].name, "cutoutenergy") == 0)
           {
           
@@ -1219,7 +1219,7 @@ cmdline_parser_internal (
               goto failure;
           
           }
-          /* The (half) width of energies who are cutted..  */
+          /* The width of energies who are cutted..  */
           else if (strcmp (long_options[option_index].name, "cutoutwidth") == 0)
           {
           

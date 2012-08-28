@@ -96,12 +96,12 @@ struct gengetopt_args_info
   float softpairthreshold_arg;	/**< @brief The min hopping rate ratio to define a softpair (default='0.95').  */
   char * softpairthreshold_orig;	/**< @brief The min hopping rate ratio to define a softpair original value given at command line.  */
   const char *softpairthreshold_help; /**< @brief The min hopping rate ratio to define a softpair help description.  */
-  float cutoutenergy_arg;	/**< @brief States around this energy will be cut out of the DOS (default='0').  */
-  char * cutoutenergy_orig;	/**< @brief States around this energy will be cut out of the DOS original value given at command line.  */
-  const char *cutoutenergy_help; /**< @brief States around this energy will be cut out of the DOS help description.  */
-  float cutoutwidth_arg;	/**< @brief The (half) width of energies who are cutted. (default='0.5').  */
-  char * cutoutwidth_orig;	/**< @brief The (half) width of energies who are cutted. original value given at command line.  */
-  const char *cutoutwidth_help; /**< @brief The (half) width of energies who are cutted. help description.  */
+  float cutoutenergy_arg;	/**< @brief States below this energy will be cut out of the DOS (default='0').  */
+  char * cutoutenergy_orig;	/**< @brief States below this energy will be cut out of the DOS original value given at command line.  */
+  const char *cutoutenergy_help; /**< @brief States below this energy will be cut out of the DOS help description.  */
+  float cutoutwidth_arg;	/**< @brief The width of energies who are cutted. (default='0.5').  */
+  char * cutoutwidth_orig;	/**< @brief The width of energies who are cutted. original value given at command line.  */
+  const char *cutoutwidth_help; /**< @brief The width of energies who are cutted. help description.  */
   float addtoenergy_arg;	/**< @brief States around this energy will be add or removed out of the DOS (default='0').  */
   char * addtoenergy_orig;	/**< @brief States around this energy will be add or removed out of the DOS original value given at command line.  */
   const char *addtoenergy_help; /**< @brief States around this energy will be add or removed out of the DOS help description.  */
