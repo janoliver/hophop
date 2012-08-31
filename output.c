@@ -369,7 +369,7 @@ writeSummary (Results * res)
         fprintf (file, "%s", prms.comment);
     else
         fprintf (file, "-");
-    
+
     fprintf (file, "\n");
 
     fclose (file);
