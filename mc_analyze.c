@@ -2,16 +2,44 @@
 
 #include "hop.h"
 
+double calcMobility (Carrier * carriers, RunParams * runprms);
+double calcDiffusivity (Carrier * carriers, RunParams * runprms);
+double calcEinsteinRelation (Carrier * carriers, RunParams * runprms);
+double calcCurrentDensity (Carrier * carriers, RunParams * runprms);
+double calcEquilibrationEnergy (Site * sites, RunParams * runprms);
+double calcAverageEnergy (Carrier * carriers);
+
 void
-MC_calculateResults (Site * sites, Carrier * carriers, Results * res)
+MC_calculateResults (Site * sites, Carrier * carriers, Results * res, RunParams * runprms)
 {
     // calculate results
-    res->mobility = calcMobility (carriers, res);
-    res->diffusivity = calcDiffusivity (carriers, res);
-    res->currentDensity = calcCurrentDensity (carriers, res);
-    res->equilibrationEnergy = calcEquilibrationEnergy (sites, res);
-    res->avgenergy = calcAverageEnergy (carriers);
-    res->einsteinrelation = calcEinsteinRelation (carriers, res);
+    res->mobility.values[runprms->iRun - 1] = calcMobility (carriers, runprms);
+    res->mobility.done[runprms->iRun - 1] = true;
+    
+    res->diffusivity.values[runprms->iRun - 1] = calcDiffusivity (carriers, runprms);
+    res->diffusivity.done[runprms->iRun - 1] = true;
+
+    res->currentDensity.values[runprms->iRun - 1] = calcCurrentDensity (carriers, runprms);
+    res->currentDensity.done[runprms->iRun - 1] = true;
+
+    res->equilibrationEnergy.values[runprms->iRun - 1] = calcEquilibrationEnergy (sites, runprms);
+    res->equilibrationEnergy.done[runprms->iRun - 1] = true;
+    
+    res->avgenergy.values[runprms->iRun - 1] = calcAverageEnergy (carriers);
+    res->avgenergy.done[runprms->iRun - 1] = true;
+    
+    res->einsteinrelation.values[runprms->iRun - 1] = calcEinsteinRelation (carriers, runprms);
+    res->einsteinrelation.done[runprms->iRun - 1] = true;
+    
+    res->simulationTime.values[runprms->iRun - 1] = runprms->simulationTime;
+    res->simulationTime.done[runprms->iRun - 1] = true;
+
+    res->nHops.values[runprms->iRun - 1] = runprms->nHops;
+    res->nHops.done[runprms->iRun - 1] = true;
+
+    res->nFailedAttempts.values[runprms->iRun - 1] = runprms->nFailedAttempts;
+    res->nFailedAttempts.done[runprms->iRun - 1] = true;
+
 }
 
 /*
@@ -21,13 +49,13 @@ MC_calculateResults (Site * sites, Carrier * carriers, Results * res)
  * z-direction the elctrons hopped.
  */
 double
-calcMobility (Carrier * carriers, Results * results)
+calcMobility (Carrier * carriers, RunParams * runprms)
 {
     int i;
     double ez = 0;
     for (i = 0; i < prms.ncarriers; ++i)
         ez += carriers[i].dz;
-    return ez / (prms.ncarriers * prms.field * results->simulationTime);
+    return ez / (prms.ncarriers * prms.field * runprms->simulationTime);
 }
 
 /*
@@ -35,7 +63,7 @@ calcMobility (Carrier * carriers, Results * results)
  * It should be something like the equlibration energy.
  */
 double
-calcEquilibrationEnergy (Site * sites, Results * results)
+calcEquilibrationEnergy (Site * sites, RunParams * runprms)
 {
     size_t i;
     double sum = 0;
@@ -43,7 +71,7 @@ calcEquilibrationEnergy (Site * sites, Results * results)
     for (i = 0; i < prms.nsites; ++i)
         sum += sites[i].totalOccTime * sites[i].energy;
 
-    return sum / (prms.ncarriers * results->simulationTime);
+    return sum / (prms.ncarriers * runprms->simulationTime);
 }
 
 /*
@@ -51,7 +79,7 @@ calcEquilibrationEnergy (Site * sites, Results * results)
  * perpendicular to the field direction.
  */
 double
-calcDiffusivity (Carrier * carriers, Results * results)
+calcDiffusivity (Carrier * carriers, RunParams * runprms)
 {
     double ex2, ey2;
     int i;
@@ -73,7 +101,7 @@ calcDiffusivity (Carrier * carriers, Results * results)
  * Calculate the einstein relation in units of e/sigma.
  */
 double
-calcEinsteinRelation (Carrier * carriers, Results * results)
+calcEinsteinRelation (Carrier * carriers, RunParams * runprms)
 {
     double ex2, ey2, ez;
     int i;
@@ -88,7 +116,7 @@ calcEinsteinRelation (Carrier * carriers, Results * results)
         ez += carriers[i].dz;
     }
 
-    return (4. * ez) / (results->simulationTime * prms.field * (ex2 + ey2));
+    return (4. * ez) / (runprms->simulationTime * prms.field * (ex2 + ey2));
 
 }
 
@@ -96,13 +124,13 @@ calcEinsteinRelation (Carrier * carriers, Results * results)
  * This function determines the current density of the system.
  */
 double
-calcCurrentDensity (Carrier * carriers, Results * results)
+calcCurrentDensity (Carrier * carriers, RunParams * runprms)
 {
     int i;
     double ez = 0;
     for (i = 0; i < prms.ncarriers; ++i)
         ez += carriers[i].dz;
-    return ez / (results->simulationTime * prms.nsites);
+    return ez / (runprms->simulationTime * prms.nsites);
 }
 
 /*

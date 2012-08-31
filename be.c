@@ -1,15 +1,17 @@
 #include "hop.h"
 #include "mgmres.h"
 
+void BE_solve (Site * sites, Results * res, RunParams * runprms);
+
 void
-BE_run (Results * total, RunParams * runprms, int *iRun)
+BE_run (Results * res, RunParams * runprms)
 {
     Site *sites = NULL;
 
     // some output
     output (O_PARALLEL, "Starting %d. Iteration (total %d): Thread ID %d\n",
-            *iRun, prms.number_runs, omp_get_thread_num ());
-    output (O_SERIAL, "\nRunning %d. iteration (total %d)\n", *iRun,
+            runprms->iRun, prms.number_runs, omp_get_thread_num ());
+    output (O_SERIAL, "\nRunning %d. iteration (total %d)\n", runprms->iRun,
             prms.number_runs);
 
     // create the sites, cells, carriers, hopping rates
@@ -19,15 +21,15 @@ BE_run (Results * total, RunParams * runprms, int *iRun)
         MC_removeSoftPairs (sites);
 
     // solve
-    BE_solve (sites, &(total[*iRun - 1]), iRun);
+    BE_solve (sites, res, runprms);
 
     // write output files
     if (strArgGiven (prms.output_folder))
     {
-        writeResults (&(total[*iRun - 1]), *iRun);
-        writeConfig (*iRun);
-        writeSites (sites, *iRun);
-        writeSitesConfig (sites, *iRun);
+        writeResults (res, runprms);
+        writeConfig (runprms);
+        writeSites (sites, runprms);
+        writeSitesConfig (sites, runprms);
     }
 
     // free resources
@@ -41,7 +43,7 @@ BE_run (Results * total, RunParams * runprms, int *iRun)
 
 // preconditioner
 void
-BE_solve (Site * sites, Results * res, int *iRun)
+BE_solve (Site * sites, Results * res, RunParams * runprms)
 {
     output (O_SERIAL, "\tSolving balance equations...");
     fflush (stdout);
@@ -134,7 +136,7 @@ BE_solve (Site * sites, Results * res, int *iRun)
     // output
     output (O_SERIAL, "\tDone! %f s duration\n", elapsed);
     output (O_PARALLEL, "Finished %d. Iteration (total %d): %f s duration\n",
-            *iRun, prms.number_runs, elapsed);
+            runprms->iRun, prms.number_runs, elapsed);
 
     // calculate mobility
     double sum = 0;
@@ -144,7 +146,9 @@ BE_solve (Site * sites, Results * res, int *iRun)
                 x[i] * sites[i].neighbors[j].rate *
                 (sites[i].neighbors[j].dist.z);
 
-    res->mobility = sum / prms.field;
+    res->mobility.values[runprms->iRun -1] = sum / prms.field;
+    res->mobility.done[runprms->iRun-1] = true;
+
 
     // free
     free (a);

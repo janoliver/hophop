@@ -2,10 +2,8 @@
 
 #include "hop.h"
 
-void hoppingStep (Site * sites, Carrier * carriers, Results * res,
-                  bool stat, RunParams * runprms);
-void hop (Carrier * c, SLE * dest, Vector * dist,
-          Results * res, Carrier * carriers, bool stat);
+void hoppingStep (Site * sites, Carrier * carriers, RunParams * runprms);
+void hop (Carrier * c, SLE * dest, Vector * dist, Carrier * carriers, RunParams * runprms);
 void updateCarrier (Carrier * carriers, RunParams * runprms);
 
 /*
@@ -13,20 +11,20 @@ void updateCarrier (Carrier * carriers, RunParams * runprms);
  * the passed "time" (in arbitrary units) and ouputs the progress.
  */
 void
-MC_simulation (Site * sites, Carrier * carriers, Results * res,
-               RunParams * runprms, int *iRun, int iReRun)
+MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms, int iReRun)
 {
     size_t j;
 
     // we need the current simulation time.
-    double simTimeOld = res->simulationTime;
-    res->nHops = 0;
+    double simTimeOld = runprms->simulationTime;
+    runprms->nHops = 0;
+    runprms->stat = false;
 
     // relaxation, no time or hop counting
     for (j = 0; j <= 100; j++)
     {
-        while (res->nHops < prms.relaxation / 100 * j)
-            hoppingStep (sites, carriers, res, false, runprms);
+        while (runprms->nHops < prms.relaxation / 100 * j)
+            hoppingStep (sites, carriers, runprms);
 
         output (O_SERIAL, "\r\tRelaxing...   (run %d of %d):\t%2d%%", iReRun,
                 prms.number_reruns, (int) j);
@@ -37,16 +35,17 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
     // actual simulation, time and hop counting
     // we need to renormalize the carrier occupation time and simulation time, since
     // we might have multiple runs due to -x, while simulationTime is counted totally
-    res->nHops = 0;
+    runprms->nHops = 0;
+    runprms->stat = true;
 
     for (j = 0; j < prms.ncarriers; ++j)
-        carriers[j].occTime -= (res->simulationTime - simTimeOld);
-    res->simulationTime = simTimeOld;
+        carriers[j].occTime -= (runprms->simulationTime - simTimeOld);
+    runprms->simulationTime = simTimeOld;
 
     for (j = 0; j <= 100; j++)
     {
-        while (res->nHops <= prms.simulation / 100 * j)
-            hoppingStep (sites, carriers, res, true, runprms);
+        while (runprms->nHops <= prms.simulation / 100 * j)
+            hoppingStep (sites, carriers,runprms);
 
         output (O_SERIAL, "\r\tSimulating... (run %d of %d):\t%2d%%", iReRun,
                 prms.number_reruns, (int) j);
@@ -57,7 +56,7 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
     // finish statistics
     for (j = 0; j < prms.nsites; ++j)
         if (sites[j].tempOccTime > 0)
-            sites[j].totalOccTime += res->simulationTime - sites[j].tempOccTime;
+            sites[j].totalOccTime += runprms->simulationTime - sites[j].tempOccTime;
 
     for (j = 0; j < prms.ncarriers; ++j)
     {
@@ -76,8 +75,7 @@ MC_simulation (Site * sites, Carrier * carriers, Results * res,
  * function is called with these parameters.
  */
 void
-hoppingStep (Site * sites, Carrier * carriers,
-             Results * res, bool stat, RunParams * runprms)
+hoppingStep (Site * sites, Carrier * carriers, RunParams * runprms)
 {
     Carrier *c = NULL;
     SLE *dest = NULL;
@@ -96,20 +94,20 @@ hoppingStep (Site * sites, Carrier * carriers,
         probSum += dest->rate;
     }
 
-    res->simulationTime = c->occTime;
+    runprms->simulationTime = c->occTime;
 
     if (dest->s->carrier == NULL)
     {
         // do the hopping and write some statistics
-        res->nHops++;
+        runprms->nHops++;
 
-        hop (c, dest, &dest->dist, res, carriers, stat);
+        hop (c, dest, &dest->dist, carriers, runprms);
     }
     else
     {
-        if (stat)
+        if (runprms->stat)
         {
-            res->nFailedAttempts++;
+            runprms->nFailedAttempts++;
             c->nFailedAttempts++;
         }
     }
@@ -122,21 +120,20 @@ hoppingStep (Site * sites, Carrier * carriers,
  * in the hopping process and all of the sites around these two sites.
  */
 void
-hop (Carrier * c, SLE * dest, Vector * dist,
-     Results * res, Carrier * carriers, bool stat)
+hop (Carrier * c, SLE * dest, Vector * dist, Carrier * carriers, RunParams * runprms)
 {
     Site *orig = c->site;
 
     // update origin site
     orig->carrier = NULL;
 
-    if (stat)
+    if (runprms->stat)
     {
         dest->nTransitions++;
 
-        orig->totalOccTime += res->simulationTime - orig->tempOccTime;
+        orig->totalOccTime += runprms->simulationTime - orig->tempOccTime;
         orig->tempOccTime = 0.0;
-        dest->s->tempOccTime = res->simulationTime;
+        dest->s->tempOccTime = runprms->simulationTime;
 
         c->dx += dist->x;
         c->dy += dist->y;
@@ -152,9 +149,9 @@ hop (Carrier * c, SLE * dest, Vector * dist,
 
     // update destination site
     dest->s->carrier = c;
-    if (stat && orig->energy < dest->s->energy)
+    if (runprms->stat && orig->energy < dest->s->energy)
         dest->s->visitedUpward++;
-    else if (stat)
+    else if (runprms->stat)
         dest->s->visited++;
 
 }

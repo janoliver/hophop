@@ -3,7 +3,7 @@
 #include "hop.h"
 
 void
-MC_run (Results * total, RunParams * runprms, int *iRun)
+MC_run (Results * res, RunParams * runprms)
 {
     Site *sites = NULL;
     Carrier *carriers = NULL;
@@ -14,8 +14,8 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
 
     // some output
     output (O_PARALLEL, "Starting %d. Iteration (total %d): Thread ID %d\n",
-            *iRun, prms.number_runs, omp_get_thread_num ());
-    output (O_SERIAL, "\nRunning %d. iteration (total %d):\n", *iRun,
+            runprms->iRun, prms.number_runs, omp_get_thread_num ());
+    output (O_SERIAL, "\nRunning %d. iteration (total %d):\n", runprms->iRun,
             prms.number_runs);
 
     // create the sites, cells, carriers, hopping rates
@@ -30,9 +30,8 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
     // simulate
     for (i = 0; i < prms.number_reruns; ++i)
     {
-        MC_distributeCarriers (carriers, sites, runprms, &(total[*iRun - 1]));
-        MC_simulation (sites, carriers, &(total[*iRun - 1]), runprms, iRun,
-                       i + 1);
+        MC_distributeCarriers (carriers, sites, runprms);
+        MC_simulation (sites, carriers, runprms, i + 1);
     }
 
     // some more output
@@ -43,25 +42,25 @@ MC_run (Results * total, RunParams * runprms, int *iRun)
 
     output (O_PARALLEL,
             "Finished %d. Iteration (total %d): %lu successful hops/sec (%ld failed)\n",
-            *iRun, prms.number_runs,
+            runprms->iRun, prms.number_runs,
             (size_t) (prms.number_reruns * (prms.relaxation + prms.simulation) /
-                      elapsed), total[*iRun - 1].nFailedAttempts);
+                      elapsed), runprms->nFailedAttempts);
     output (O_SERIAL, " Done. %lu successful hops/sec (%ld failed)\n",
             (size_t) (prms.number_reruns * (prms.relaxation + prms.simulation) /
-                      elapsed), total[*iRun - 1].nFailedAttempts);
+                      elapsed), runprms->nFailedAttempts);
 
     // calculate the results
-    MC_calculateResults (sites, carriers, &(total[*iRun - 1]));
+    MC_calculateResults (sites, carriers, res, runprms);
 
     // write output files
     if (strArgGiven (prms.output_folder))
     {
-        writeResults (&(total[*iRun - 1]), *iRun);
-        writeConfig (*iRun);
-        writeSites (sites, *iRun);
-        writeSitesConfig (sites, *iRun);
+        writeResults (res, runprms);
+        writeConfig (runprms);
+        writeSites (sites, runprms);
+        writeSitesConfig (sites, runprms);
         if (prms.output_transitions)
-            writeTransitions (sites, *iRun);
+            writeTransitions (sites, runprms);
     }
 
     // free resources

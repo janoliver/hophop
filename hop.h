@@ -95,6 +95,12 @@ typedef struct run_params
 {
     gsl_rng *r;
     long rseed_used;
+
+    double simulationTime;
+    size_t nHops;
+    size_t nFailedAttempts;
+    int iRun;
+    bool stat;
 } RunParams;
 
 struct site_list_element;
@@ -127,18 +133,27 @@ typedef struct site
     float tempOccTime;
 } Site;
 
-typedef struct results
+typedef struct result {
+    double * values;
+    double avg;
+    bool * done;
+    double err;
+} Result;
+
+typedef struct results_struct
 {
-    double mobility;
-    double diffusivity;
-    double einsteinrelation;
-    double simulationTime;
-    double currentDensity;
-    double equilibrationEnergy;
-    size_t nHops;
-    size_t nFailedAttempts;
-    double avgenergy;
+    Result mobility;
+    Result diffusivity;
+    Result einsteinrelation;
+    Result currentDensity;
+    Result equilibrationEnergy;
+    Result avgenergy;
+    
+    Result nHops;
+    Result simulationTime;
+    Result nFailedAttempts;
 } Results;
+
 
 typedef struct vector
 {
@@ -156,48 +171,38 @@ typedef struct site_list_element
 extern Params prms;
 
 // helpers
-void average_results (Results * res, Results * total, Results * error);
+void average_errors (Results * res);
+void free_results (Results * res);
 void init_results (Results * res);
-void add_results_to_results (Results * res, Results * to_add);
-void divide_results_by_scalar (Results * res, double scalar);
 int output (int mode, const char *fmt, ...);
 
 // output.c
-void writeSites (Site * sites, int iRun);
-void writeSitesConfig (Site * sites, int iRun);
-void writeTransitions (Site * sites, int iRun);
-void writeConfig (int iRun);
-void writeResults (Results * res, int iRun);
-void writeSummary (Results * res, Results * error);
+void writeSites (Site * sites, RunParams * runprms);
+void writeSitesConfig (Site * sites, RunParams * runprms);
+void writeTransitions (Site * sites, RunParams * runprms);
+void writeConfig (RunParams * runprms);
+void writeResults (Results * res, RunParams * runprms);
+void writeSummary (Results * res);
 
 // params
 bool strArgGiven (char *arg);
 void generateParams (Params * prms, int argc, char **argv);
 
 //mc
-void MC_simulation (Site * sites, Carrier * carriers, Results * res,
-                    RunParams * runprms, int *iRun, int iReRun);
+void MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms, int iReRun);
 Site *MC_createSites (RunParams * runprms);
-void MC_distributeCarriers (Carrier * carriers, Site * sites,
-                            RunParams * runprms, Results * res);
+void MC_distributeCarriers (Carrier * carriers, Site * sites, RunParams * runprms);
 Carrier *MC_createCarriers (Site * sites);
 void MC_createHoppingRates (Site * sites);
 void MC_removeSoftPairs (Site * sites);
-void MC_calculateResults (Site * sites, Carrier * carriers, Results * res);
-void MC_run (Results * total, RunParams * runprms, int *iRun);
+void MC_calculateResults (Site * sites, Carrier * carriers, Results * res, RunParams * runprms);
+void MC_run (Results * total, RunParams * runprms);
 
 int timeval_subtract (struct timeval *result,
                       struct timeval *x, struct timeval *y);
-double calcMobility (Carrier * carriers, Results * results);
-double calcDiffusivity (Carrier * carriers, Results * results);
-double calcEinsteinRelation (Carrier * carriers, Results * results);
-double calcCurrentDensity (Carrier * carriers, Results * results);
-double calcEquilibrationEnergy (Site * sites, Results * results);
-double calcAverageEnergy (Carrier * carriers);
 
 // balance equations
-void BE_run (Results * total, RunParams * runprms, int *iRun);
-void BE_solve (Site * sites, Results * res, int *iRun);
+void BE_run (Results * res, RunParams * runprms);
 
 
 #endif /* HOP_H */

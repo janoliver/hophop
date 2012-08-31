@@ -1,84 +1,113 @@
 #include "hop.h"
 
 void
-average_results (Results * res, Results * total, Results * error)
+average_errors (Results * res)
 {
-    int iRun;
+    Result * results[] = {
+        &(res->mobility),
+        &(res->diffusivity),
+        &(res->einsteinrelation),
+        &(res->currentDensity),
+        &(res->equilibrationEnergy),
+        &(res->avgenergy),
+        
+        &(res->nHops),
+        &(res->nFailedAttempts),
+        &(res->simulationTime)
+    };
 
-    // perform the averaging
-    for (iRun = 0; iRun < prms.number_runs; iRun++)
+    int nResults = sizeof(results)/sizeof(Result *);
+
+    int i,j,c = 0;
+    
+    // calculate averages
+    for(i=0;i<nResults;++i)
     {
-        add_results_to_results (res, &(total[iRun]));
+        for(j=0;j<prms.number_runs;++j)
+        {
+            if(results[i]->done[j])
+            {
+                results[i]->avg += results[i]->values[j];
+                c++;
+            }
+        }
+        results[i]->avg /= c;
     }
 
-    divide_results_by_scalar (res, (double) prms.number_runs);
-
-    // find the errors
-    for (iRun = 0; iRun < prms.number_runs; iRun++)
+    // calculate errors
+    for(i=0;i<nResults;++i)
     {
-        error->mobility += pow (res->mobility - total[iRun].mobility, 2);
-        error->diffusivity +=
-            pow (res->diffusivity - total[iRun].diffusivity, 2);
-        error->simulationTime +=
-            pow (res->simulationTime - total[iRun].simulationTime, 2);
-        error->equilibrationEnergy +=
-            pow (res->equilibrationEnergy - total[iRun].equilibrationEnergy, 2);
-        error->avgenergy += pow (res->avgenergy - total[iRun].avgenergy, 2);
-        error->einsteinrelation += pow (res->einsteinrelation -
-                                        total[iRun].einsteinrelation, 2);
-
+        for(j=0;j<prms.number_runs;++j)
+        {
+            if(results[i]->done[j])
+            {
+                results[i]->err += pow(results[i]->avg - results[i]->values[j],2);
+            }
+        }
+        results[i]->err = sqrt(results[i]->err / c);
     }
-
-    error->mobility = sqrt (error->mobility / prms.number_runs);
-    error->diffusivity = sqrt (error->diffusivity / prms.number_runs);
-    error->currentDensity = sqrt (error->currentDensity / prms.number_runs);
-    error->simulationTime = sqrt (error->simulationTime / prms.number_runs);
-    error->equilibrationEnergy =
-        sqrt (error->equilibrationEnergy / prms.number_runs);
-    error->avgenergy = sqrt (error->avgenergy / prms.number_runs);
-    error->einsteinrelation = sqrt (error->einsteinrelation / prms.number_runs);
-
 }
 
 void
 init_results (Results * res)
 {
-    res->mobility = 0.0;
-    res->diffusivity = 0.0;
-    res->currentDensity = 0.0;
-    res->simulationTime = 0.0;
-    res->equilibrationEnergy = 0.0;
-    res->avgenergy = 0.0;
-    res->einsteinrelation = 0.0;
+    Result * results[] = {
+        &(res->mobility),
+        &(res->diffusivity),
+        &(res->einsteinrelation),
+        &(res->currentDensity),
+        &(res->equilibrationEnergy),
+        &(res->avgenergy),
+        
+        &(res->nHops),
+        &(res->nFailedAttempts),
+        &(res->simulationTime)
+    };
 
-    res->nFailedAttempts = 0;
+    int nResults = sizeof(results)/sizeof(Result *);
+
+    int i,j;
+    for (i=0;i<nResults;++i)
+    {
+        results[i]->avg = 0;
+        results[i]->err = 0;
+        results[i]->done = (bool*)malloc(sizeof(bool) * prms.number_runs);
+        results[i]->values = (double*)malloc(sizeof(double) * prms.number_runs);
+        
+        for (j=0;j<prms.number_runs;++j)
+        {
+            results[i]->values[j] = 0;
+            results[i]->done[j] = false;
+        }
+    }
 }
 
 void
-add_results_to_results (Results * res, Results * to_add)
-{
-    res->mobility += to_add->mobility;
-    res->diffusivity += to_add->diffusivity;
-    res->currentDensity += to_add->currentDensity;
-    res->simulationTime += to_add->simulationTime;
-    res->equilibrationEnergy += to_add->equilibrationEnergy;
-    res->avgenergy += to_add->avgenergy;
-    res->einsteinrelation += to_add->einsteinrelation;
-
-}
-
-void
-divide_results_by_scalar (Results * res, double scalar)
+free_results (Results * res)
 {
 
-    res->mobility /= scalar;
-    res->diffusivity /= scalar;
-    res->currentDensity /= scalar;
-    res->simulationTime /= scalar;
-    res->equilibrationEnergy /= scalar;
-    res->avgenergy /= scalar;
-    res->einsteinrelation /= scalar;
+    Result * results[] = {
+        &(res->mobility),
+        &(res->diffusivity),
+        &(res->einsteinrelation),
+        &(res->currentDensity),
+        &(res->equilibrationEnergy),
+        &(res->avgenergy),
+        
+        &(res->nHops),
+        &(res->nFailedAttempts),
+        &(res->simulationTime)
+    };
 
+    int nResults = sizeof(results)/sizeof(Result *);
+
+
+    int i;
+    for (i=0;i<nResults;++i)
+    {
+        free(results[i]->done);
+        free(results[i]->values);
+    }
 }
 
 int

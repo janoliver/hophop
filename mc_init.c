@@ -223,8 +223,7 @@ MC_createCarriers (Site * sites)
  * source of electrons or anything else.
  */
 void
-MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms,
-                       Results * res)
+MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
 {
     size_t i;
     Carrier tmp;
@@ -246,7 +245,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms,
     for (i = 0; i < prms.ncarriers; ++i)
     {
         c[i].site = &sites[sample[i].index];
-        c[i].occTime = res->simulationTime +
+        c[i].occTime = runprms->simulationTime +
             (float) gsl_ran_exponential (runprms->r, 1.0) / c[i].site->rateSum;
 
         // now insert the carrier into the heap

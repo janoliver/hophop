@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include "hop.h"
 
-void checkOutputFolder (int iRun);
+void checkOutputFolder (RunParams * runprms);
 
 /*
  * Writes the sites file with the following format:
@@ -18,15 +18,15 @@ void checkOutputFolder (int iRun);
  * Filename: sites-config.dat
  */
 void
-writeSitesConfig (Site * sites, int iRun)
+writeSitesConfig (Site * sites, RunParams * runprms)
 {
-    checkOutputFolder (iRun);
+    checkOutputFolder (runprms);
 
     FILE *file;
     int i;
     char fileName[128] = "";
 
-    sprintf (fileName, "%s/%d/sites-config.dat", prms.output_folder, iRun);
+    sprintf (fileName, "%s/%d/sites-config.dat", prms.output_folder, runprms->iRun);
 
     file = fopen (fileName, "w+");
 
@@ -56,15 +56,15 @@ writeSitesConfig (Site * sites, int iRun)
  * Filename: sites.dat
  */
 void
-writeSites (Site * sites, int iRun)
+writeSites (Site * sites, RunParams * runprms)
 {
-    checkOutputFolder (iRun);
+    checkOutputFolder (runprms);
 
     FILE *file;
     int i;
     char fileName[128] = "";
 
-    sprintf (fileName, "%s/%d/sites.dat", prms.output_folder, iRun);
+    sprintf (fileName, "%s/%d/sites.dat", prms.output_folder, runprms->iRun);
 
     file = fopen (fileName, "w+");
 
@@ -87,16 +87,16 @@ writeSites (Site * sites, int iRun)
  * index1 index2 E1 E2 NTransitions
  */
 void
-writeTransitions (Site * sites, int iRun)
+writeTransitions (Site * sites, RunParams * runprms)
 {
-    checkOutputFolder (iRun);
+    checkOutputFolder (runprms);
 
     FILE *file;
     int i, j;
     char fileName[128] = "";
     SLE *neighbor;
 
-    sprintf (fileName, "%s/%d/transitions.dat", prms.output_folder, iRun);
+    sprintf (fileName, "%s/%d/transitions.dat", prms.output_folder, runprms->iRun);
 
     file = fopen (fileName, "w+");
 
@@ -129,9 +129,9 @@ writeTransitions (Site * sites, int iRun)
  * Filename: params.conf
  */
 void
-writeConfig (int iRun)
+writeConfig (RunParams * runprms)
 {
-    checkOutputFolder (iRun);
+    checkOutputFolder (runprms);
 
     char fileName[128] = "";
 
@@ -148,9 +148,9 @@ writeConfig (int iRun)
  * Filename: results.dat
  */
 void
-writeResults (Results * res, int iRun)
+writeResults (Results * res, RunParams * runprms)
 {
-    checkOutputFolder (iRun);
+    checkOutputFolder (runprms);
 
     FILE *file, *file2;
     char fileName[128] = "";
@@ -171,32 +171,37 @@ writeResults (Results * res, int iRun)
     // write head
     if (buffer == 0)
     {
-        fprintf (file, "#simul. time      ");
-        fprintf (file, "mobility          ");
-        fprintf (file, "diffusivity x/y   ");
-        fprintf (file, "current density   ");
-        fprintf (file, "Equilibration en. ");
-        fprintf (file, "random seed\n");
+        if (prms.balance_eq)
+        {
+            fprintf (file, "#mobility         ");
+            fprintf (file, "random seed\n");
+        }
+        else
+        {
+
+            fprintf (file, "#simul. time      ");
+            fprintf (file, "mobility          ");
+            fprintf (file, "diffusivity x/y   ");
+            fprintf (file, "current density   ");
+            fprintf (file, "Equilibration en. ");
+            fprintf (file, "random seed\n");
+        }
     }
 
     // write site information
     if (prms.balance_eq)
     {
-        fprintf (file, "%-18e", res->simulationTime);
-        fprintf (file, "%-+18e", res->mobility);
-        fprintf (file, "%-+18e", res->diffusivity);
-        fprintf (file, "%-+18e", res->currentDensity);
-        fprintf (file, "%-+18e", res->equilibrationEnergy);
-        fprintf (file, "%lu\n", prms.rseed);
+        fprintf (file, "%-+18e", res->mobility.values[runprms->iRun]);
+        fprintf (file, "%lu\n", runprms->rseed_used);
     }
     else
     {
-        fprintf (file, "%-+18e", res->simulationTime);
-        fprintf (file, "%-+18e", res->mobility);
-        fprintf (file, "%-+18e", res->diffusivity);
-        fprintf (file, "%-+18e", res->currentDensity);
-        fprintf (file, "%-+18e", res->equilibrationEnergy);
-        fprintf (file, "%lu\n", prms.rseed);
+        fprintf (file, "%-18e", runprms->simulationTime);
+        fprintf (file, "%-+18e", res->mobility.values[runprms->iRun]);
+        fprintf (file, "%-+18e", res->diffusivity.values[runprms->iRun]);
+        fprintf (file, "%-+18e", res->currentDensity.values[runprms->iRun]);
+        fprintf (file, "%-+18e", res->equilibrationEnergy.values[runprms->iRun]);
+        fprintf (file, "%lu\n", runprms->rseed_used);
     }
 
     fclose (file);
@@ -210,11 +215,11 @@ writeResults (Results * res, int iRun)
  * check if it exists. If not, create it.
  */
 void
-checkOutputFolder (int iRun)
+checkOutputFolder (RunParams * runprms)
 {
     // check if realization folder exists
     char realfolder[200];
-    sprintf (realfolder, "mkdir -p %s/%d", prms.output_folder, iRun);
+    sprintf (realfolder, "mkdir -p %s/%d", prms.output_folder, runprms->iRun);
     int ret = system (realfolder);
     if (ret)
         output (O_FORCE, "could not create output realization folder!\n");
@@ -222,7 +227,7 @@ checkOutputFolder (int iRun)
 }
 
 void
-writeSummary (Results * res, Results * error)
+writeSummary (Results * res)
 {
     if (!strArgGiven (prms.output_summary))
         return;
@@ -304,26 +309,26 @@ writeSummary (Results * res, Results * error)
     fprintf (file, "%-+18e", prms.temperature);
     fprintf (file, "%-+18e", prms.field);
 
-    fprintf (file, "%-+18e", res->simulationTime);
-    fprintf (file, "%-+18e", error->simulationTime);
+    fprintf (file, "%-+18e", res->simulationTime.avg);
+    fprintf (file, "%-+18e", res->simulationTime.err);
 
-    fprintf (file, "%-+18e", res->mobility);
-    fprintf (file, "%-+18e", error->mobility);
+    fprintf (file, "%-+18e", res->mobility.avg);
+    fprintf (file, "%-+18e", res->mobility.err);
 
-    fprintf (file, "%-+18e", res->diffusivity);
-    fprintf (file, "%-+18e", error->diffusivity);
+    fprintf (file, "%-+18e", res->diffusivity.avg);
+    fprintf (file, "%-+18e", res->diffusivity.err);
 
-    fprintf (file, "%-+18e", res->einsteinrelation);
-    fprintf (file, "%-+18e", error->einsteinrelation);
+    fprintf (file, "%-+18e", res->einsteinrelation.avg);
+    fprintf (file, "%-+18e", res->einsteinrelation.err);
 
-    fprintf (file, "%-+18e", res->currentDensity);
-    fprintf (file, "%-+18e", error->currentDensity);
+    fprintf (file, "%-+18e", res->currentDensity.avg);
+    fprintf (file, "%-+18e", res->currentDensity.err);
 
-    fprintf (file, "%-+18e", res->equilibrationEnergy);
-    fprintf (file, "%-+18e", error->equilibrationEnergy);
+    fprintf (file, "%-+18e", res->equilibrationEnergy.avg);
+    fprintf (file, "%-+18e", res->equilibrationEnergy.err);
 
-    fprintf (file, "%-+18e", res->avgenergy);
-    fprintf (file, "%-+18e", error->avgenergy);
+    fprintf (file, "%-+18e", res->avgenergy.avg);
+    fprintf (file, "%-+18e", res->avgenergy.err);
 
     fprintf (file, "%-+18e", prms.cut_dos ? prms.cut_out_energy : 0);
     fprintf (file, "%-+18e", prms.cut_dos ? prms.cut_out_width : 0);

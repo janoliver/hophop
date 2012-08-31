@@ -5,7 +5,7 @@
 // the program parameters
 Params prms;
 
-void printResults (Results * results, Results * errors);
+void printResults (Results * results);
 void printApplicationHeader ();
 void printSettings ();
 void checkApplicationSettings (int argc, char **argv);
@@ -31,21 +31,17 @@ main (int argc, char **argv)
 
     // start simulation
     int iRun;
-    Results total[prms.number_runs], res, error;
+    Results res;
     init_results (&res);
-    init_results (&error);
 
     // set the number of threads
     omp_set_num_threads (prms.nthreads);
 
-#pragma omp parallel if(prms.parallel) shared(total) private(iRun)
+#pragma omp parallel if(prms.parallel) shared(res) private(iRun)
     {
 #pragma omp for schedule(dynamic)
         for (iRun = 1; iRun <= prms.number_runs; iRun++)
         {
-            // set the results struct to zero
-            init_results (&(total[iRun - 1]));
-
             // setup random number generator
             RunParams runprms;
             runprms.r = gsl_rng_alloc (prms.T);
@@ -53,15 +49,20 @@ main (int argc, char **argv)
             if (prms.rseed != 0)
                 runprms.rseed_used = (unsigned long) prms.rseed + iRun - 1;
             gsl_rng_set (runprms.r, runprms.rseed_used);
+            runprms.nHops = 0;
+            runprms.nFailedAttempts = 0;
+            runprms.stat = false;
+            runprms.simulationTime = 0;
+            runprms.iRun = iRun;
 
             // here is where el magico happens
             if (prms.balance_eq)
             {
-                BE_run (total, &runprms, &iRun);
+                BE_run (&res, &runprms);
             }
             else
             {
-                MC_run (total, &runprms, &iRun);
+                MC_run (&res, &runprms);
             }
 
             // free the RNG
@@ -71,14 +72,19 @@ main (int argc, char **argv)
     }
 
     // average results (see helper.c)
-    average_results (&res, total, &error);
+    average_errors (&res);
 
     // summary
     if (strArgGiven (prms.output_summary))
-        writeSummary (&res, &error);
+        writeSummary (&res);
 
     // output results to the command line
-    printResults (&res, &error);
+    printResults (&res);
+
+    // free results structs
+    //int i;
+    //for(i = 0; i< sizeof(res)
+    free_results(&res);
 
     return 0;
 }
@@ -144,12 +150,12 @@ printSettings ()
  * This function prints out the results of the simulation.
  */
 void
-printResults (Results * results, Results * error)
+printResults (Results * results)
 {
     // Results output
     output (O_BOTH, "\nResults:\n");
     output (O_BOTH, "\tMobility in field-direction: \tu   = %e (+- %e)\n",
-            results->mobility, error->mobility);
+            results->mobility.avg, results->mobility.err);
 
     if (prms.balance_eq)
     {
@@ -158,15 +164,15 @@ printResults (Results * results, Results * error)
     }
 
     output (O_BOTH, "\tDiffusivity perp. to field:  \tD   = %e (+- %e)\n",
-            results->diffusivity, error->diffusivity);
+            results->diffusivity.avg, results->diffusivity.err);
     output (O_BOTH, "\tEinstein rel. perp. to field: \tu/D = %e (+- %e) e/o\n",
-            results->einsteinrelation, error->einsteinrelation);
+            results->einsteinrelation.avg, results->einsteinrelation.err);
     output (O_BOTH, "\tCurrent density (z-dir):  \tj   = %e (+- %e)\n",
-            results->currentDensity, error->currentDensity);
+            results->currentDensity.avg, results->currentDensity.err);
     output (O_BOTH, "\tEquilibration Energy: \t\tE_i = %e\n",
-            results->equilibrationEnergy);
+            results->equilibrationEnergy.avg);
     output (O_BOTH, "\tSimulated time: \t\tt   = %e\n\n",
-            results->simulationTime);
+            results->simulationTime.avg);
 
 }
 
