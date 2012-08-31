@@ -240,15 +240,15 @@ writeSummary (Results * res)
     int buffer = 0;
 
     // build the current time string
-    char timestring[20]; 
+    char timestring[20];
     time_t now;
-    time(&now);
+    time (&now);
     struct tm *ti;
-    ti = localtime(&now);
-    sprintf(timestring, "%04d-%02d-%02d_%02d:%02d:%02d",
-            ti->tm_year+1900, ti->tm_mon, ti->tm_mday, ti->tm_hour,
-            ti->tm_min, ti->tm_sec);
- 
+    ti = localtime (&now);
+    sprintf (timestring, "%04d-%02d-%02d_%02d:%02d:%02d",
+             ti->tm_year + 1900, ti->tm_mon, ti->tm_mday, ti->tm_hour,
+             ti->tm_min, ti->tm_sec);
+
     sprintf (fileName, "%s", prms.output_summary);
 
     // check for the header
@@ -265,7 +265,7 @@ writeSummary (Results * res)
     if (buffer == 0)
     {
         fprintf (file, "%s%s %s\n", "#", PKG_NAME, PKG_VERSION);
-        
+
         fprintf (file, "%-20s", "#mode");
         fprintf (file, "%-20s", "dos_exponent");
         fprintf (file, "%-20s", "system_length");
@@ -364,7 +364,7 @@ writeSummary (Results * res)
     fprintf (file, "%-+20e", res->avgenergy.err);
     fprintf (file, "%-20lu", prms.rseed);
     fprintf (file, "%-20s", timestring);
-    
+
     if (strArgGiven (prms.comment))
         fprintf (file, "%s", prms.comment);
     fprintf (file, "\n");
