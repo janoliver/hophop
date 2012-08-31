@@ -328,7 +328,7 @@ writeSummary (Results * res)
         fprintf (file, "%-20s", "float");
         fprintf (file, "%-20s", "float");
         fprintf (file, "%-20s", "long");
-        fprintf (file, "%-20s", "str");
+        fprintf (file, "%-20s", "datetime");
         fprintf (file, "%-20s", "str");
         fprintf (file, "\n");
     }
@@ -367,6 +367,9 @@ writeSummary (Results * res)
 
     if (strArgGiven (prms.comment))
         fprintf (file, "%s", prms.comment);
+    else
+        fprintf (file, "-");
+    
     fprintf (file, "\n");
 
     fclose (file);

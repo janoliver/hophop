@@ -123,65 +123,6 @@ MC_createSites (RunParams * runprms)
         return s2;
     }
 
-    // filter sites in case of add or remove sites
-    if (prms.addto_dos)
-    {
-        // make an array with the site indices and sort it according to
-        // the absolute energy difference to the decisive energy
-        s2 = (Site *) malloc ((prms.nsites + prms.add_to_number) *
-                              sizeof (Site));
-
-        if (prms.add_to_number < 0)
-        {
-            i = 0;
-            qsort (s, prms.nsites, sizeof (Site), compare_addtosites);
-            for (k = -prms.add_to_number; k < prms.nsites; ++k)
-            {
-                s2[i] = s[k];
-                s2[i].index = i;
-                i++;
-            }
-        }
-        else
-        {
-            //s2 = s;
-            for (i = 0; i < prms.nsites + prms.add_to_number; ++i)
-            {
-                if (i < prms.nsites)
-                {
-                    s2[i] = s[i];
-                }
-                else
-                {
-
-                    s2[i].x =
-                        (float) gsl_rng_uniform (runprms->r) * prms.length_x;
-                    s2[i].y =
-                        (float) gsl_rng_uniform (runprms->r) * prms.length_y;
-                    s2[i].z =
-                        (float) gsl_rng_uniform (runprms->r) * prms.length_z;
-
-                    s2[i].energy = prms.add_to_energy;
-
-                    s2[i].carrier = NULL;
-                    s2[i].visited = 0;
-                    s2[i].visitedUpward = 0;
-                    s2[i].index = i;
-                    s2[i].totalOccTime = 0.0;
-                    s2[i].tempOccTime = 0.0;
-                    s2[i].neighbors = NULL;
-                    s2[i].nNeighbors = 0;
-                    s2[i].rateSum = 0.0;
-                }
-            }
-        }
-
-        prms.nsites += prms.add_to_number;
-
-        free (s);
-        return s2;
-    }
-
     // return s if no filter was applied
     return s;
 }
@@ -668,15 +609,4 @@ compare_neighbors (const void *a, const void *b)
 {
     double diff = (((SLE *) a)->rate - ((SLE *) b)->rate);
     return diff < 0 ? 1 : (diff > 0) ? -1 : 0;
-}
-
-/*
- * Compare two sites with their energy distance to prms.add_to_energy
- */
-int
-compare_addtosites (const void *a, const void *b)
-{
-    double absa = fabs (((Site *) a)->energy - prms.add_to_energy);
-    double absb = fabs (((Site *) b)->energy - prms.add_to_energy);
-    return (absa - absb) < 0 ? -1 : ((absa - absb) > 0) ? 1 : 0;
 }

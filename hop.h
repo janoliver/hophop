@@ -66,9 +66,6 @@ typedef struct params
     float cut_out_energy;
     float cut_out_width;
     bool cut_dos;
-    float add_to_energy;
-    float add_to_number;
-    bool addto_dos;
 
     // balance eq.
     bool balance_eq;

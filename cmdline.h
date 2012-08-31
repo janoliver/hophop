@@ -31,7 +31,7 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_VERSION
 /** @brief the program version */
-#define CMDLINE_PARSER_VERSION "1.6"
+#define CMDLINE_PARSER_VERSION "2.0"
 #endif
 
 /** @brief Where the command line options are stored */
@@ -102,12 +102,6 @@ struct gengetopt_args_info
   float cutoutwidth_arg;	/**< @brief The width of energies who are cutted. (default='0.5').  */
   char * cutoutwidth_orig;	/**< @brief The width of energies who are cutted. original value given at command line.  */
   const char *cutoutwidth_help; /**< @brief The width of energies who are cutted. help description.  */
-  float addtoenergy_arg;	/**< @brief States around this energy will be add or removed out of the DOS (default='0').  */
-  char * addtoenergy_orig;	/**< @brief States around this energy will be add or removed out of the DOS original value given at command line.  */
-  const char *addtoenergy_help; /**< @brief States around this energy will be add or removed out of the DOS help description.  */
-  int addtonumber_arg;	/**< @brief This amount of sites will be added/removed (+/-) (default='-1000').  */
-  char * addtonumber_orig;	/**< @brief This amount of sites will be added/removed (+/-) original value given at command line.  */
-  const char *addtonumber_help; /**< @brief This amount of sites will be added/removed (+/-) help description.  */
   int ncarriers_arg;	/**< @brief The number of charge carriers in the system. (default='10').  */
   char * ncarriers_orig;	/**< @brief The number of charge carriers in the system. original value given at command line.  */
   const char *ncarriers_help; /**< @brief The number of charge carriers in the system. help description.  */
@@ -176,8 +170,6 @@ struct gengetopt_args_info
   unsigned int softpairthreshold_given ;	/**< @brief Whether softpairthreshold was given.  */
   unsigned int cutoutenergy_given ;	/**< @brief Whether cutoutenergy was given.  */
   unsigned int cutoutwidth_given ;	/**< @brief Whether cutoutwidth was given.  */
-  unsigned int addtoenergy_given ;	/**< @brief Whether addtoenergy was given.  */
-  unsigned int addtonumber_given ;	/**< @brief Whether addtonumber was given.  */
   unsigned int ncarriers_given ;	/**< @brief Whether ncarriers was given.  */
   unsigned int simulation_given ;	/**< @brief Whether simulation was given.  */
   unsigned int relaxation_given ;	/**< @brief Whether relaxation was given.  */
