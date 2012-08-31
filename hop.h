@@ -133,10 +133,11 @@ typedef struct site
     float tempOccTime;
 } Site;
 
-typedef struct result {
-    double * values;
+typedef struct result
+{
+    double *values;
     double avg;
-    bool * done;
+    bool *done;
     double err;
 } Result;
 
@@ -148,7 +149,7 @@ typedef struct results_struct
     Result currentDensity;
     Result equilibrationEnergy;
     Result avgenergy;
-    
+
     Result nHops;
     Result simulationTime;
     Result nFailedAttempts;
@@ -189,13 +190,16 @@ bool strArgGiven (char *arg);
 void generateParams (Params * prms, int argc, char **argv);
 
 //mc
-void MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms, int iReRun);
+void MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
+                    int iReRun);
 Site *MC_createSites (RunParams * runprms);
-void MC_distributeCarriers (Carrier * carriers, Site * sites, RunParams * runprms);
+void MC_distributeCarriers (Carrier * carriers, Site * sites,
+                            RunParams * runprms);
 Carrier *MC_createCarriers (Site * sites);
 void MC_createHoppingRates (Site * sites);
 void MC_removeSoftPairs (Site * sites);
-void MC_calculateResults (Site * sites, Carrier * carriers, Results * res, RunParams * runprms);
+void MC_calculateResults (Site * sites, Carrier * carriers, Results * res,
+                          RunParams * runprms);
 void MC_run (Results * total, RunParams * runprms);
 
 int timeval_subtract (struct timeval *result,

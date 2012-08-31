@@ -146,8 +146,8 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
                 x[i] * sites[i].neighbors[j].rate *
                 (sites[i].neighbors[j].dist.z);
 
-    res->mobility.values[runprms->iRun -1] = sum / prms.field;
-    res->mobility.done[runprms->iRun-1] = true;
+    res->mobility.values[runprms->iRun - 1] = sum / prms.field;
+    res->mobility.done[runprms->iRun - 1] = true;
 
 
     // free

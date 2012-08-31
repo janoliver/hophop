@@ -84,7 +84,7 @@ main (int argc, char **argv)
     // free results structs
     //int i;
     //for(i = 0; i< sizeof(res)
-    free_results(&res);
+    free_results (&res);
 
     return 0;
 }

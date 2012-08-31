@@ -3,7 +3,8 @@
 #include "hop.h"
 
 void hoppingStep (Site * sites, Carrier * carriers, RunParams * runprms);
-void hop (Carrier * c, SLE * dest, Vector * dist, Carrier * carriers, RunParams * runprms);
+void hop (Carrier * c, SLE * dest, Vector * dist, Carrier * carriers,
+          RunParams * runprms);
 void updateCarrier (Carrier * carriers, RunParams * runprms);
 
 /*
@@ -11,7 +12,8 @@ void updateCarrier (Carrier * carriers, RunParams * runprms);
  * the passed "time" (in arbitrary units) and ouputs the progress.
  */
 void
-MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms, int iReRun)
+MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
+               int iReRun)
 {
     size_t j;
 
@@ -45,7 +47,7 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms, int iReRun
     for (j = 0; j <= 100; j++)
     {
         while (runprms->nHops <= prms.simulation / 100 * j)
-            hoppingStep (sites, carriers,runprms);
+            hoppingStep (sites, carriers, runprms);
 
         output (O_SERIAL, "\r\tSimulating... (run %d of %d):\t%2d%%", iReRun,
                 prms.number_reruns, (int) j);
@@ -56,7 +58,8 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms, int iReRun
     // finish statistics
     for (j = 0; j < prms.nsites; ++j)
         if (sites[j].tempOccTime > 0)
-            sites[j].totalOccTime += runprms->simulationTime - sites[j].tempOccTime;
+            sites[j].totalOccTime +=
+                runprms->simulationTime - sites[j].tempOccTime;
 
     for (j = 0; j < prms.ncarriers; ++j)
     {
@@ -120,7 +123,8 @@ hoppingStep (Site * sites, Carrier * carriers, RunParams * runprms)
  * in the hopping process and all of the sites around these two sites.
  */
 void
-hop (Carrier * c, SLE * dest, Vector * dist, Carrier * carriers, RunParams * runprms)
+hop (Carrier * c, SLE * dest, Vector * dist, Carrier * carriers,
+     RunParams * runprms)
 {
     Site *orig = c->site;
 

@@ -26,7 +26,8 @@ writeSitesConfig (Site * sites, RunParams * runprms)
     int i;
     char fileName[128] = "";
 
-    sprintf (fileName, "%s/%d/sites-config.dat", prms.output_folder, runprms->iRun);
+    sprintf (fileName, "%s/%d/sites-config.dat", prms.output_folder,
+             runprms->iRun);
 
     file = fopen (fileName, "w+");
 
@@ -96,7 +97,8 @@ writeTransitions (Site * sites, RunParams * runprms)
     char fileName[128] = "";
     SLE *neighbor;
 
-    sprintf (fileName, "%s/%d/transitions.dat", prms.output_folder, runprms->iRun);
+    sprintf (fileName, "%s/%d/transitions.dat", prms.output_folder,
+             runprms->iRun);
 
     file = fopen (fileName, "w+");
 
@@ -200,7 +202,8 @@ writeResults (Results * res, RunParams * runprms)
         fprintf (file, "%-+18e", res->mobility.values[runprms->iRun]);
         fprintf (file, "%-+18e", res->diffusivity.values[runprms->iRun]);
         fprintf (file, "%-+18e", res->currentDensity.values[runprms->iRun]);
-        fprintf (file, "%-+18e", res->equilibrationEnergy.values[runprms->iRun]);
+        fprintf (file, "%-+18e",
+                 res->equilibrationEnergy.values[runprms->iRun]);
         fprintf (file, "%lu\n", runprms->rseed_used);
     }
 

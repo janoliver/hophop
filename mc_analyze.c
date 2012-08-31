@@ -10,27 +10,32 @@ double calcEquilibrationEnergy (Site * sites, RunParams * runprms);
 double calcAverageEnergy (Carrier * carriers);
 
 void
-MC_calculateResults (Site * sites, Carrier * carriers, Results * res, RunParams * runprms)
+MC_calculateResults (Site * sites, Carrier * carriers, Results * res,
+                     RunParams * runprms)
 {
     // calculate results
     res->mobility.values[runprms->iRun - 1] = calcMobility (carriers, runprms);
     res->mobility.done[runprms->iRun - 1] = true;
-    
-    res->diffusivity.values[runprms->iRun - 1] = calcDiffusivity (carriers, runprms);
+
+    res->diffusivity.values[runprms->iRun - 1] =
+        calcDiffusivity (carriers, runprms);
     res->diffusivity.done[runprms->iRun - 1] = true;
 
-    res->currentDensity.values[runprms->iRun - 1] = calcCurrentDensity (carriers, runprms);
+    res->currentDensity.values[runprms->iRun - 1] =
+        calcCurrentDensity (carriers, runprms);
     res->currentDensity.done[runprms->iRun - 1] = true;
 
-    res->equilibrationEnergy.values[runprms->iRun - 1] = calcEquilibrationEnergy (sites, runprms);
+    res->equilibrationEnergy.values[runprms->iRun - 1] =
+        calcEquilibrationEnergy (sites, runprms);
     res->equilibrationEnergy.done[runprms->iRun - 1] = true;
-    
+
     res->avgenergy.values[runprms->iRun - 1] = calcAverageEnergy (carriers);
     res->avgenergy.done[runprms->iRun - 1] = true;
-    
-    res->einsteinrelation.values[runprms->iRun - 1] = calcEinsteinRelation (carriers, runprms);
+
+    res->einsteinrelation.values[runprms->iRun - 1] =
+        calcEinsteinRelation (carriers, runprms);
     res->einsteinrelation.done[runprms->iRun - 1] = true;
-    
+
     res->simulationTime.values[runprms->iRun - 1] = runprms->simulationTime;
     res->simulationTime.done[runprms->iRun - 1] = true;
 
