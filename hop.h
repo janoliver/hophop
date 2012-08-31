@@ -33,7 +33,6 @@
 #define O_BOTH     3
 #define O_FORCE    0
 
-
 typedef struct params
 {
     // all parameters here

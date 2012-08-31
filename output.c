@@ -5,6 +5,7 @@
 
 void checkOutputFolder (RunParams * runprms);
 
+
 /*
  * Writes the sites file with the following format:
  * N    X   Y   Z
@@ -180,7 +181,6 @@ writeResults (Results * res, RunParams * runprms)
         }
         else
         {
-
             fprintf (file, "#simul. time      ");
             fprintf (file, "mobility          ");
             fprintf (file, "diffusivity x/y   ");
@@ -239,6 +239,16 @@ writeSummary (Results * res)
     FILE *file, *file2;
     int buffer = 0;
 
+    // build the current time string
+    char timestring[20]; 
+    time_t now;
+    time(&now);
+    struct tm *ti;
+    ti = localtime(&now);
+    sprintf(timestring, "%04d-%02d-%02d_%02d:%02d:%02d",
+            ti->tm_year+1900, ti->tm_mon, ti->tm_mday, ti->tm_hour,
+            ti->tm_min, ti->tm_sec);
+ 
     sprintf (fileName, "%s", prms.output_summary);
 
     // check for the header
@@ -251,102 +261,110 @@ writeSummary (Results * res)
 
     file = fopen (fileName, "a+");
 
-    // write head
+    // write header
     if (buffer == 0)
     {
-        fprintf (file, "#DOS exponent     ");
-        fprintf (file, "System size       ");
-        fprintf (file, "Number of sites   ");
-        fprintf (file, "Number carriers   ");
+        fprintf (file, "%s%s %s\n", "#", PKG_NAME, PKG_VERSION);
+        
+        fprintf (file, "%-20s", "#mode");
+        fprintf (file, "%-20s", "dos_exponent");
+        fprintf (file, "%-20s", "system_length");
+        fprintf (file, "%-20s", "number_sites");
+        fprintf (file, "%-20s", "number_carriers");
+        fprintf (file, "%-20s", "localization_length");
+        fprintf (file, "%-20s", "temperature");
+        fprintf (file, "%-20s", "electric_field");
+        fprintf (file, "%-20s", "number_runs");
+        fprintf (file, "%-20s", "number_reruns");
+        fprintf (file, "%-20s", "number_relaxation");
+        fprintf (file, "%-20s", "number_simulation");
+        fprintf (file, "%-20s", "cutout_energy");
+        fprintf (file, "%-20s", "cutout_energy_err");
+        fprintf (file, "%-20s", "simulation_time");
+        fprintf (file, "%-20s", "simulation_time_err");
+        fprintf (file, "%-20s", "mobility");
+        fprintf (file, "%-20s", "mobility_err");
+        fprintf (file, "%-20s", "diffusivity");
+        fprintf (file, "%-20s", "diffusivity_err");
+        fprintf (file, "%-20s", "einstein_rel");
+        fprintf (file, "%-20s", "einstein_rel_err");
+        fprintf (file, "%-20s", "current_dens");
+        fprintf (file, "%-20s", "current_dens_err");
+        fprintf (file, "%-20s", "eq_energy");
+        fprintf (file, "%-20s", "eq_energy_err");
+        fprintf (file, "%-20s", "avg_energy");
+        fprintf (file, "%-20s", "avg_energy_err");
+        fprintf (file, "%-20s", "random_seed");
+        fprintf (file, "%-20s", "finish_time");
+        fprintf (file, "%-20s", "comment");
+        fprintf (file, "\n");
 
-        fprintf (file, "Localization len. ");
-        fprintf (file, "Temperature       ");
-        fprintf (file, "Electric field    ");
-
-        fprintf (file, "Simul. time       ");
-        fprintf (file, "Error Simul. time ");
-
-        fprintf (file, "Mobility          ");
-        fprintf (file, "Error mobility    ");
-
-        fprintf (file, "Diffusivity x/y   ");
-        fprintf (file, "Error diffus. x/y ");
-
-        fprintf (file, "Einstein relation ");
-        fprintf (file, "Error ER          ");
-
-        fprintf (file, "Current density   ");
-        fprintf (file, "Erro curr. dens.  ");
-
-        fprintf (file, "Equilibration en. ");
-        fprintf (file, "Error Eq. en.     ");
-
-        fprintf (file, "Average energy    ");
-        fprintf (file, "Error avg. en.    ");
-
-        fprintf (file, "Cutout Energy     ");
-        fprintf (file, "Cutout width      ");
-
-        fprintf (file, "Add to Energy     ");
-        fprintf (file, "Add to number     ");
-
-        fprintf (file, "number of runs    ");
-        fprintf (file, "number of reruns  ");
-
-        fprintf (file, "relaxation hops   ");
-        fprintf (file, "simulation hops   ");
-
-        fprintf (file, "random seed       ");
-        fprintf (file, "Mode              ");
-        fprintf (file, "Comment           ");
+        fprintf (file, "%-20s", "#str");
+        fprintf (file, "%-20s", "int");
+        fprintf (file, "%-20s", "int");
+        fprintf (file, "%-20s", "long");
+        fprintf (file, "%-20s", "long");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "int");
+        fprintf (file, "%-20s", "int");
+        fprintf (file, "%-20s", "long");
+        fprintf (file, "%-20s", "long");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "long");
+        fprintf (file, "%-20s", "str");
+        fprintf (file, "%-20s", "str");
         fprintf (file, "\n");
     }
 
     // write site information
-    fprintf (file, "%-+18e", prms.exponent);
-    fprintf (file, "%-18d", prms.length_x);
-    fprintf (file, "%-18d", prms.nsites);
-    fprintf (file, "%-18d", prms.ncarriers);
-
-    fprintf (file, "%-+18e", prms.loclength);
-    fprintf (file, "%-+18e", prms.temperature);
-    fprintf (file, "%-+18e", prms.field);
-
-    fprintf (file, "%-+18e", res->simulationTime.avg);
-    fprintf (file, "%-+18e", res->simulationTime.err);
-
-    fprintf (file, "%-+18e", res->mobility.avg);
-    fprintf (file, "%-+18e", res->mobility.err);
-
-    fprintf (file, "%-+18e", res->diffusivity.avg);
-    fprintf (file, "%-+18e", res->diffusivity.err);
-
-    fprintf (file, "%-+18e", res->einsteinrelation.avg);
-    fprintf (file, "%-+18e", res->einsteinrelation.err);
-
-    fprintf (file, "%-+18e", res->currentDensity.avg);
-    fprintf (file, "%-+18e", res->currentDensity.err);
-
-    fprintf (file, "%-+18e", res->equilibrationEnergy.avg);
-    fprintf (file, "%-+18e", res->equilibrationEnergy.err);
-
-    fprintf (file, "%-+18e", res->avgenergy.avg);
-    fprintf (file, "%-+18e", res->avgenergy.err);
-
-    fprintf (file, "%-+18e", prms.cut_dos ? prms.cut_out_energy : 0);
-    fprintf (file, "%-+18e", prms.cut_dos ? prms.cut_out_width : 0);
-
-    fprintf (file, "%-+18e", prms.addto_dos ? prms.add_to_energy : 0);
-    fprintf (file, "%-18d", prms.addto_dos ? prms.add_to_number : 0);
-
-    fprintf (file, "%-18d", prms.number_runs);
-    fprintf (file, "%-18d", prms.number_reruns);
-
-    fprintf (file, "%-18lu", prms.relaxation);
-    fprintf (file, "%-18lu", prms.simulation);
-
-    fprintf (file, "%-18lu", prms.rseed);
-    fprintf (file, "%-18s", prms.balance_eq ? "Balance eq." : "MC Simulation");
+    fprintf (file, "%-20s", prms.balance_eq ? "be" : "mc");
+    fprintf (file, "%-+20e", prms.exponent);
+    fprintf (file, "%-20d", prms.length_x);
+    fprintf (file, "%-20d", prms.nsites);
+    fprintf (file, "%-20d", prms.ncarriers);
+    fprintf (file, "%-+20e", prms.loclength);
+    fprintf (file, "%-+20e", prms.temperature);
+    fprintf (file, "%-+20e", prms.field);
+    fprintf (file, "%-20d", prms.number_runs);
+    fprintf (file, "%-20d", prms.number_reruns);
+    fprintf (file, "%-20lu", prms.relaxation);
+    fprintf (file, "%-20lu", prms.simulation);
+    fprintf (file, "%-+20e", prms.cut_dos ? prms.cut_out_energy : 0);
+    fprintf (file, "%-+20e", prms.cut_dos ? prms.cut_out_width : 0);
+    fprintf (file, "%-+20e", res->simulationTime.avg);
+    fprintf (file, "%-+20e", res->simulationTime.err);
+    fprintf (file, "%-+20e", res->mobility.avg);
+    fprintf (file, "%-+20e", res->mobility.err);
+    fprintf (file, "%-+20e", res->diffusivity.avg);
+    fprintf (file, "%-+20e", res->diffusivity.err);
+    fprintf (file, "%-+20e", res->einsteinrelation.avg);
+    fprintf (file, "%-+20e", res->einsteinrelation.err);
+    fprintf (file, "%-+20e", res->currentDensity.avg);
+    fprintf (file, "%-+20e", res->currentDensity.err);
+    fprintf (file, "%-+20e", res->equilibrationEnergy.avg);
+    fprintf (file, "%-+20e", res->equilibrationEnergy.err);
+    fprintf (file, "%-+20e", res->avgenergy.avg);
+    fprintf (file, "%-+20e", res->avgenergy.err);
+    fprintf (file, "%-20lu", prms.rseed);
+    fprintf (file, "%-20s", timestring);
+    
     if (strArgGiven (prms.comment))
         fprintf (file, "%s", prms.comment);
     fprintf (file, "\n");
