@@ -8,3 +8,4 @@ options.ggo
 config.h
 *.pyc
 res/test.py
+*sublime*

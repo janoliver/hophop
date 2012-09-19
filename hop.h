@@ -204,5 +204,7 @@ int timeval_subtract (struct timeval *result,
 // balance equations
 void BE_run (Results * res, RunParams * runprms);
 
+// analytics
+double calcFermiEnergy();
 
 #endif /* HOP_H */

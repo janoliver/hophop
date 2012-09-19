@@ -120,9 +120,43 @@ MC_createSites (RunParams * runprms)
             }
 
         free (s);
-        return s2;
+        s = s2;
     }
 
+    // n dependency: cut out all the occupied sites following the fermi
+    // distribution.
+    if (prms.ncarriers > 1)
+    {
+        j = prms.nsites;
+        k = 0;
+        double fermilevel = calcFermiEnergy();
+
+        for (i = 0; i < j; ++i)
+        {
+
+            if (1/(1 + exp((s[i].energy - fermilevel)/prms.temperature)) > 
+                (float) gsl_rng_uniform (runprms->r))
+            {
+                s[i].index = -1;
+                prms.nsites--;
+            }
+        }
+
+        s2 = (Site *) malloc (prms.nsites * sizeof (Site));
+
+        for (i = 0; i < j; ++i)
+            if (s[i].index >= 0)
+            {
+                s2[k] = s[i];
+                s2[k].index = k;
+                k++;
+            }
+
+        free (s);
+        prms.ncarriers = 1;
+        s = s2;
+    }
+    
     // return s if no filter was applied
     return s;
 }
