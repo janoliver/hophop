@@ -46,7 +46,7 @@ MC_calculateResults (Site * sites, Carrier * carriers, Results * res,
     res->nFailedAttempts.done[runprms->iRun - 1] = true;
 
     res->nSites.values[runprms->iRun - 1] = runprms->nSites;
-    res->nSites.done[runprms->iRun - 1] = true;    
+    res->nSites.done[runprms->iRun - 1] = true;
 
 }
 

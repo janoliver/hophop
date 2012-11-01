@@ -212,8 +212,8 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
 
     // select prms.ncarriers random sites for the carriers
     Site *sample = malloc (ncarriers * sizeof (Site));
-    gsl_ran_choose (runprms->r, sample, ncarriers, sites, 
-        runprms->nSites, sizeof (Site));
+    gsl_ran_choose (runprms->r, sample, ncarriers, sites,
+                    runprms->nSites, sizeof (Site));
 
     // clear all the sites and set the correct index
     for (i = 0; i < runprms->nSites; ++i)
@@ -231,8 +231,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
             (float) gsl_ran_exponential (runprms->r, 1.0) / c[i].site->rateSum;
 
         // now insert the carrier into the heap
-        while (i > 0 && c[i].occTime < c[i / 2].occTime && 
-            !prms.meanfield)
+        while (i > 0 && c[i].occTime < c[i / 2].occTime && !prms.meanfield)
         {
             tmp = c[i];
             c[i] = c[i / 2];
@@ -246,7 +245,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
         c[i].site->tempOccTime = 0.000001;
     }
 
-    free(sample);
+    free (sample);
 }
 
 /*
@@ -313,7 +312,8 @@ MC_createHoppingRates (Site * sites, RunParams * runprms)
     {
         // this weirdness with 99 takes care of site numbers that
         // cannot be divided by 100.
-        for (k = l * runprms->nSites / 99; k < ((l + 1) * runprms->nSites / 99); ++k)
+        for (k = l * runprms->nSites / 99; k < ((l + 1) * runprms->nSites / 99);
+             ++k)
             if (k < runprms->nSites)
                 setNeighbors (&sites[k], cells);
 
