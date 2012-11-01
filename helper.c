@@ -13,7 +13,8 @@ average_errors (Results * res)
 
         &(res->nHops),
         &(res->nFailedAttempts),
-        &(res->simulationTime)
+        &(res->simulationTime),
+        &(res->nSites)
     };
 
     int nResults = sizeof (results) / sizeof (Result *);
@@ -62,7 +63,8 @@ init_results (Results * res)
 
         &(res->nHops),
         &(res->nFailedAttempts),
-        &(res->simulationTime)
+        &(res->simulationTime),
+        &(res->nSites)
     };
 
     int nResults = sizeof (results) / sizeof (Result *);
@@ -98,7 +100,8 @@ free_results (Results * res)
 
         &(res->nHops),
         &(res->nFailedAttempts),
-        &(res->simulationTime)
+        &(res->simulationTime),
+        &(res->nSites)
     };
 
     int nResults = sizeof (results) / sizeof (Result *);

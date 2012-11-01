@@ -96,6 +96,7 @@ typedef struct run_params
     double simulationTime;
     size_t nHops;
     size_t nFailedAttempts;
+    size_t nSites;
     int iRun;
     bool stat;
 } RunParams;
@@ -150,6 +151,7 @@ typedef struct results_struct
     Result nHops;
     Result simulationTime;
     Result nFailedAttempts;
+    Result nSites;
 } Results;
 
 
@@ -193,8 +195,8 @@ Site *MC_createSites (RunParams * runprms);
 void MC_distributeCarriers (Carrier * carriers, Site * sites,
                             RunParams * runprms);
 Carrier *MC_createCarriers (Site * sites);
-void MC_createHoppingRates (Site * sites);
-void MC_removeSoftPairs (Site * sites);
+void MC_createHoppingRates (Site * sites, RunParams * runprms);
+void MC_removeSoftPairs (Site * sites, RunParams * runprms);
 void MC_calculateResults (Site * sites, Carrier * carriers, Results * res,
                           RunParams * runprms);
 void MC_run (Results * total, RunParams * runprms);

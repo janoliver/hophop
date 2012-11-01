@@ -30,7 +30,7 @@ typedef struct softpair
 
 
 
-Cell *createCells (Site * sites);
+Cell *createCells (Site * sites, RunParams * runprms);
 Cell *getCell3D (Cell * cells, ssize_t x, ssize_t y, ssize_t z);
 void setNeighbors (Site * s, Cell * cells);
 double calcHoppingRate (Site i, Site j);
@@ -50,9 +50,7 @@ MC_createSites (RunParams * runprms)
     size_t i, j, k, l;
     Site *s, *s2;
 
-    prms.nsites = prms.length_x * prms.length_y * prms.length_z;
-
-    s = (Site *) malloc (prms.nsites * sizeof (Site));
+    s = (Site *) malloc (runprms->nSites * sizeof (Site));
 
     // lattice case. Map site index to x,y,z coordinates
     for (l = 0; l < prms.length_x; ++l)
@@ -96,7 +94,7 @@ MC_createSites (RunParams * runprms)
     // filter sites in case of cut-out
     if (prms.cut_dos)
     {
-        j = prms.nsites;
+        j = runprms->nSites;
         k = 0;
 
         for (i = 0; i < j; ++i)
@@ -105,11 +103,11 @@ MC_createSites (RunParams * runprms)
                 s[i].energy > prms.cut_out_energy - prms.cut_out_width)
             {
                 s[i].index = -1;
-                prms.nsites--;
+                runprms->nSites--;
             }
         }
 
-        s2 = (Site *) malloc (prms.nsites * sizeof (Site));
+        s2 = (Site *) malloc (runprms->nSites * sizeof (Site));
 
         for (i = 0; i < j; ++i)
             if (s[i].index >= 0)
@@ -127,7 +125,7 @@ MC_createSites (RunParams * runprms)
     // distribution.
     if (prms.ncarriers > 1 && prms.meanfield)
     {
-        j = prms.nsites;
+        j = runprms->nSites;
         k = 0;
         double fermilevel = calcFermiEnergy ();
 
@@ -138,11 +136,11 @@ MC_createSites (RunParams * runprms)
                 (float) gsl_rng_uniform (runprms->r))
             {
                 s[i].index = -1;
-                prms.nsites--;
+                runprms->nSites--;
             }
         }
 
-        s2 = (Site *) malloc (prms.nsites * sizeof (Site));
+        s2 = (Site *) malloc (runprms->nSites * sizeof (Site));
 
         for (i = 0; i < j; ++i)
             if (s[i].index >= 0)
@@ -214,11 +212,11 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
 
     // select prms.ncarriers random sites for the carriers
     Site *sample = malloc (ncarriers * sizeof (Site));
-    gsl_ran_choose (runprms->r, sample, ncarriers, sites, prms.nsites,
-                    sizeof (Site));
+    gsl_ran_choose (runprms->r, sample, ncarriers, sites, 
+        runprms->nSites, sizeof (Site));
 
     // clear all the sites and set the correct index
-    for (i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < runprms->nSites; ++i)
     {
         sites[i].carrier = NULL;
         sites[i].tempOccTime = 0;
@@ -233,7 +231,8 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
             (float) gsl_ran_exponential (runprms->r, 1.0) / c[i].site->rateSum;
 
         // now insert the carrier into the heap
-        while (i > 0 && c[i].occTime < c[i / 2].occTime)
+        while (i > 0 && c[i].occTime < c[i / 2].occTime && 
+            !prms.meanfield)
         {
             tmp = c[i];
             c[i] = c[i / 2];
@@ -246,6 +245,8 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
         c[i].site->carrier = &c[i];
         c[i].site->tempOccTime = 0.000001;
     }
+
+    free(sample);
 }
 
 /*
@@ -257,7 +258,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
  * into a linked list which is a member of the cell struct.
  */
 Cell *
-createCells (Site * sites)
+createCells (Site * sites, RunParams * runprms)
 {
     size_t i, tx, ty, tz, nCells;
     Cell *c, *temp;
@@ -274,7 +275,7 @@ createCells (Site * sites)
         c[i].index = i;
     }
 
-    for (i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < runprms->nSites; ++i)
     {
         tx = sites[i].x / prms.cutoff_radius;
         ty = sites[i].y / prms.cutoff_radius;
@@ -302,18 +303,18 @@ createCells (Site * sites)
  * memory!!
  */
 void
-MC_createHoppingRates (Site * sites)
+MC_createHoppingRates (Site * sites, RunParams * runprms)
 {
     size_t k, l;
     ln *sList, *tmp;
-    Cell *cells = (Cell *) createCells (sites);
+    Cell *cells = (Cell *) createCells (sites, runprms);
 
     for (l = 0; l < 100; ++l)
     {
         // this weirdness with 99 takes care of site numbers that
         // cannot be divided by 100.
-        for (k = l * prms.nsites / 99; k < ((l + 1) * prms.nsites / 99); ++k)
-            if (k < prms.nsites)
+        for (k = l * runprms->nSites / 99; k < ((l + 1) * runprms->nSites / 99); ++k)
+            if (k < runprms->nSites)
                 setNeighbors (&sites[k], cells);
 
         output (O_SERIAL, "\r\tInitializing...: \t\t%2d%%", (int) l);
@@ -341,7 +342,7 @@ MC_createHoppingRates (Site * sites)
  * described in the PhD Thesis of Fredrik Jansson based ok xyz.
  */
 void
-MC_removeSoftPairs (Site * sites)
+MC_removeSoftPairs (Site * sites, RunParams * runprms)
 {
     Softpair *softpair, *temp, *newSoftpair = NULL, *sp = NULL;
     int j, i, nSoftPairs = 0;
@@ -350,7 +351,7 @@ MC_removeSoftPairs (Site * sites)
     float rateb, rateab, ratebx = 0.0, rateSum;
 
     // find softpairs
-    for (j = 0; j < prms.nsites; ++j)
+    for (j = 0; j < runprms->nSites; ++j)
     {
         for (i = 0; i < sites[j].nNeighbors; ++i)
         {
@@ -452,7 +453,7 @@ MC_removeSoftPairs (Site * sites)
 
         // all removed ?
         int counter = 0;
-        for (j = 0; j < prms.nsites; ++j)
+        for (j = 0; j < runprms->nSites; ++j)
             for (i = 0; i < sites[j].nNeighbors; ++i)
                 if (sites[j].neighbors[i].rate / sites[j].rateSum >
                     prms.softpairthreshold)
@@ -463,7 +464,7 @@ MC_removeSoftPairs (Site * sites)
 
         // recursive call if there are still softpairs
         if (counter > 0)
-            MC_removeSoftPairs (sites);
+            MC_removeSoftPairs (sites, runprms);
     }
 }
 

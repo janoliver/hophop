@@ -61,7 +61,7 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
     output (O_SERIAL, " Done.\n");
 
     // finish statistics
-    for (j = 0; j < prms.nsites; ++j)
+    for (j = 0; j < runprms->nSites; ++j)
         if (sites[j].tempOccTime > 0)
             sites[j].totalOccTime +=
                 runprms->simulationTime - sites[j].tempOccTime;

@@ -54,6 +54,7 @@ main (int argc, char **argv)
             runprms.stat = false;
             runprms.simulationTime = 0;
             runprms.iRun = iRun;
+            runprms.nSites = prms.nsites;
 
             // here is where el magico happens
             if (prms.balance_eq)

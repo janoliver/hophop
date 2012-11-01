@@ -16,9 +16,9 @@ BE_run (Results * res, RunParams * runprms)
 
     // create the sites, cells, carriers, hopping rates
     sites = MC_createSites (runprms);
-    MC_createHoppingRates (sites);
+    MC_createHoppingRates (sites, runprms);
     if (prms.removesoftpairs)
-        MC_removeSoftPairs (sites);
+        MC_removeSoftPairs (sites, runprms);
 
     // solve
     BE_solve (sites, res, runprms);

@@ -20,9 +20,9 @@ MC_run (Results * res, RunParams * runprms)
 
     // create the sites, cells, carriers, hopping rates
     sites = MC_createSites (runprms);
-    MC_createHoppingRates (sites);
+    MC_createHoppingRates (sites, runprms);
     if (prms.removesoftpairs)
-        MC_removeSoftPairs (sites);
+        MC_removeSoftPairs (sites, runprms);
     carriers = MC_createCarriers (sites);
 
     gettimeofday (&start, &tz);
@@ -64,7 +64,7 @@ MC_run (Results * res, RunParams * runprms)
     }
 
     // free resources
-    for (i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < runprms->nSites; ++i)
     {
         // free neighbor memory
         free (sites[i].neighbors);

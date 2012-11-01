@@ -45,6 +45,9 @@ MC_calculateResults (Site * sites, Carrier * carriers, Results * res,
     res->nFailedAttempts.values[runprms->iRun - 1] = runprms->nFailedAttempts;
     res->nFailedAttempts.done[runprms->iRun - 1] = true;
 
+    res->nSites.values[runprms->iRun - 1] = runprms->nSites;
+    res->nSites.done[runprms->iRun - 1] = true;    
+
 }
 
 /*
@@ -84,7 +87,7 @@ calcEquilibrationEnergy (Site * sites, RunParams * runprms)
     if (!prms.meanfield)
         ncarriers = prms.ncarriers;
 
-    for (i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < runprms->nSites; ++i)
         sum += sites[i].totalOccTime * sites[i].energy;
 
     return sum / (ncarriers * runprms->simulationTime);
@@ -162,7 +165,7 @@ calcCurrentDensity (Carrier * carriers, RunParams * runprms)
 
     for (i = 0; i < ncarriers; ++i)
         ez += carriers[i].dz;
-    return ez / (runprms->simulationTime * prms.nsites);
+    return ez / (runprms->simulationTime * runprms->nSites);
 }
 
 /*
