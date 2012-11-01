@@ -45,7 +45,8 @@ section "Monte carlo simulation" sectiondesc="The following options matter only,
 option "ncarriers" n "The number of charge carriers in the system." int default="10" optional
 option "simulation" I "The number of hops during which statistics are collected." long default="1000000000" optional
 option "relaxation" R "The number of hops to relax." long default="100000000" optionaloption "nreruns" x "How many times should the electron be placed at some random starting position?" int default="1" optional
-  
+option "meanfield" - "Instead of simulating n carriers, use a single carrier in a modified DOS (mean field approach)" flag off
+
 
 section "Balance equations" sectiondesc="These options only matter, when the solution is found by solving the balance equations. (setting the --be flag)"
 

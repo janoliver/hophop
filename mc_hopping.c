@@ -16,6 +16,11 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
                int iReRun)
 {
     size_t j;
+    int ncarriers = 1;
+
+    // is this the meanfield mode?
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
 
     // we need the current simulation time.
     double simTimeOld = runprms->simulationTime;
@@ -40,7 +45,7 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
     runprms->nHops = 0;
     runprms->stat = true;
 
-    for (j = 0; j < prms.ncarriers; ++j)
+    for (j = 0; j < ncarriers; ++j)
         carriers[j].occTime -= (runprms->simulationTime - simTimeOld);
     runprms->simulationTime = simTimeOld;
 
@@ -61,7 +66,7 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
             sites[j].totalOccTime +=
                 runprms->simulationTime - sites[j].tempOccTime;
 
-    for (j = 0; j < prms.ncarriers; ++j)
+    for (j = 0; j < ncarriers; ++j)
     {
         carriers[j].dx2 += pow (carriers[j].ddx, 2.0);
         carriers[j].dy2 += pow (carriers[j].ddy, 2.0);
@@ -210,8 +215,9 @@ updateCarrier (Carrier * c, RunParams * runprms)
         (float) gsl_ran_exponential (runprms->r, 1.0) / c[0].site->rateSum;
 
     // children always sit at c[2i+1] and c[2i+2]
+    // do this only when the non-meanfield mc simulation is selected
     Carrier tmp;
-    while (1)
+    while (1 && !prms.meanfield)
     {
         smallest = (2 * i + 1 < prms.ncarriers &&
                     c[i].occTime > c[2 * i + 1].occTime) ? 2 * i + 1 : i;

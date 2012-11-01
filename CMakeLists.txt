@@ -15,44 +15,46 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(hopping C)
 
 ADD_CUSTOM_COMMAND(
-        COMMAND ${gengetopt} --conf-parser --set-version=${PACKAGE_VERSION} --set-package=${PACKAGE_NAME} --show-required -l  -i options.ggo
-        OUTPUT cmdline.h cmdline.c
+    COMMAND ${gengetopt} --conf-parser --set-version=${PACKAGE_VERSION} --set-package=${PACKAGE_NAME} --show-required -l  -i options.ggo
+    OUTPUT cmdline.h cmdline.c
 )
 
 CONFIGURE_FILE(
-        "res/config.h.in"
-        "config.h"
+    "res/config.h.in"
+    "config.h"
 )
 
 CONFIGURE_FILE(
-        "res/options.ggo.in"
-        "options.ggo"
+    "res/options.ggo.in"
+    "options.ggo"
 )
 
 SET_DIRECTORY_PROPERTIES(
-        PROPERTIES 
-        ADDITIONAL_MAKE_CLEAN_FILES "cmdline.h;cmdline.c;config.h;options.ggo"
+    PROPERTIES 
+    ADDITIONAL_MAKE_CLEAN_FILES "cmdline.h;cmdline.c;config.h;options.ggo"
 )
 
-ADD_EXECUTABLE(hop 
-                   hop.c hop.h
-                   mc.c 
-                   mc_init.c 
-                   mc_hopping.c 
-                   mc_analyze.c 
-                   output.c 
-                   params.c
-                   be.c
-                   helper.c
-                   analytics.c
-                   cmdline.c cmdline.h
-                   mgmres.c mgmres.h
+ADD_EXECUTABLE(
+    hop 
+    hop.c hop.h
+    mc.c 
+    mc_init.c 
+    mc_hopping.c 
+    mc_analyze.c 
+    output.c 
+    params.c
+    be.c
+    helper.c
+    analytics.c
+    cmdline.c cmdline.h
+    mgmres.c mgmres.h
 )
 
-TARGET_LINK_LIBRARIES(hop 
-                          m 
-                          gsl gslcblas 
-                          gomp
+TARGET_LINK_LIBRARIES(
+    hop 
+    m 
+    gsl gslcblas 
+    gomp
 )
 
 INSTALL(TARGETS hop DESTINATION bin)

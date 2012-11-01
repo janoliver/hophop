@@ -58,9 +58,15 @@ calcMobility (Carrier * carriers, RunParams * runprms)
 {
     int i;
     double ez = 0;
-    for (i = 0; i < prms.ncarriers; ++i)
+
+    // the meanfield stuff
+    int ncarriers = 1;
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
+
+    for (i = 0; i < ncarriers; ++i)
         ez += carriers[i].dz;
-    return ez / (prms.ncarriers * prms.field * runprms->simulationTime);
+    return ez / (ncarriers * prms.field * runprms->simulationTime);
 }
 
 /*
@@ -73,10 +79,15 @@ calcEquilibrationEnergy (Site * sites, RunParams * runprms)
     size_t i;
     double sum = 0;
 
+    // the meanfield stuff
+    int ncarriers = 1;
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
+
     for (i = 0; i < prms.nsites; ++i)
         sum += sites[i].totalOccTime * sites[i].energy;
 
-    return sum / (prms.ncarriers * runprms->simulationTime);
+    return sum / (ncarriers * runprms->simulationTime);
 }
 
 /*
@@ -91,13 +102,18 @@ calcDiffusivity (Carrier * carriers, RunParams * runprms)
     ex2 = 0.0;
     ey2 = 0.0;
 
-    for (i = 0; i < prms.ncarriers; ++i)
+    // the meanfield stuff
+    int ncarriers = 1;
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
+
+    for (i = 0; i < ncarriers; ++i)
     {
         ex2 += carriers[i].dx2;
         ey2 += carriers[i].dy2;
     }
-    ex2 /= (prms.ncarriers);
-    ey2 /= (prms.ncarriers);
+    ex2 /= (ncarriers);
+    ey2 /= (ncarriers);
     return (ex2 + ey2) / (4);
 
 }
@@ -114,7 +130,12 @@ calcEinsteinRelation (Carrier * carriers, RunParams * runprms)
     ex2 = 0.0;
     ey2 = 0.0;
 
-    for (i = 0; i < prms.ncarriers; ++i)
+    // the meanfield stuff
+    int ncarriers = 1;
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
+
+    for (i = 0; i < ncarriers; ++i)
     {
         ex2 += carriers[i].dx2;
         ey2 += carriers[i].dy2;
@@ -133,7 +154,13 @@ calcCurrentDensity (Carrier * carriers, RunParams * runprms)
 {
     int i;
     double ez = 0;
-    for (i = 0; i < prms.ncarriers; ++i)
+
+    // the meanfield stuff
+    int ncarriers = 1;
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
+
+    for (i = 0; i < ncarriers; ++i)
         ez += carriers[i].dz;
     return ez / (runprms->simulationTime * prms.nsites);
 }
@@ -147,8 +174,14 @@ calcAverageEnergy (Carrier * carriers)
 {
     int i;
     double avg = 0;
-    for (i = 0; i < prms.ncarriers; ++i)
+
+    // the meanfield stuff
+    int ncarriers = 1;
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
+
+    for (i = 0; i < ncarriers; ++i)
         avg += carriers[i].site->energy;
 
-    return avg / prms.ncarriers;
+    return avg / ncarriers;
 }

@@ -39,6 +39,7 @@ typedef struct params
     int length_x, length_y, length_z;
     int nx, ny, nz;
     int ncarriers;
+    bool meanfield;
     int nsites;
     float exponent;
     float loclength;
@@ -205,6 +206,6 @@ int timeval_subtract (struct timeval *result,
 void BE_run (Results * res, RunParams * runprms);
 
 // analytics
-double calcFermiEnergy();
+double calcFermiEnergy ();
 
 #endif /* HOP_H */

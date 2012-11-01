@@ -125,16 +125,16 @@ MC_createSites (RunParams * runprms)
 
     // n dependency: cut out all the occupied sites following the fermi
     // distribution.
-    if (prms.ncarriers > 1)
+    if (prms.ncarriers > 1 && prms.meanfield)
     {
         j = prms.nsites;
         k = 0;
-        double fermilevel = calcFermiEnergy();
+        double fermilevel = calcFermiEnergy ();
 
         for (i = 0; i < j; ++i)
         {
 
-            if (1/(1 + exp((s[i].energy - fermilevel)/prms.temperature)) > 
+            if (1 / (1 + exp ((s[i].energy - fermilevel) / prms.temperature)) >
                 (float) gsl_rng_uniform (runprms->r))
             {
                 s[i].index = -1;
@@ -153,10 +153,10 @@ MC_createSites (RunParams * runprms)
             }
 
         free (s);
-        prms.ncarriers = 1;
+
         s = s2;
     }
-    
+
     // return s if no filter was applied
     return s;
 }
@@ -167,14 +167,18 @@ MC_createSites (RunParams * runprms)
 Carrier *
 MC_createCarriers (Site * sites)
 {
-    int i;
+    int i, ncarriers = 1;
     Carrier *c;
 
+    // is this the meanfield mode?
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
+
     // allocate carrier memory
-    c = (Carrier *) malloc (sizeof (Carrier) * prms.ncarriers);
+    c = (Carrier *) malloc (sizeof (Carrier) * ncarriers);
 
     // distribute carriers 
-    for (i = 0; i < prms.ncarriers; ++i)
+    for (i = 0; i < ncarriers; ++i)
     {
         c[i].index = i;
         c[i].dx = 0.0;
@@ -202,10 +206,15 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
 {
     size_t i;
     Carrier tmp;
+    int ncarriers = 1;
+
+    // is this the meanfield mode?
+    if (!prms.meanfield)
+        ncarriers = prms.ncarriers;
 
     // select prms.ncarriers random sites for the carriers
-    Site *sample = malloc (prms.ncarriers * sizeof (Site));
-    gsl_ran_choose (runprms->r, sample, prms.ncarriers, sites, prms.nsites,
+    Site *sample = malloc (ncarriers * sizeof (Site));
+    gsl_ran_choose (runprms->r, sample, ncarriers, sites, prms.nsites,
                     sizeof (Site));
 
     // clear all the sites and set the correct index
@@ -217,7 +226,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
     }
 
     // distribute carriers 
-    for (i = 0; i < prms.ncarriers; ++i)
+    for (i = 0; i < ncarriers; ++i)
     {
         c[i].site = &sites[sample[i].index];
         c[i].occTime = runprms->simulationTime +

@@ -334,7 +334,8 @@ writeSummary (Results * res)
     }
 
     // write site information
-    fprintf (file, "%-20s", prms.balance_eq ? "be" : "mc");
+    fprintf (file, "%-20s", prms.balance_eq ? "be" :
+             (prms.meanfield ? "mc-meanfield" : "mc-many"));
     fprintf (file, "%-+20e", prms.exponent);
     fprintf (file, "%-20d", prms.length_x);
     fprintf (file, "%-20d", prms.nsites);

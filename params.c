@@ -133,6 +133,7 @@ generateParams (Params * prms, int argc, char **argv)
     prms->output_transitions = (args.transitions_given) ? true : false;
     prms->memreq = (args.memreq_given) ? true : false;
     prms->balance_eq = (args.be_given) ? true : false;
+    prms->meanfield = (args.meanfield_given) ? true : false;
 
     // balance equation parameters
     if (args.be_it_arg == 0)

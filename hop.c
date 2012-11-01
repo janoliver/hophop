@@ -122,7 +122,8 @@ printSettings ()
     output (O_BOTH, "\tRealizations for Averaging: \ti = %d\n",
             prms.number_runs);
     output (O_BOTH, "\tMode: \t\t\t\t%s\n\n",
-            prms.balance_eq ? "Balance equations" : "Monte carlo simulation");
+            prms.balance_eq ? "Balance equations" :
+            (prms.meanfield ? "Monte Carlo Meanfield" : "Monte Carlo Many"));
 
     if (prms.balance_eq)
     {
