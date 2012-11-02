@@ -133,7 +133,7 @@ generateParams (Params * prms, int argc, char **argv)
     prms->output_transitions = (args.transitions_given) ? true : false;
     prms->memreq = (args.memreq_given) ? true : false;
     prms->balance_eq = (args.be_given) ? true : false;
-    prms->meanfield = (args.meanfield_given) ? true : false;
+    prms->many = (args.many_given) ? true : false;
 
     // balance equation parameters
     if (args.be_it_arg == 0)
@@ -170,10 +170,9 @@ generateParams (Params * prms, int argc, char **argv)
     }
     prms->ncarriers = args.ncarriers_arg;
 
-    // currently, the balance equations can only handle one single carrier.
-    // therefore, if we use them, ncarriers is set to 1
-    if (prms->balance_eq)
-        prms->ncarriers = 1;
+    // be must use the meanfield approach for multiple charge carriers
+    if (prms->balance_eq && prms->ncarriers > 1)
+        prms->many = false;
 
     // number of runs
     if (args.nruns_arg < 1)

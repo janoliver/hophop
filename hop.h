@@ -39,7 +39,7 @@ typedef struct params
     int length_x, length_y, length_z;
     int nx, ny, nz;
     int ncarriers;
-    bool meanfield;
+    bool many;
     int nsites;
     float exponent;
     float loclength;

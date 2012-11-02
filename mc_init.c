@@ -123,7 +123,7 @@ MC_createSites (RunParams * runprms)
 
     // n dependency: cut out all the occupied sites following the fermi
     // distribution.
-    if (prms.ncarriers > 1 && prms.meanfield)
+    if (prms.ncarriers > 1 && !prms.many)
     {
         j = runprms->nSites;
         k = 0;
@@ -169,7 +169,7 @@ MC_createCarriers (Site * sites)
     Carrier *c;
 
     // is this the meanfield mode?
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     // allocate carrier memory
@@ -207,7 +207,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
     int ncarriers = 1;
 
     // is this the meanfield mode?
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     // select prms.ncarriers random sites for the carriers
@@ -231,7 +231,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
             (float) gsl_ran_exponential (runprms->r, 1.0) / c[i].site->rateSum;
 
         // now insert the carrier into the heap
-        while (i > 0 && c[i].occTime < c[i / 2].occTime && !prms.meanfield)
+        while (i > 0 && c[i].occTime < c[i / 2].occTime && prms.many)
         {
             tmp = c[i];
             c[i] = c[i / 2];

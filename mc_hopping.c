@@ -19,7 +19,7 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
     int ncarriers = 1;
 
     // is this the meanfield mode?
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     // we need the current simulation time.
@@ -217,7 +217,7 @@ updateCarrier (Carrier * c, RunParams * runprms)
     // children always sit at c[2i+1] and c[2i+2]
     // do this only when the non-meanfield mc simulation is selected
     Carrier tmp;
-    while (1 && !prms.meanfield)
+    while (1 && prms.many)
     {
         smallest = (2 * i + 1 < prms.ncarriers &&
                     c[i].occTime > c[2 * i + 1].occTime) ? 2 * i + 1 : i;

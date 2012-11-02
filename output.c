@@ -335,10 +335,10 @@ writeSummary (Results * res)
 
     // write site information
     fprintf (file, "%-20s", prms.balance_eq ? "be" :
-             (prms.meanfield ? "mc-meanfield" : "mc-many"));
+             (prms.many ? "mc-many" : "mc-meanfield"));
     fprintf (file, "%-+20e", prms.exponent);
     fprintf (file, "%-20d", prms.length_x);
-    fprintf (file, "%-20d", prms.nsites);
+    fprintf (file, "%-20e", res->nSites.avg);
     fprintf (file, "%-20d", prms.ncarriers);
     fprintf (file, "%-+20e", prms.loclength);
     fprintf (file, "%-+20e", prms.temperature);

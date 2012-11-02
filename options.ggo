@@ -29,6 +29,7 @@ option "X" X "The x-length of the sample. Right now, only cubic samples should b
 option "Y" Y "The y-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional
 option "Z" Z "The z-length of the sample. Right now, only cubic samples should be used, so rather use the parameter --length." int default="50" optional 
 option "nsites" N "The number of localized states. This value has to be bigger than --ncarriers. Deprecated! Scale the number os states using --length." int optional default="125000"
+option "ncarriers" n "The number of charge carriers in the system." int default="1" optional
 option "rc" - "Determines up to which distance sites should be neighbors." float default="3" optional 
 option "exponent" p "The exponent of the DOS g(x) = exp(-(x)^p)" float optional default="2.0"
 option "llength" a "Localization length of the sites, assumed equal for all of them." float default="0.215" optional
@@ -40,12 +41,11 @@ option "cutoutenergy" - "States below this energy will be cut out of the DOS" fl
 option "cutoutwidth" - "The width of energies who are cutted." float default="0.5" optional 
 
 
-section "Monte carlo simulation" sectiondesc="The following options matter only, when the system is simulated using a monte carlo simulation (which is the default)"
+section "Monte carlo simulation" sectiondesc="The following options matter only, when the system is simulated using a Monte Carlo simulation (which is the default)"
 
-option "ncarriers" n "The number of charge carriers in the system." int default="10" optional
 option "simulation" I "The number of hops during which statistics are collected." long default="1000000000" optional
 option "relaxation" R "The number of hops to relax." long default="100000000" optionaloption "nreruns" x "How many times should the electron be placed at some random starting position?" int default="1" optional
-option "meanfield" - "Instead of simulating n carriers, use a single carrier in a modified DOS (mean field approach)" flag off
+option "many" - "Instead of using the mean field approach, simulate multiple charge carriers. (slow!!!)" flag off
 
 
 section "Balance equations" sectiondesc="These options only matter, when the solution is found by solving the balance equations. (setting the --be flag)"

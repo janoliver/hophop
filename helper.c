@@ -19,16 +19,19 @@ average_errors (Results * res)
 
     int nResults = sizeof (results) / sizeof (Result *);
 
-    int i, j, c = 0;
+    int i, j, c;
 
     // calculate averages
     for (i = 0; i < nResults; ++i)
     {
+        c = 0;
         for (j = 0; j < prms.number_runs; ++j)
         {
             if (results[i]->done[j])
             {
+
                 results[i]->avg += results[i]->values[j];
+
                 c++;
             }
         }

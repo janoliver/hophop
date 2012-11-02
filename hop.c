@@ -124,7 +124,7 @@ printSettings ()
             prms.number_runs);
     output (O_BOTH, "\tMode: \t\t\t\t%s\n\n",
             prms.balance_eq ? "Balance equations" :
-            (prms.meanfield ? "Monte Carlo Meanfield" : "Monte Carlo Many"));
+            (prms.many ? "Monte Carlo Many" : "Monte Carlo Meanfield"));
 
     if (prms.balance_eq)
     {

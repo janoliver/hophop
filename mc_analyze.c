@@ -45,7 +45,7 @@ MC_calculateResults (Site * sites, Carrier * carriers, Results * res,
     res->nFailedAttempts.values[runprms->iRun - 1] = runprms->nFailedAttempts;
     res->nFailedAttempts.done[runprms->iRun - 1] = true;
 
-    res->nSites.values[runprms->iRun - 1] = runprms->nSites;
+    res->nSites.values[runprms->iRun - 1] = (float)runprms->nSites;
     res->nSites.done[runprms->iRun - 1] = true;
 
 }
@@ -64,7 +64,7 @@ calcMobility (Carrier * carriers, RunParams * runprms)
 
     // the meanfield stuff
     int ncarriers = 1;
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     for (i = 0; i < ncarriers; ++i)
@@ -84,7 +84,7 @@ calcEquilibrationEnergy (Site * sites, RunParams * runprms)
 
     // the meanfield stuff
     int ncarriers = 1;
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     for (i = 0; i < runprms->nSites; ++i)
@@ -107,7 +107,7 @@ calcDiffusivity (Carrier * carriers, RunParams * runprms)
 
     // the meanfield stuff
     int ncarriers = 1;
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     for (i = 0; i < ncarriers; ++i)
@@ -135,7 +135,7 @@ calcEinsteinRelation (Carrier * carriers, RunParams * runprms)
 
     // the meanfield stuff
     int ncarriers = 1;
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     for (i = 0; i < ncarriers; ++i)
@@ -160,7 +160,7 @@ calcCurrentDensity (Carrier * carriers, RunParams * runprms)
 
     // the meanfield stuff
     int ncarriers = 1;
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     for (i = 0; i < ncarriers; ++i)
@@ -180,7 +180,7 @@ calcAverageEnergy (Carrier * carriers)
 
     // the meanfield stuff
     int ncarriers = 1;
-    if (!prms.meanfield)
+    if (prms.many)
         ncarriers = prms.ncarriers;
 
     for (i = 0; i < ncarriers; ++i)
