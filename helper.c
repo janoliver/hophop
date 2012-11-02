@@ -41,12 +41,14 @@ average_errors (Results * res)
     // calculate errors
     for (i = 0; i < nResults; ++i)
     {
+        c = 0;
         for (j = 0; j < prms.number_runs; ++j)
         {
             if (results[i]->done[j])
             {
                 results[i]->err +=
                     pow (results[i]->avg - results[i]->values[j], 2);
+                c++;
             }
         }
         results[i]->err = sqrt (results[i]->err / c);
