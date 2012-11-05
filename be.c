@@ -34,7 +34,7 @@ BE_run (Results * res, RunParams * runprms)
 
     // free resources
     int i;
-    for (i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < runprms->nSites; ++i)
         free (sites[i].neighbors);
     free (sites);
 
@@ -59,21 +59,21 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
     SLE *neighbor, *neighbor2;
 
     // find out the number of entries
-    nnz = 2 * prms.nsites - 1;
-    for (i = 1; i < prms.nsites; ++i)
+    nnz = 2 * runprms->nSites - 1;
+    for (i = 1; i < runprms->nSites; ++i)
         nnz += sites[i].nNeighbors;
 
     //allocate memory
-    ia = malloc (sizeof (int) * (prms.nsites + 1));
+    ia = malloc (sizeof (int) * (runprms->nSites + 1));
     ja = malloc (sizeof (int) * nnz);
     a = malloc (sizeof (double) * nnz);
-    rhs = calloc (prms.nsites, sizeof (double));
-    x = malloc (sizeof (double) * prms.nsites);
+    rhs = calloc (runprms->nSites, sizeof (double));
+    x = malloc (sizeof (double) * runprms->nSites);
 
     // create the arrays
     int counter = 0;
     ia[0] = 0;
-    for (i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < runprms->nSites; ++i)
     {
         // first element is always 1
         a[counter] = 1;
@@ -81,7 +81,7 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
         counter++;
     }
 
-    for (i = 1; i < prms.nsites; ++i)
+    for (i = 1; i < runprms->nSites; ++i)
     {
         // where does the current row begin?
         ia[i] = counter;
@@ -113,19 +113,19 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
             counter++;
         }
     }
-    ia[prms.nsites] = counter;
+    ia[runprms->nSites] = counter;
 
     // create the right hand side
     rhs[0] = 1;
 
     // create the initial guess
-    for (i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < runprms->nSites; ++i)
     {
-        x[i] = 1. / prms.nsites;
+        x[i] = 1. / runprms->nSites;
     }
 
     // perform the calculation
-    pmgmres_ilu_cr (prms.nsites, nnz, ia, ja, a, x, rhs, prms.be_outer_it,
+    pmgmres_ilu_cr (runprms->nSites, nnz, ia, ja, a, x, rhs, prms.be_outer_it,
                     prms.be_it, prms.be_abs_tol, prms.be_rel_tol);
 
     //timer
@@ -140,7 +140,7 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
 
     // calculate mobility
     double sum = 0;
-    for (i = 0; i < prms.nsites; ++i)
+    for (i = 0; i < runprms->nSites; ++i)
         for (j = 0; j < sites[i].nNeighbors; ++j)
             sum +=
                 x[i] * sites[i].neighbors[j].rate *
@@ -148,6 +148,9 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
 
     res->mobility.values[runprms->iRun - 1] = sum / prms.field;
     res->mobility.done[runprms->iRun - 1] = true;
+
+    res->nSites.values[runprms->iRun - 1] = (float)runprms->nSites;
+    res->nSites.done[runprms->iRun - 1] = true;
 
 
     // free

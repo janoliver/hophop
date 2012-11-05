@@ -75,11 +75,11 @@ MC_createSites (RunParams * runprms)
                 }
 
                 if (!prms.gaussian)
-                    s[i].energy = (float) gsl_ran_exppow (runprms->r, 1.,
-                                                          prms.exponent);
+                    s[i].energy = (float) -1. * fabs(gsl_ran_exppow (
+                        runprms->r, 1., prms.exponent));
                 else
                     s[i].energy = (float) gsl_ran_gaussian (runprms->r, 1.);
-
+                
                 s[i].carrier = NULL;
                 s[i].visited = 0;
                 s[i].visitedUpward = 0;

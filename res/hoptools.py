@@ -103,7 +103,9 @@ class SummaryParser(object):
             "<": np.less,
             "<=": np.less_equal,
             "==": np.equal,
-            "!=": np.not_equal 
+            "!=": np.not_equal,
+            "str==": np.core.defchararray.equal,
+            "str!=": np.core.defchararray.not_equal
         }
 
         # test the operator validity
@@ -117,7 +119,7 @@ class SummaryParser(object):
             try:
                 float(left)
             except:
-                raise Exception("In the expression use valid floats!")
+                pass # seems to be astring...
 
         # test the right side
         if right in self.dtype.names:
@@ -126,8 +128,8 @@ class SummaryParser(object):
             try:
                 float(right)
             except:
-                raise Exception("In the expression use valid floats!")
-
+                pass # seems to be a string...
+                
         self.working_data = self.working_data[operators[operator](left, right)]
 
         return self

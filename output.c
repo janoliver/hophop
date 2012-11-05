@@ -245,7 +245,7 @@ writeSummary (Results * res)
     time (&now);
     struct tm *ti;
     ti = localtime (&now);
-    sprintf (timestring, "%04d-%02d-%02d_%02d:%02d:%02d",
+    sprintf (timestring, "%04d-%02d-%02dT%02d:%02d:%02d",
              ti->tm_year + 1900, ti->tm_mon, ti->tm_mday, ti->tm_hour,
              ti->tm_min, ti->tm_sec);
 
@@ -300,7 +300,7 @@ writeSummary (Results * res)
         fprintf (file, "\n");
 
         fprintf (file, "%-20s", "#str");
-        fprintf (file, "%-20s", "int");
+        fprintf (file, "%-20s", "float");
         fprintf (file, "%-20s", "int");
         fprintf (file, "%-20s", "long");
         fprintf (file, "%-20s", "long");
