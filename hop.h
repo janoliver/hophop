@@ -120,8 +120,8 @@ typedef struct site
     float x;
     float y;
     float z;
-    int visited;
-    int visitedUpward;
+    unsigned long visited;
+    unsigned long visitedUpward;
     Carrier *carrier;
     int index;
     struct site_list_element *neighbors;
@@ -178,7 +178,6 @@ int output (int mode, const char *fmt, ...);
 
 // output.c
 void writeSites (Site * sites, RunParams * runprms);
-void writeSitesConfig (Site * sites, RunParams * runprms);
 void writeTransitions (Site * sites, RunParams * runprms);
 void writeConfig (RunParams * runprms);
 void writeResults (Results * res, RunParams * runprms);

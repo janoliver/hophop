@@ -4,49 +4,7 @@
 #include "hop.h"
 
 void checkOutputFolder (RunParams * runprms);
-
-
-/*
- * Writes the sites file with the following format:
- * N    X   Y   Z
- * x1   y1  z2  E1
- * x2   y2  z2  E2
- * .
- * .
- * .
- * xn   yn  zn  En
- * 
- * Filename: sites-config.dat
- */
-void
-writeSitesConfig (Site * sites, RunParams * runprms)
-{
-    checkOutputFolder (runprms);
-
-    FILE *file;
-    int i;
-    char fileName[128] = "";
-
-    sprintf (fileName, "%s/%d/sites-config.dat", prms.output_folder,
-             runprms->iRun);
-
-    file = fopen (fileName, "w+");
-
-    // write box information
-    fprintf (file, "%8d\t%8d\t%8d\t%8d\n", prms.nsites, prms.length_x,
-             prms.length_y, prms.length_z);
-
-    // write site information
-    for (i = 0; i < prms.nsites; ++i)
-    {
-        fprintf (file, "%8.5f\t%8.5f\t%8.5f\t%8.5f\n",
-                 sites[i].x, sites[i].y, sites[i].z, sites[i].energy);
-    }
-    fclose (file);
-
-    // some output
-    output (O_SERIAL, "\tWrote site configuration to \t\t%s\n", fileName);
-}
+void get_timestring (char** timestring);
 
 /*
  * Writes the sites file with the following format:
@@ -73,7 +31,7 @@ writeSites (Site * sites, RunParams * runprms)
     // write site information
     for (i = 0; i < prms.nsites; ++i)
     {
-        fprintf (file, "%8.5f\t%8.5f\t%8.5f\t%8.5f\t%8d\t%8d\n",
+        fprintf (file, "%8.5f %8.5f %8.5f %8.5f %8lu %8lu\n",
                  sites[i].x, sites[i].y, sites[i].z,
                  sites[i].energy, sites[i].visited, sites[i].visitedUpward);
     }
@@ -159,7 +117,8 @@ writeResults (Results * res, RunParams * runprms)
     char fileName[128] = "";
     int buffer = 0;
 
-    sprintf (fileName, "%s/results.dat", prms.output_folder);
+    sprintf (fileName, "%s/%d/results.dat", prms.output_folder,
+        runprms->iRun);
 
     // check for the header
     file2 = fopen (fileName, "r");
@@ -171,41 +130,48 @@ writeResults (Results * res, RunParams * runprms)
 
     file = fopen (fileName, "a+");
 
+    char * timestring = NULL;
+    get_timestring(&timestring);
+
     // write head
     if (buffer == 0)
     {
-        if (prms.balance_eq)
-        {
-            fprintf (file, "#mobility         ");
-            fprintf (file, "random seed\n");
-        }
-        else
-        {
-            fprintf (file, "#simul. time      ");
-            fprintf (file, "mobility          ");
-            fprintf (file, "diffusivity x/y   ");
-            fprintf (file, "current density   ");
-            fprintf (file, "Equilibration en. ");
-            fprintf (file, "random seed\n");
-        }
+
+        fprintf (file, "%-20s", "#number_sites");
+        fprintf (file, "%-20s", "simulation_time");
+        fprintf (file, "%-20s", "mobility");
+        fprintf (file, "%-20s", "diffusivity");
+        fprintf (file, "%-20s", "einstein_rel");
+        fprintf (file, "%-20s", "current_dens");
+        fprintf (file, "%-20s", "eq_energy");
+        fprintf (file, "%-20s", "avg_energy");
+        fprintf (file, "%-20s", "random_seed");
+        fprintf (file, "%-20s", "finish_time");
+        fprintf (file, "\n");
+
+        fprintf (file, "%-20s", "#long");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "float");
+        fprintf (file, "%-20s", "long");
+        fprintf (file, "%-20s", "datetime");
+        fprintf (file, "\n");
     }
 
-    // write site information
-    if (prms.balance_eq)
-    {
-        fprintf (file, "%-+18e", res->mobility.values[runprms->iRun]);
-        fprintf (file, "%lu\n", runprms->rseed_used);
-    }
-    else
-    {
-        fprintf (file, "%-18e", runprms->simulationTime);
-        fprintf (file, "%-+18e", res->mobility.values[runprms->iRun]);
-        fprintf (file, "%-+18e", res->diffusivity.values[runprms->iRun]);
-        fprintf (file, "%-+18e", res->currentDensity.values[runprms->iRun]);
-        fprintf (file, "%-+18e",
-                 res->equilibrationEnergy.values[runprms->iRun]);
-        fprintf (file, "%lu\n", runprms->rseed_used);
-    }
+    fprintf (file, "%-20e", res->nSites.values[runprms->iRun - 1]);
+    fprintf (file, "%-+20e", res->simulationTime.values[runprms->iRun - 1]);
+    fprintf (file, "%-+20e", res->mobility.values[runprms->iRun - 1]);
+    fprintf (file, "%-+20e", res->diffusivity.values[runprms->iRun - 1]);
+    fprintf (file, "%-+20e", res->einsteinrelation.values[runprms->iRun - 1]);
+    fprintf (file, "%-+20e", res->currentDensity.values[runprms->iRun - 1]);
+    fprintf (file, "%-+20e", res->equilibrationEnergy.values[runprms->iRun - 1]);
+    fprintf (file, "%-+20e", res->avgenergy.values[runprms->iRun - 1]);
+    fprintf (file, "%-20lu", runprms->rseed_used);
+    fprintf (file, "%-20s\n", timestring);
 
     fclose (file);
 
@@ -239,16 +205,6 @@ writeSummary (Results * res)
     FILE *file, *file2;
     int buffer = 0;
 
-    // build the current time string
-    char timestring[20];
-    time_t now;
-    time (&now);
-    struct tm *ti;
-    ti = localtime (&now);
-    sprintf (timestring, "%04d-%02d-%02dT%02d:%02d:%02d",
-             ti->tm_year + 1900, ti->tm_mon, ti->tm_mday, ti->tm_hour,
-             ti->tm_min, ti->tm_sec);
-
     sprintf (fileName, "%s", prms.output_summary);
 
     // check for the header
@@ -260,6 +216,9 @@ writeSummary (Results * res)
     }
 
     file = fopen (fileName, "a+");
+
+    char * timestring = NULL;
+    get_timestring(&timestring);
 
     // write header
     if (buffer == 0)
@@ -279,7 +238,7 @@ writeSummary (Results * res)
         fprintf (file, "%-20s", "number_relaxation");
         fprintf (file, "%-20s", "number_simulation");
         fprintf (file, "%-20s", "cutout_energy");
-        fprintf (file, "%-20s", "cutout_energy_err");
+        fprintf (file, "%-20s", "cutout_width");
         fprintf (file, "%-20s", "simulation_time");
         fprintf (file, "%-20s", "simulation_time_err");
         fprintf (file, "%-20s", "mobility");
@@ -377,4 +336,18 @@ writeSummary (Results * res)
 
     // some output
     output (O_SERIAL, "\nExtended summary file %s\n", fileName);
+}
+
+void get_timestring(char ** timestring) 
+{
+    // build the current time string
+    *timestring = (char*)malloc(20*sizeof(char));
+    time_t now;
+    time (&now);
+    struct tm *ti;
+    ti = localtime (&now);
+    sprintf (*timestring, "%04d-%02d-%02dT%02d:%02d:%02d",
+             ti->tm_year + 1900, ti->tm_mon, ti->tm_mday, ti->tm_hour,
+             ti->tm_min, ti->tm_sec);
+
 }

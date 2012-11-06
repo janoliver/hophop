@@ -58,7 +58,6 @@ MC_run (Results * res, RunParams * runprms)
         writeResults (res, runprms);
         writeConfig (runprms);
         writeSites (sites, runprms);
-        writeSitesConfig (sites, runprms);
         if (prms.output_transitions)
             writeTransitions (sites, runprms);
     }

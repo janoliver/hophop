@@ -29,7 +29,6 @@ BE_run (Results * res, RunParams * runprms)
         writeResults (res, runprms);
         writeConfig (runprms);
         writeSites (sites, runprms);
-        writeSitesConfig (sites, runprms);
     }
 
     // free resources

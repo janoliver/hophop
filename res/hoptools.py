@@ -152,6 +152,19 @@ class SummaryParser(object):
         self.reset()
         return ret
 
+    def get_single_values(self, col):
+        """
+        Returns one column and each value only once.
+        """
+
+        if not col in self.dtype.names:
+            raise Exception("Unknown column name!")
+
+        ret = np.unique(self.working_data[col])
+
+        self.reset()
+        return ret
+
     def _get_type(self, typestr):
         types = {
             'int' : '<i4',
