@@ -22,7 +22,6 @@ class SummaryParser(object):
     expression_matcher = None
     
     def __init__(self, filename=None):
-        self.version = 2.1
         self.col_width = 20
 
         if filename:
@@ -36,10 +35,8 @@ class SummaryParser(object):
             for i in xrange(0, len(l), n):
                 yield l[i:i+n].strip('# ')
         
-        # check the version
-        version = f.readline().strip().split()[1]
-        if float(version) != self.version:
-            raise Exception("Parser and summary file versions don't match!")
+        # version
+        version = float(f.readline().strip().split()[1])
 
         # column titles
         col_line = f.readline().strip()
