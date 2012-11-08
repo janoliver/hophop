@@ -22,7 +22,7 @@ class SummaryParser(object):
     expression_matcher = None
     
     def __init__(self, filename=None):
-        self.version = 2.0
+        self.version = 2.1
         self.col_width = 20
 
         if filename:

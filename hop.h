@@ -152,6 +152,9 @@ typedef struct results_struct
     Result simulationTime;
     Result nFailedAttempts;
     Result nSites;
+
+    time_t time_start;
+    time_t time_finished;
 } Results;
 
 

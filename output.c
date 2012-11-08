@@ -4,7 +4,8 @@
 #include "hop.h"
 
 void checkOutputFolder (RunParams * runprms);
-void get_timestring (char** timestring);
+void get_timestring (char** timestringm, time_t t);
+void get_timestring_now(char ** timestring);
 
 /*
  * Writes the sites file with the following format:
@@ -131,7 +132,7 @@ writeResults (Results * res, RunParams * runprms)
     file = fopen (fileName, "a+");
 
     char * timestring = NULL;
-    get_timestring(&timestring);
+    get_timestring_now(&timestring);
 
     // write head
     if (buffer == 0)
@@ -217,9 +218,19 @@ writeSummary (Results * res)
 
     file = fopen (fileName, "a+");
 
-    char * timestring = NULL;
-    get_timestring(&timestring);
+    // the time
+    char * timestring_start = NULL;
+    get_timestring(&timestring_start, res->time_start);
+    char * timestring_finish = NULL;
+    get_timestring(&timestring_finish, res->time_finished);
 
+    // the mode string
+    char mode[1024];
+    sprintf (mode, "%s-%s-%s", 
+        prms.balance_eq ? "be" : "mc",
+        prms.many ? "many" : "meanfield",
+        prms.gaussian ? "full" : "half");
+    
     // write header
     if (buffer == 0)
     {
@@ -254,6 +265,7 @@ writeSummary (Results * res)
         fprintf (file, "%-20s", "avg_energy");
         fprintf (file, "%-20s", "avg_energy_err");
         fprintf (file, "%-20s", "random_seed");
+        fprintf (file, "%-20s", "start_time");
         fprintf (file, "%-20s", "finish_time");
         fprintf (file, "%-20s", "comment");
         fprintf (file, "\n");
@@ -288,13 +300,13 @@ writeSummary (Results * res)
         fprintf (file, "%-20s", "float");
         fprintf (file, "%-20s", "long");
         fprintf (file, "%-20s", "datetime");
+        fprintf (file, "%-20s", "datetime");
         fprintf (file, "%-20s", "str");
         fprintf (file, "\n");
     }
 
     // write site information
-    fprintf (file, "%-20s", prms.balance_eq ? "be" :
-             (prms.many ? "mc-many" : "mc-meanfield"));
+    fprintf (file, "%-20s", mode);
     fprintf (file, "%-+20e", prms.exponent);
     fprintf (file, "%-20d", prms.length_x);
     fprintf (file, "%-20e", res->nSites.avg);
@@ -303,9 +315,9 @@ writeSummary (Results * res)
     fprintf (file, "%-+20e", prms.temperature);
     fprintf (file, "%-+20e", prms.field);
     fprintf (file, "%-20d", prms.number_runs);
-    fprintf (file, "%-20d", prms.number_reruns);
-    fprintf (file, "%-20lu", prms.relaxation);
-    fprintf (file, "%-20lu", prms.simulation);
+    fprintf (file, "%-20d", prms.balance_eq ? 0 : prms.number_reruns);
+    fprintf (file, "%-20lu", prms.balance_eq ? 0 : prms.relaxation);
+    fprintf (file, "%-20lu", prms.balance_eq ? 0 : prms.simulation);
     fprintf (file, "%-+20e", prms.cut_dos ? prms.cut_out_energy : 0);
     fprintf (file, "%-+20e", prms.cut_dos ? prms.cut_out_width : 0);
     fprintf (file, "%-+20e", res->simulationTime.avg);
@@ -323,7 +335,8 @@ writeSummary (Results * res)
     fprintf (file, "%-+20e", res->avgenergy.avg);
     fprintf (file, "%-+20e", res->avgenergy.err);
     fprintf (file, "%-20lu", prms.rseed);
-    fprintf (file, "%-20s", timestring);
+    fprintf (file, "%-20s", timestring_start);
+    fprintf (file, "%-20s", timestring_finish);
 
     if (strArgGiven (prms.comment))
         fprintf (file, "%s", prms.comment);
@@ -338,12 +351,24 @@ writeSummary (Results * res)
     output (O_SERIAL, "\nExtended summary file %s\n", fileName);
 }
 
-void get_timestring(char ** timestring) 
+void get_timestring(char ** timestring, time_t t) 
+{
+    // build the current time string
+    *timestring = (char*)malloc(20*sizeof(char));
+    struct tm *ti;
+    ti = localtime (&t);
+    sprintf (*timestring, "%04d-%02d-%02dT%02d:%02d:%02d",
+             ti->tm_year + 1900, ti->tm_mon, ti->tm_mday, ti->tm_hour,
+             ti->tm_min, ti->tm_sec);
+
+}
+
+void get_timestring_now(char ** timestring) 
 {
     // build the current time string
     *timestring = (char*)malloc(20*sizeof(char));
     time_t now;
-    time (&now);
+    time(&now);
     struct tm *ti;
     ti = localtime (&now);
     sprintf (*timestring, "%04d-%02d-%02dT%02d:%02d:%02d",

@@ -53,6 +53,9 @@ average_errors (Results * res)
         }
         results[i]->err = sqrt (results[i]->err / c);
     }
+
+    // set finish time
+    time(&(res->time_finished));
 }
 
 void
@@ -89,6 +92,8 @@ init_results (Results * res)
             results[i]->done[j] = false;
         }
     }
+
+    time(&(res->time_start));
 }
 
 void

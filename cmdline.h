@@ -31,7 +31,7 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_VERSION
 /** @brief the program version */
-#define CMDLINE_PARSER_VERSION "2.1"
+#define CMDLINE_PARSER_VERSION "2.2"
 #endif
 
 /** @brief Where the command line options are stored */
@@ -118,10 +118,10 @@ struct gengetopt_args_info
   const char *many_help; /**< @brief Instead of using the mean field approach, simulate multiple charge carriers. (slow!!!) help description.  */
   int be_flag;	/**< @brief Solve balance equations (default=off).  */
   const char *be_help; /**< @brief Solve balance equations help description.  */
-  long be_it_arg;	/**< @brief Max inner iterations after which the calculation is stopped.  (default='1000').  */
+  long be_it_arg;	/**< @brief Max inner iterations after which the calculation is stopped.  (default='50').  */
   char * be_it_orig;	/**< @brief Max inner iterations after which the calculation is stopped.  original value given at command line.  */
   const char *be_it_help; /**< @brief Max inner iterations after which the calculation is stopped.  help description.  */
-  long be_oit_arg;	/**< @brief Max outer iterations or restarts of the algorithm. (default='1').  */
+  long be_oit_arg;	/**< @brief Max outer iterations or restarts of the algorithm. (default='100').  */
   char * be_oit_orig;	/**< @brief Max outer iterations or restarts of the algorithm. original value given at command line.  */
   const char *be_oit_help; /**< @brief Max outer iterations or restarts of the algorithm. help description.  */
   float tol_abs_arg;	/**< @brief absolute tolerance for finding the solution (default='1e-8').  */
