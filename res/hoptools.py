@@ -126,6 +126,12 @@ class SummaryParser(object):
                 float(right)
             except:
                 pass # seems to be a string...
+
+        if operator == '==' and (type(left) == str or type(right) == str):
+            operator = 'str=='
+
+        if operator == '!=' and (type(left) == str or type(right) == str):
+            operator = 'str!='
                 
         self.working_data = self.working_data[operators[operator](left, right)]
 
