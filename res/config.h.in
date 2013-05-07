@@ -1,2 +1,0 @@
-#define PKG_VERSION "@PACKAGE_VERSION@"
-#define PKG_NAME    "@PACKAGE_NAME@"

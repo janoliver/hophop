@@ -47,7 +47,7 @@ int compare_addtosites (const void *a, const void *b);
 Site *
 MC_createSites (RunParams * runprms)
 {
-    size_t i, j, k, l;
+    int i, j, k, l;
     Site *s, *s2;
 
     s = (Site *) malloc (runprms->nSites * sizeof (Site));
@@ -163,7 +163,7 @@ MC_createSites (RunParams * runprms)
  * allocate carrier array and initialize the values
  */
 Carrier *
-MC_createCarriers (Site * sites)
+MC_createCarriers ()
 {
     int i, ncarriers = 1;
     Carrier *c;
@@ -202,7 +202,7 @@ MC_createCarriers (Site * sites)
 void
 MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
 {
-    size_t i;
+    int i;
     Carrier tmp;
     int ncarriers = 1;
 
@@ -259,7 +259,7 @@ MC_distributeCarriers (Carrier * c, Site * sites, RunParams * runprms)
 Cell *
 createCells (Site * sites, RunParams * runprms)
 {
-    size_t i, tx, ty, tz, nCells;
+    int i, tx, ty, tz, nCells;
     Cell *c, *temp;
     ln *head;
 
@@ -304,7 +304,7 @@ createCells (Site * sites, RunParams * runprms)
 void
 MC_createHoppingRates (Site * sites, RunParams * runprms)
 {
-    size_t k, l;
+    int k, l;
     ln *sList, *tmp;
     Cell *cells = (Cell *) createCells (sites, runprms);
 

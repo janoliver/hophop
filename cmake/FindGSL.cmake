@@ -1,0 +1,37 @@
+# This module defines
+# GSL_INCLUDE_DIR, where to find include files, etc.
+# GSL_LIBRARIES, the libraries to link against.
+# GSL_STATIC_LIBRARY_PATH
+# GSL_FOUND.
+
+# also defined, but not for general use are
+# GSL_LIBRARY, where to find the CUnit library.
+
+MESSAGE(STATUS "Searching for gsl library")
+
+FIND_PATH(GSL_INCLUDE_DIR gsl)
+
+FIND_LIBRARY(GSL_LIBRARY gsl)
+FIND_LIBRARY(GSLCBLAS_LIBRARY gslcblas)
+
+IF(GSL_INCLUDE_DIR)
+  IF(GSL_LIBRARY)
+    SET(GSL_FOUND TRUE)
+    SET(GSL_LIBRARIES ${GSL_LIBRARY} ${GSLCBLAS_LIBRARY})
+  ENDIF(GSL_LIBRARY)
+ENDIF(GSL_INCLUDE_DIR)
+
+IF (GSL_FOUND)
+   IF (NOT GSL_FIND_QUIETLY)
+      MESSAGE(STATUS "Found GSL: ${GSL_LIBRARIES}")
+   ENDIF (NOT GSL_FIND_QUIETLY)
+ELSE (GSL_FOUND)
+   IF (GSL_FIND_REQUIRED)
+      MESSAGE(SEND_ERROR "Could NOT find GSL")
+   ENDIF (GSL_FIND_REQUIRED)
+ENDIF (GSL_FOUND)
+
+MARK_AS_ADVANCED (
+  GSL_INCLUDE_DIR 
+  GSL_LIBRARIES
+)

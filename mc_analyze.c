@@ -3,7 +3,7 @@
 #include "hop.h"
 
 double calcMobility (Carrier * carriers, RunParams * runprms);
-double calcDiffusivity (Carrier * carriers, RunParams * runprms);
+double calcDiffusivity (Carrier * carriers);
 double calcEinsteinRelation (Carrier * carriers, RunParams * runprms);
 double calcCurrentDensity (Carrier * carriers, RunParams * runprms);
 double calcEquilibrationEnergy (Site * sites, RunParams * runprms);
@@ -18,7 +18,7 @@ MC_calculateResults (Site * sites, Carrier * carriers, Results * res,
     res->mobility.done[runprms->iRun - 1] = true;
 
     res->diffusivity.values[runprms->iRun - 1] =
-        calcDiffusivity (carriers, runprms);
+        calcDiffusivity (carriers);
     res->diffusivity.done[runprms->iRun - 1] = true;
 
     res->currentDensity.values[runprms->iRun - 1] =
@@ -79,7 +79,7 @@ calcMobility (Carrier * carriers, RunParams * runprms)
 double
 calcEquilibrationEnergy (Site * sites, RunParams * runprms)
 {
-    size_t i;
+    long i;
     double sum = 0;
 
     // the meanfield stuff
@@ -98,7 +98,7 @@ calcEquilibrationEnergy (Site * sites, RunParams * runprms)
  * perpendicular to the field direction.
  */
 double
-calcDiffusivity (Carrier * carriers, RunParams * runprms)
+calcDiffusivity (Carrier * carriers)
 {
     double ex2, ey2;
     int i;

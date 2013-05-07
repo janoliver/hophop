@@ -5,10 +5,11 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #include <sys/time.h>
+#include <sys/types.h>
 
 #include <time.h>
 #include <math.h>
@@ -22,8 +23,6 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_const_cgsm.h>
 #include <gsl/gsl_const_mksa.h>
-
-#include "config.h"
 
 #include "cmdline.h"
 
@@ -94,9 +93,9 @@ typedef struct run_params
     long rseed_used;
 
     double simulationTime;
-    size_t nHops;
-    size_t nFailedAttempts;
-    size_t nSites;
+    long nHops;
+    long nFailedAttempts;
+    int nSites;
     int iRun;
     bool stat;
 } RunParams;
@@ -110,8 +109,8 @@ typedef struct carrier
     struct site *site;
     int index;
     double occTime;
-    size_t nFailedAttempts;
-    size_t nHops;
+    long nFailedAttempts;
+    long nHops;
 } Carrier;
 
 typedef struct site
@@ -196,7 +195,7 @@ void MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
 Site *MC_createSites (RunParams * runprms);
 void MC_distributeCarriers (Carrier * carriers, Site * sites,
                             RunParams * runprms);
-Carrier *MC_createCarriers (Site * sites);
+Carrier *MC_createCarriers ();
 void MC_createHoppingRates (Site * sites, RunParams * runprms);
 void MC_removeSoftPairs (Site * sites, RunParams * runprms);
 void MC_calculateResults (Site * sites, Carrier * carriers, Results * res,

@@ -10,7 +10,6 @@ MC_run (Results * res, RunParams * runprms)
     int i;
 
     struct timeval start, end, result;
-    struct timezone tz;
 
     // some output
     output (O_PARALLEL, "Starting %d. Iteration (total %d): Thread ID %d\n",
@@ -23,9 +22,9 @@ MC_run (Results * res, RunParams * runprms)
     MC_createHoppingRates (sites, runprms);
     if (prms.removesoftpairs)
         MC_removeSoftPairs (sites, runprms);
-    carriers = MC_createCarriers (sites);
+    carriers = MC_createCarriers ();
 
-    gettimeofday (&start, &tz);
+    gettimeofday (&start, NULL);
 
     // simulate
     for (i = 0; i < prms.number_reruns; ++i)
@@ -35,7 +34,7 @@ MC_run (Results * res, RunParams * runprms)
     }
 
     // some more output
-    gettimeofday (&end, &tz);
+    gettimeofday (&end, NULL);
     timeval_subtract (&result, &start, &end);
 
     double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;

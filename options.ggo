@@ -1,7 +1,7 @@
 #  Created by Jan Oliver Oelerich
 
-package "HOP"
-version "2.2"
+package ""
+version ""
 
 purpose "This software simulates hopping in disordered semiconductors with \
 hopping on localized states. It uses Monte-Carlo simulation techniques. \

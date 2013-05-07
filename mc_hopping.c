@@ -2,9 +2,8 @@
 
 #include "hop.h"
 
-void hoppingStep (Site * sites, Carrier * carriers, RunParams * runprms);
-void hop (Carrier * c, SLE * dest, Vector * dist, Carrier * carriers,
-          RunParams * runprms);
+void hoppingStep (Carrier * carriers, RunParams * runprms);
+void hop (Carrier * c, SLE * dest, Vector * dist, RunParams * runprms);
 void updateCarrier (Carrier * carriers, RunParams * runprms);
 
 /*
@@ -15,7 +14,7 @@ void
 MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
                int iReRun)
 {
-    size_t j;
+    int j;
     int ncarriers = 1;
 
     // is this the meanfield mode?
@@ -31,7 +30,7 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
     for (j = 0; j <= 100; j++)
     {
         while (runprms->nHops < prms.relaxation / 100 * j)
-            hoppingStep (sites, carriers, runprms);
+            hoppingStep (carriers, runprms);
 
         output (O_SERIAL, "\r\tRelaxing...   (run %d of %d):\t%2d%%", iReRun,
                 prms.number_reruns, (int) j);
@@ -52,7 +51,7 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
     for (j = 0; j <= 100; j++)
     {
         while (runprms->nHops <= prms.simulation / 100 * j)
-            hoppingStep (sites, carriers, runprms);
+            hoppingStep (carriers, runprms);
 
         output (O_SERIAL, "\r\tSimulating... (run %d of %d):\t%2d%%", iReRun,
                 prms.number_reruns, (int) j);
@@ -83,7 +82,7 @@ MC_simulation (Site * sites, Carrier * carriers, RunParams * runprms,
  * function is called with these parameters.
  */
 void
-hoppingStep (Site * sites, Carrier * carriers, RunParams * runprms)
+hoppingStep (Carrier * carriers, RunParams * runprms)
 {
     Carrier *c = NULL;
     SLE *dest = NULL;
@@ -109,7 +108,7 @@ hoppingStep (Site * sites, Carrier * carriers, RunParams * runprms)
         // do the hopping and write some statistics
         runprms->nHops++;
 
-        hop (c, dest, &dest->dist, carriers, runprms);
+        hop (c, dest, &dest->dist, runprms);
     }
     else
     {
@@ -128,8 +127,7 @@ hoppingStep (Site * sites, Carrier * carriers, RunParams * runprms)
  * in the hopping process and all of the sites around these two sites.
  */
 void
-hop (Carrier * c, SLE * dest, Vector * dist, Carrier * carriers,
-     RunParams * runprms)
+hop (Carrier * c, SLE * dest, Vector * dist, RunParams * runprms)
 {
     Site *orig = c->site;
 

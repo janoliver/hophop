@@ -49,8 +49,7 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
 
     // measure the cpu time
     struct timeval start, end, result;
-    struct timezone tz;
-    gettimeofday (&start, &tz);
+    gettimeofday (&start, NULL);
 
     // create the matrix in sparse triplet form
     int i, *ia, *ja, nnz, j, k;
@@ -128,7 +127,7 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
                     prms.be_it, prms.be_abs_tol, prms.be_rel_tol);
 
     //timer
-    gettimeofday (&end, &tz);
+    gettimeofday (&end, NULL);
     timeval_subtract (&result, &start, &end);
     double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
 
