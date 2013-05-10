@@ -7,31 +7,31 @@
 # also defined, but not for general use are
 # GSL_LIBRARY, where to find the CUnit library.
 
-MESSAGE(STATUS "Searching for gsl library")
+message(STATUS "Searching for gsl library")
 
-FIND_PATH(GSL_INCLUDE_DIR gsl)
+find_path(GSL_INCLUDE_DIR gsl)
 
-FIND_LIBRARY(GSL_LIBRARY gsl)
-FIND_LIBRARY(GSLCBLAS_LIBRARY gslcblas)
+find_library(GSL_LIBRARY gsl)
+find_library(GSLCBLAS_LIBRARY gslcblas)
 
-IF(GSL_INCLUDE_DIR)
-  IF(GSL_LIBRARY)
-    SET(GSL_FOUND TRUE)
-    SET(GSL_LIBRARIES ${GSL_LIBRARY} ${GSLCBLAS_LIBRARY})
-  ENDIF(GSL_LIBRARY)
-ENDIF(GSL_INCLUDE_DIR)
+if(GSL_INCLUDE_DIR)
+  if(GSL_LIBRARY)
+    set(GSL_FOUND TRUE)
+    set(GSL_LIBRARIES ${GSL_LIBRARY} ${GSLCBLAS_LIBRARY})
+  endif(GSL_LIBRARY)
+endif(GSL_INCLUDE_DIR)
 
-IF (GSL_FOUND)
-   IF (NOT GSL_FIND_QUIETLY)
-      MESSAGE(STATUS "Found GSL: ${GSL_LIBRARIES}")
-   ENDIF (NOT GSL_FIND_QUIETLY)
-ELSE (GSL_FOUND)
-   IF (GSL_FIND_REQUIRED)
-      MESSAGE(SEND_ERROR "Could NOT find GSL")
-   ENDIF (GSL_FIND_REQUIRED)
-ENDIF (GSL_FOUND)
+if (GSL_FOUND)
+   if (NOT GSL_FIND_QUIETLY)
+      message(STATUS "Found GSL: ${GSL_LIBRARIES}")
+   endif (NOT GSL_FIND_QUIETLY)
+else (GSL_FOUND)
+   if (GSL_FIND_REQUIRED)
+      message(SEND_ERROR "Could NOT find GSL")
+   endif (GSL_FIND_REQUIRED)
+endif (GSL_FOUND)
 
-MARK_AS_ADVANCED (
+mark_as_advanced (
   GSL_INCLUDE_DIR 
   GSL_LIBRARIES
 )
