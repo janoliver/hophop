@@ -123,8 +123,8 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
     }
 
     // perform the calculation
-    pmgmres_ilu_cr (runprms->nSites, nnz, ia, ja, a, x, rhs, prms.be_outer_it,
-                    prms.be_it, prms.be_abs_tol, prms.be_rel_tol);
+    int it = pmgmres_ilu_cr (runprms->nSites, nnz, ia, ja, a, x, rhs, 
+            prms.be_outer_it, prms.be_it, prms.be_abs_tol, prms.be_rel_tol);
 
     //timer
     gettimeofday (&end, NULL);
@@ -132,9 +132,9 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
     double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
 
     // output
-    output (O_SERIAL, "\tDone! %f s duration\n", elapsed);
-    output (O_PARALLEL, "Finished %d. Iteration (total %d): %f s duration\n",
-            runprms->iRun, prms.number_runs, elapsed);
+    output (O_SERIAL, "\tDone! %f s duration, %d gmres iterations\n", elapsed, it);
+    output (O_PARALLEL, "Finished %d. Iteration (total %d): %fs duration, %d gmres iterations\n",
+            runprms->iRun, prms.number_runs, elapsed, it);
 
     // calculate mobility
     double sum = 0;

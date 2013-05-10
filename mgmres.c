@@ -1178,7 +1178,7 @@ mult_givens (double c, double s, int k, double *g)
 
 /******************************************************************************/
 
-void
+int
 pmgmres_ilu_cr (int n, int nz_num, int ia[], int ja[], double a[],
                 double x[], double rhs[], int itr_max, int mr, double tol_abs,
                 double tol_rel)
@@ -1484,7 +1484,7 @@ pmgmres_ilu_cr (int n, int nz_num, int ia[], int ja[], double a[],
     free_dmatrix (v, 0, mr, 0, n - 1);
     free (y);
 
-    return;
+    return itr_used;
 }
 
 /******************************************************************************/
