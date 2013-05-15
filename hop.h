@@ -69,6 +69,8 @@ typedef struct params
 
     // balance eq.
     bool balance_eq;
+    bool mgmres;
+    bool lis;
     float be_abs_tol;
     float be_rel_tol;
     int be_it;

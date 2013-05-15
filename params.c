@@ -133,7 +133,16 @@ generateParams (Params * prms, int argc, char **argv)
     prms->output_transitions = (args.transitions_given) ? true : false;
     prms->memreq = (args.memreq_given) ? true : false;
     prms->balance_eq = (args.be_given) ? true : false;
+    prms->mgmres = (args.mgmres_given) ? true : false;
     prms->many = (args.many_given) ? true : false;
+    prms->lis = false;
+
+#ifndef WITH_LIS
+
+    prms.mgmres = true;
+
+#endif
+
 
     // balance equation parameters
     if (args.be_it_arg == 0)
@@ -190,9 +199,11 @@ generateParams (Params * prms, int argc, char **argv)
     else
         prms->nthreads = (GSL_MIN (args.nthreads_arg, prms->number_runs));
 
+
     // if prms.nthreads == 1 for any reason, disable parallel computing
     if (prms->nthreads == 1)
         prms->parallel = false;
+
 
     // free memory
     free (params);

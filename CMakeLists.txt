@@ -1,5 +1,5 @@
 # version, package name and cmake version
-set(PACKAGE_VERSION "2.3")
+set(PACKAGE_VERSION "2.4")
 set(PACKAGE_NAME "HOP")
 set(gengetopt "gengetopt")
 
@@ -40,6 +40,13 @@ find_package(GSL REQUIRED)
 include_directories(${GSL_INCLUDE_DIR})
 set(LIBS ${LIBS} ${GSL_LIBRARIES})
 set(LIBS ${LIBS} ${MATH_LIB})
+
+find_package(Lis)
+if(LIS_FOUND)
+    include_directories(${LIS_INCLUDE_DIR})
+    set(LIBS ${LIBS} ${LIS_LIBRARIES})
+    add_definitions(-DWITH_LIS)
+endif(LIS_FOUND)
 
 find_package( OpenMP REQUIRED)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")

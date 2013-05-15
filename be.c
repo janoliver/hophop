@@ -1,6 +1,8 @@
 #include "hop.h"
 #include "mgmres.h"
 
+#include "lis.h"
+
 void BE_solve (Site * sites, Results * res, RunParams * runprms);
 
 void
@@ -44,15 +46,14 @@ BE_run (Results * res, RunParams * runprms)
 void
 BE_solve (Site * sites, Results * res, RunParams * runprms)
 {
-    output (O_SERIAL, "\tSolving balance equations...");
+    output (O_SERIAL, "\tSolving balance equations ...");
     fflush (stdout);
 
     // measure the cpu time
     struct timeval start, end, result;
     gettimeofday (&start, NULL);
 
-    // create the matrix in sparse triplet form
-    int i, *ia, *ja, nnz, j, k;
+    int i, *ia, *ja, nnz, j, k, it;
     double *a, *rhs, *x;
     SLE *neighbor, *neighbor2;
 
@@ -122,9 +123,59 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
         x[i] = 1. / runprms->nSites;
     }
 
-    // perform the calculation
-    int it = pmgmres_ilu_cr (runprms->nSites, nnz, ia, ja, a, x, rhs, 
+    if(prms.mgmres)
+    {
+        // perform the calculation
+        it = pmgmres_ilu_cr (runprms->nSites, nnz, ia, ja, a, x, rhs, 
             prms.be_outer_it, prms.be_it, prms.be_abs_tol, prms.be_rel_tol);
+
+    }
+
+#ifdef WITH_LIS
+
+    if(!prms.mgmres)
+    {
+        char options[200];
+        sprintf(options, "-i gmres -p ilu -tol %e -t %d -restart %d -maxiter %d", 
+            prms.be_abs_tol, 1, prms.be_outer_it, prms.be_it);
+
+        LIS_INT argc = 1;
+        char ** argv = (char *[]){""};
+
+        lis_initialize(&argc, &argv);
+
+        LIS_MATRIX lis_A;
+        lis_matrix_create(0,&lis_A);
+        lis_matrix_set_size(lis_A,0,runprms->nSites);
+
+        lis_matrix_set_csr(nnz,ia,ja,a,lis_A);
+        lis_matrix_assemble(lis_A);
+
+        LIS_VECTOR lis_b, lis_x;
+        LIS_SOLVER solver;
+
+        lis_vector_duplicate(lis_A, &lis_b);
+        lis_vector_duplicate(lis_A, &lis_x);
+
+        for(i = 0; i < runprms->nSites; ++i)
+        {
+            lis_vector_set_value(LIS_INS_VALUE,i,rhs[i],lis_b);
+        }
+
+        lis_solver_create(&solver);
+        lis_solver_set_option(options,solver);
+        lis_solve(lis_A,lis_b,lis_x,solver);
+        lis_solver_get_iters(solver,&it);
+
+        for(i = 0; i < runprms->nSites; ++i)
+        {
+            lis_vector_get_value(lis_x, i, &(x[i]));
+        }
+
+        lis_finalize();
+    }
+
+#endif /* WITH_LIS */
 
     //timer
     gettimeofday (&end, NULL);

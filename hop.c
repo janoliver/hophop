@@ -19,6 +19,7 @@ main (int argc, char **argv)
     // is used all over the software
     generateParams (&prms, argc, argv);
 
+
     if (prms.memreq)
     {
         printEstimatedMemory ();
@@ -123,7 +124,8 @@ printSettings ()
     output (O_BOTH, "\tRealizations for Averaging: \ti = %d\n",
             prms.number_runs);
     output (O_BOTH, "\tMode: \t\t\t\t%s\n\n",
-            prms.balance_eq ? "Balance equations" :
+            prms.balance_eq ? 
+            (prms.mgmres ? "Balance Equations (MGMRES.c)" : "Balance Equations (LIS)") :
             (prms.many ? "Monte Carlo Many" : "Monte Carlo Meanfield"));
 
     if (prms.balance_eq)

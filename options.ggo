@@ -51,6 +51,7 @@ option "many" - "Instead of using the mean field approach, simulate multiple cha
 section "Balance equations" sectiondesc="These options only matter, when the solution is found by solving the balance equations. (setting the --be flag)"
 
 option "be" - "Solve balance equations" flag off
+option "mgmres" - "Force use of mgmres instead of lis" flag off
 option "be_it" - "Max inner iterations after which the calculation is stopped. " long default="300" optional
 option "be_oit" - "Max outer iterations or restarts of the algorithm." long default="10" optional
 option "tol_abs" - "absolute tolerance for finding the solution" float default="1e-8" optional
