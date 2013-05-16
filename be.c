@@ -1,9 +1,15 @@
 #include "hop.h"
 #include "mgmres.h"
 
+#ifdef WITH_LIS
+
 #include "lis.h"
+int solve_lis(Site * sites, RunParams * runprms, int nnz, double * x);
+
+#endif /* WITH_LIS */
 
 void BE_solve (Site * sites, Results * res, RunParams * runprms);
+int solve_mgmres(Site * sites, RunParams * runprms, int nnz, double * x);
 
 void
 BE_run (Results * res, RunParams * runprms)
@@ -53,22 +59,182 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
     struct timeval start, end, result;
     gettimeofday (&start, NULL);
 
-    int i, *ia, *ja, nnz, j, k, it;
-    double *a, *rhs, *x;
-    SLE *neighbor, *neighbor2;
-
+    int i, nnz, j, it;
+    
     // find out the number of entries
     nnz = 2 * runprms->nSites - 1;
     for (i = 1; i < runprms->nSites; ++i)
         nnz += sites[i].nNeighbors;
+
+    double *x = malloc (sizeof (double) * runprms->nSites);
+
+    if(prms.mgmres)
+    {
+        it = solve_mgmres(sites, runprms, nnz, x);
+    }
+
+#ifdef WITH_LIS
+
+    else
+    {
+        it = solve_lis(sites, runprms, nnz, x);
+    }
+
+#endif /* WITH_LIS */
+
+    //timer
+    gettimeofday (&end, NULL);
+    timeval_subtract (&result, &start, &end);
+    double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
+
+    // output
+    output (O_SERIAL, "\tDone! %f s duration, %d gmres iterations\n", elapsed, it);
+    output (O_PARALLEL, "Finished %d. Iteration (total %d): %fs duration, %d gmres iterations\n",
+            runprms->iRun, prms.number_runs, elapsed, it);
+
+    // calculate mobility
+    double sum = 0;
+    for (i = 0; i < runprms->nSites; ++i)
+        for (j = 0; j < sites[i].nNeighbors; ++j)
+            sum +=
+                x[i] * sites[i].neighbors[j].rate *
+                (sites[i].neighbors[j].dist.z);
+
+    res->mobility.values[runprms->iRun - 1] = sum / prms.field;
+    res->mobility.done[runprms->iRun - 1] = true;
+
+    res->nSites.values[runprms->iRun - 1] = (float)runprms->nSites;
+    res->nSites.done[runprms->iRun - 1] = true;
+
+
+    // free
+    free (x);
+
+}
+
+#ifdef WITH_LIS
+
+int
+solve_lis(Site * sites, RunParams * runprms, int nnz, double * x)
+{
+    int i, *ia, *ja, k, it;
+    double *a, *rhs;
+    SLE *neighbor;
+
+    //allocate memory
+    ia = malloc (sizeof (int) * nnz);
+    ja = malloc (sizeof (int) * nnz);
+    a = malloc (sizeof (double) * nnz);
+    rhs = calloc (runprms->nSites, sizeof (double));
+    
+    // create the arrays
+    int counter = 0;
+
+    for (i = 0; i < runprms->nSites; ++i)
+    {
+        a[counter] = 1;
+        ja[counter] = 0;
+        ia[counter] = i;
+        counter++;
+
+        // diagonal element is always the rate sum
+        if(i > 0)
+        {
+            a[counter] = -1 * sites[i].rateSum;
+            ja[counter] = i;
+            ia[counter] = i;
+            counter++;
+        }
+
+        // now the neighbors
+        for (k = 0; k < sites[i].nNeighbors; ++k)
+        {
+            neighbor = &(sites[i].neighbors[k]);
+
+            if(neighbor->s->index == 0)
+                continue;
+            
+            a[counter] = neighbor->rate;
+            ja[counter] = neighbor->s->index;
+            ia[counter] = i;
+            counter++;
+        }
+    }
+
+    // create the right hand side
+    rhs[0] = 1;
+
+    // create the initial guess
+    for (i = 0; i < runprms->nSites; ++i)
+        x[i] = 1. / runprms->nSites;
+
+    int threads = omp_get_num_threads();
+    omp_set_num_threads(1);
+
+    char options[200];
+    sprintf(options, 
+        "-i gmres -p ilu -tol %e -t %d -restart %d -maxiter %d", 
+        prms.be_abs_tol, 1, prms.be_it, prms.be_outer_it * prms.be_it);
+
+    LIS_INT argc = 1;
+    char ** argv = (char *[]){""};
+
+    lis_initialize(&argc, &argv);
+
+    LIS_MATRIX lis_A;
+    lis_matrix_create(0,&lis_A);
+    lis_matrix_set_type(lis_A, LIS_MATRIX_COO);
+    lis_matrix_set_size(lis_A,0,runprms->nSites);
+
+    lis_matrix_set_coo(nnz,ja,ia,a,lis_A);
+    lis_matrix_assemble(lis_A);
+
+    LIS_VECTOR lis_b, lis_x;
+    LIS_SOLVER solver;
+
+    lis_vector_duplicate(lis_A, &lis_b);
+    lis_vector_duplicate(lis_A, &lis_x);
+
+    for(i = 0; i < runprms->nSites; ++i)
+        lis_vector_set_value(LIS_INS_VALUE,i,rhs[i],lis_b);
+
+    lis_solver_create(&solver);
+    lis_solver_set_option(options,solver);
+    lis_solve(lis_A,lis_b,lis_x,solver);
+    lis_solver_get_iters(solver,&it);
+
+    for(i = 0; i < runprms->nSites; ++i)
+        lis_vector_get_value(lis_x, i, &(x[i]));
+
+    lis_finalize();
+
+    omp_set_num_threads(threads);
+
+
+    free (a);
+    free (ia);
+    free (ja);
+    free (rhs);
+
+    return it;
+
+}
+
+#endif /* WITH_LIS */
+
+int
+solve_mgmres(Site * sites, RunParams * runprms, int nnz, double * x)
+{
+    int i, *ia, *ja, j, k, it;
+    double *a, *rhs;
+    SLE *neighbor, *neighbor2;
 
     //allocate memory
     ia = malloc (sizeof (int) * (runprms->nSites + 1));
     ja = malloc (sizeof (int) * nnz);
     a = malloc (sizeof (double) * nnz);
     rhs = calloc (runprms->nSites, sizeof (double));
-    x = malloc (sizeof (double) * runprms->nSites);
-
+    
     // create the arrays
     int counter = 0;
     ia[0] = 0;
@@ -123,90 +289,15 @@ BE_solve (Site * sites, Results * res, RunParams * runprms)
         x[i] = 1. / runprms->nSites;
     }
 
-    if(prms.mgmres)
-    {
-        // perform the calculation
-        it = pmgmres_ilu_cr (runprms->nSites, nnz, ia, ja, a, x, rhs, 
+    // perform the calculation
+    it = pmgmres_ilu_cr (runprms->nSites, nnz, ia, ja, a, x, rhs, 
             prms.be_outer_it, prms.be_it, prms.be_abs_tol, prms.be_rel_tol);
 
-    }
 
-#ifdef WITH_LIS
-
-    if(!prms.mgmres)
-    {
-        char options[200];
-        sprintf(options, "-i gmres -p ilu -tol %e -t %d -restart %d -maxiter %d", 
-            prms.be_abs_tol, 1, prms.be_outer_it, prms.be_it);
-
-        LIS_INT argc = 1;
-        char ** argv = (char *[]){""};
-
-        lis_initialize(&argc, &argv);
-
-        LIS_MATRIX lis_A;
-        lis_matrix_create(0,&lis_A);
-        lis_matrix_set_size(lis_A,0,runprms->nSites);
-
-        lis_matrix_set_csr(nnz,ia,ja,a,lis_A);
-        lis_matrix_assemble(lis_A);
-
-        LIS_VECTOR lis_b, lis_x;
-        LIS_SOLVER solver;
-
-        lis_vector_duplicate(lis_A, &lis_b);
-        lis_vector_duplicate(lis_A, &lis_x);
-
-        for(i = 0; i < runprms->nSites; ++i)
-        {
-            lis_vector_set_value(LIS_INS_VALUE,i,rhs[i],lis_b);
-        }
-
-        lis_solver_create(&solver);
-        lis_solver_set_option(options,solver);
-        lis_solve(lis_A,lis_b,lis_x,solver);
-        lis_solver_get_iters(solver,&it);
-
-        for(i = 0; i < runprms->nSites; ++i)
-        {
-            lis_vector_get_value(lis_x, i, &(x[i]));
-        }
-
-        lis_finalize();
-    }
-
-#endif /* WITH_LIS */
-
-    //timer
-    gettimeofday (&end, NULL);
-    timeval_subtract (&result, &start, &end);
-    double elapsed = result.tv_sec + (double) result.tv_usec / 1e6;
-
-    // output
-    output (O_SERIAL, "\tDone! %f s duration, %d gmres iterations\n", elapsed, it);
-    output (O_PARALLEL, "Finished %d. Iteration (total %d): %fs duration, %d gmres iterations\n",
-            runprms->iRun, prms.number_runs, elapsed, it);
-
-    // calculate mobility
-    double sum = 0;
-    for (i = 0; i < runprms->nSites; ++i)
-        for (j = 0; j < sites[i].nNeighbors; ++j)
-            sum +=
-                x[i] * sites[i].neighbors[j].rate *
-                (sites[i].neighbors[j].dist.z);
-
-    res->mobility.values[runprms->iRun - 1] = sum / prms.field;
-    res->mobility.done[runprms->iRun - 1] = true;
-
-    res->nSites.values[runprms->iRun - 1] = (float)runprms->nSites;
-    res->nSites.done[runprms->iRun - 1] = true;
-
-
-    // free
     free (a);
     free (ia);
     free (ja);
     free (rhs);
-    free (x);
 
+    return it;
 }
