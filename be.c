@@ -201,7 +201,7 @@ solve_lis(Site * sites, RunParams * runprms, int nnz, double * x)
     lis_solver_create(&solver);
     lis_solver_set_option(options,solver);
     lis_solve(lis_A,lis_b,lis_x,solver);
-    lis_solver_get_iters(solver,&it);
+    lis_solver_get_iter(solver,&it);
 
     for(i = 0; i < runprms->nSites; ++i)
         lis_vector_get_value(lis_x, i, &(x[i]));
