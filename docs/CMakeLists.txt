@@ -19,50 +19,14 @@
 #
 #
 
-# - Try to find LIS
-# Once done, this will define
-#
-#  LIS_FOUND
-#  LIS_INCLUDE_DIRS
-#  LIS_LIBRARIES
-#
-#  Environment variable LIS_ROOT can be set to give hints
+add_custom_target(docs-manual
+        COMMAND sphinx-build -c ${CMAKE_CURRENT_SOURCE_DIR} -b html ${PROJECT_SOURCE_DIR}/docs manual
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Build html documentation"
+        VERBATIM)
 
-
-IF (LIS_ROOT)
-
-    FIND_LIBRARY(
-            LIS_LIBRARY
-            NAMES "lis"
-            PATHS ${LIS_ROOT}
-            PATH_SUFFIXES "lib" "lib64"
-            NO_DEFAULT_PATH
-    )
-
-    FIND_PATH(
-            LIS_INCLUDE_DIR
-            NAMES "lis.h"
-            PATHS ${LIS_ROOT}
-            PATH_SUFFIXES "include"
-            NO_DEFAULT_PATH
-    )
-
-ELSE (LIS_ROOT)
-
-    FIND_LIBRARY(
-            LIS_LIBRARY
-            NAMES "lis"
-    )
-
-    FIND_PATH(
-            LIS_INCLUDE_DIR
-            NAMES "lis.h"
-    )
-
-ENDIF (LIS_ROOT)
-
-
-set(LIS_LIBRARIES ${LIS_LIBRARY})
-
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIS DEFAULT_MSG LIS_LIBRARIES LIS_INCLUDE_DIR)
+add_custom_target(docs-manual-tex
+        COMMAND sphinx-build -c ${CMAKE_CURRENT_SOURCE_DIR} -b latex ${PROJECT_SOURCE_DIR}/docs manual-tex
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Build html documentation"
+        VERBATIM)

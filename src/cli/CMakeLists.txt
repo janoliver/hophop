@@ -19,50 +19,16 @@
 #
 #
 
-# - Try to find LIS
-# Once done, this will define
-#
-#  LIS_FOUND
-#  LIS_INCLUDE_DIRS
-#  LIS_LIBRARIES
-#
-#  Environment variable LIS_ROOT can be set to give hints
+find_program(GENGETOPT_EXECUTABLE gengetopt)
 
-
-IF (LIS_ROOT)
-
-    FIND_LIBRARY(
-            LIS_LIBRARY
-            NAMES "lis"
-            PATHS ${LIS_ROOT}
-            PATH_SUFFIXES "lib" "lib64"
-            NO_DEFAULT_PATH
-    )
-
-    FIND_PATH(
-            LIS_INCLUDE_DIR
-            NAMES "lis.h"
-            PATHS ${LIS_ROOT}
-            PATH_SUFFIXES "include"
-            NO_DEFAULT_PATH
-    )
-
-ELSE (LIS_ROOT)
-
-    FIND_LIBRARY(
-            LIS_LIBRARY
-            NAMES "lis"
-    )
-
-    FIND_PATH(
-            LIS_INCLUDE_DIR
-            NAMES "lis.h"
-    )
-
-ENDIF (LIS_ROOT)
-
-
-set(LIS_LIBRARIES ${LIS_LIBRARY})
-
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIS DEFAULT_MSG LIS_LIBRARIES LIS_INCLUDE_DIR)
+add_custom_target(gen-cli
+        COMMAND ${GENGETOPT_EXECUTABLE} --conf-parser --show-required -l
+        --set-version=${PACKAGE_VERSION}
+        --set-package=${PACKAGE_NAME}
+        -i ${CMAKE_SOURCE_DIR}/src/cli/options.ggo
+        --output-dir=${CMAKE_SOURCE_DIR}/src/cli/
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Generating CLI header and c file"
+        OUTPUT ${CMAKE_SOURCE_DIR}/src/cli/cmdline.h ${CMAKE_SOURCE_DIR}/src/cli/cmdline.c
+        VERBATIM
+        )
