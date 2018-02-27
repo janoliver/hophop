@@ -7,3 +7,5 @@ some lattice structure. The energetic disorder can be specified as an
 input parameter.
 The software determines some key features of the charge transport such as
 mobility, diffusivity, certain important energies and so on.
+
+See the `documentation at hophop.readthedocs.io <http://hophop.readthedocs.io>`_
