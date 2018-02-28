@@ -78,6 +78,7 @@ calcFermiEnergy ()
 double
 DOSunnormalized (double x, void *p)
 {
+    (void)(p);
     return exp (-pow (x, prms.exponent));
 }
 
