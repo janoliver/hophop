@@ -26,15 +26,15 @@
 #  LIS_INCLUDE_DIRS
 #  LIS_LIBRARIES
 #
-#  Environment variable LIS_ROOT can be set to give hints
+#  Environment variable LIS_ROOT_DIR can be set to give hints
 
 
-IF (LIS_ROOT)
+IF (LIS_ROOT_DIR)
 
     FIND_LIBRARY(
             LIS_LIBRARY
             NAMES "lis"
-            PATHS ${LIS_ROOT}
+            PATHS ${LIS_ROOT_DIR}
             PATH_SUFFIXES "lib" "lib64"
             NO_DEFAULT_PATH
     )
@@ -42,12 +42,12 @@ IF (LIS_ROOT)
     FIND_PATH(
             LIS_INCLUDE_DIR
             NAMES "lis.h"
-            PATHS ${LIS_ROOT}
+            PATHS ${LIS_ROOT_DIR}
             PATH_SUFFIXES "include"
             NO_DEFAULT_PATH
     )
 
-ELSE (LIS_ROOT)
+ELSE (LIS_ROOT_DIR)
 
     FIND_LIBRARY(
             LIS_LIBRARY
@@ -59,7 +59,7 @@ ELSE (LIS_ROOT)
             NAMES "lis.h"
     )
 
-ENDIF (LIS_ROOT)
+ENDIF (LIS_ROOT_DIR)
 
 
 set(LIS_LIBRARIES ${LIS_LIBRARY})

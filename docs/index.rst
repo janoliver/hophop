@@ -8,6 +8,12 @@ input parameter.
 The software determines some key features of the charge transport such as
 mobility, diffusivity, certain important energies and so on.
 
+.. toctree::
+    :maxdepth: 1
+    :caption: Documentation
+
+    install
+
 Requirements
 ------------
 The following libraries and software is required to compile successfully:
