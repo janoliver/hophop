@@ -1,6 +1,11 @@
 hophop
 ======
 
+.. figure:: hopping.png
+    :alt: Hopping transport
+    :align: center
+    :scale: 70%
+
 *hophop* simulates charge carrier movement through disordered
 systems. *hophop* determines some key features of the charge transport such as
 mobility, diffusivity, certain important energies and so on.
